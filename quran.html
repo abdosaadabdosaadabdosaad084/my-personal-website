@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#061b16">
+<title>القرآن الكريم | فهرس السور والتفسير</title>
+<link rel="preconnect" href="https://api.alquran.cloud">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#06130f;--panel:#0c211a;--gold:#d6b56d;--text:#f5f2e8;--muted:#a7b9ae;--line:#234536}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#123b2a 0,#06130f 52%);color:var(--text);font-family:Cairo,Tahoma,sans-serif;min-height:100vh}
+button,input{font:inherit}button{cursor:pointer}.wrap{width:min(1120px,100%);margin:auto;padding:22px 16px 60px}
+.hero{position:relative;overflow:hidden;border:1px solid #d6b56d55;border-radius:26px;padding:30px 22px;text-align:center;background:linear-gradient(135deg,#143d2d,#0b2119 65%,#152c21);box-shadow:0 20px 60px #0003}
+.eyebrow{color:var(--gold);font-size:12px;letter-spacing:2px}.hero h1{font-family:Amiri,serif;font-size:clamp(34px,6vw,56px);margin:8px 0;color:#f6e8bd}.hero p{margin:0;color:#d4e1d8}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.search{flex:1;min-width:200px;background:#0b211a;border:1px solid var(--line);border-radius:13px;color:white;padding:12px 15px;outline:none}.search:focus{border-color:var(--gold)}.toolbtn{border:1px solid var(--line);border-radius:12px;background:#102a21;color:var(--text);padding:10px 13px}.toolbtn:hover{border-color:var(--gold)}
+.status{font-size:13px;color:var(--muted);padding:8px 2px}.surah-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}.surah{display:flex;align-items:center;gap:12px;text-align:right;background:linear-gradient(145deg,#10291f,#0a1d16);border:1px solid var(--line);padding:13px;border-radius:15px;color:var(--text);transition:.18s}.surah:hover{transform:translateY(-2px);border-color:#d6b56d99;background:#163528}.num{width:42px;height:42px;flex:none;display:grid;place-items:center;border:1px solid #d6b56d66;color:var(--gold);border-radius:12px;font-weight:700}.sinfo{min-width:0;flex:1}.sname{font-family:Amiri,serif;font-size:23px}.smeta{font-size:11px;color:var(--muted)}
+.reader{display:none}.reader.active{display:block}.index-view.hidden{display:none}.back{display:block;margin-bottom:12px;text-align:right}.reader-head{border:1px solid #d6b56d66;border-radius:20px;background:linear-gradient(135deg,#143b2b,#0a1d16);padding:18px;margin-bottom:16px;text-align:center}.reader-head h2{font:700 34px Amiri,serif;color:#f6e8bd;margin:5px}.reader-head p{margin:0;color:var(--muted);font-size:12px}.bismillah{font:28px Amiri,serif;color:var(--gold);padding:18px 0 8px;text-align:center}
+.ayah{border:1px solid var(--line);background:#0a1d16dd;border-radius:17px;margin:12px 0;padding:16px}.ayah.selected{border-color:#d6b56d99}.ayah-top{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--gold);font-size:12px}.ayah-text{font:30px/2.1 Amiri,serif;text-align:justify;direction:rtl;padding:10px 0}.ayah-actions{display:flex;gap:8px;flex-wrap:wrap}.smallbtn{border:1px solid var(--line);border-radius:10px;padding:7px 11px;background:#102a21;color:#d9e7de;font-size:12px}.smallbtn:hover,.smallbtn.on{border-color:var(--gold);color:#f6e8bd}.tafsir{background:#112b21;border-right:3px solid var(--gold);border-radius:10px;padding:13px;margin:6px 0 12px;line-height:2;color:#e1e9df}.tafsir h4{margin:0 0 5px;color:var(--gold);font-size:13px}.tafsir p{margin:0;font-size:14px}.empty{padding:28px;text-align:center;color:var(--muted)}.foot{text-align:center;color:#8fa598;font-size:11px;margin-top:24px;line-height:1.9}
+@media(min-width:760px){.wrap{padding-top:30px}.hero{padding:38px}.surah-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.ayah{padding:20px 24px}}@media(max-width:420px){.surah-grid{grid-template-columns:1fr}.ayah-text{font-size:26px}}
+</style>
+</head>
+<body><main class="wrap">
+<header class="hero"><div class="eyebrow">نورٌ وهداية</div><h1>القرآن الكريم</h1><p>فهرس السور بالترتيب المصحفي • اقرأ الآيات وتعرّف على تفسيرها</p></header>
+<div class="toolbar"><input id="search" class="search" type="search" placeholder="ابحث عن اسم السورة أو رقمها..." aria-label="البحث عن سورة"><button id="savedBtn" class="toolbtn">★ الآيات المحفوظة</button><button id="allBtn" class="toolbtn">فهرس السور ١١٤</button></div>
+<div id="status" class="status" role="status">جارٍ تحميل فهرس السور...</div>
+<section id="indexView" class="index-view"><div id="surahGrid" class="surah-grid"></div></section>
+<section id="reader" class="reader"><button id="backBtn" class="toolbtn back">← العودة إلى الفهرس</button><div id="readerHead" class="reader-head"></div><div id="ayahList"></div></section>
+<footer class="foot">النص القرآني والتفسير يُحمّلان من خدمة AlQuran Cloud. يُرجى مراجعة المصحف المعتمد عند الطباعة أو الاقتباس.<br>واجهة تعليمية مجانية لقراءة القرآن الكريم.</footer>
+</main>
+<script>
+const API='https://api.alquran.cloud/v1', $=id=>document.getElementById(id);
+let surahs=[], savedOnly=false, saved=new Set();
+try{saved=new Set(JSON.parse(localStorage.getItem('quran-saved-ayahs')||'[]'))}catch(e){}
+const arNum=n=>new Intl.NumberFormat('ar-EG').format(n);
+function status(msg){$('status').textContent=msg}
+async function getJSON(url){const r=await fetch(url);if(!r.ok)throw Error('تعذر الاتصال بمصدر البيانات');const j=await r.json();if(j.code!==200)throw Error(j.status||'تعذر تحميل البيانات');return j.data}
+function renderSurahs(){
+ const q=$('search').value.trim().toLowerCase();
+ const list=surahs.filter(s=>(!q||s.name.includes(q)||s.englishName.toLowerCase().includes(q)||String(s.number)===q));
+ $('surahGrid').innerHTML='';
+ list.forEach(s=>{const b=document.createElement('button');b.className='surah';b.innerHTML='<span class="num">'+arNum(s.number)+'</span><span class="sinfo"><span class="sname">'+s.name+'</span><br><span class="smeta">'+s.englishName+' · '+arNum(s.numberOfAyahs)+' آية · '+(s.revelationType==='Meccan'?'مكية':'مدنية')+'</span></span>';b.addEventListener('click',()=>openSurah(s.number));$('surahGrid').appendChild(b)});
+ if(!list.length)$('surahGrid').innerHTML='<div class="empty">لا توجد نتائج مطابقة.</div>';
+ status('عدد السور: '+arNum(surahs.length)+' — بالترتيب المصحفي.');
+}
+async function openSurah(num){
+ const s=surahs.find(x=>x.number===num);if(!s)return;
+ $('indexView').classList.add('hidden');$('reader').classList.add('active');
+ $('readerHead').innerHTML='<div class="eyebrow">السورة رقم '+arNum(s.number)+'</div><h2>'+s.name+'</h2><p>'+(s.revelationType==='Meccan'?'مكية':'مدنية')+' · '+arNum(s.numberOfAyahs)+' آية</p>';
+ $('ayahList').innerHTML='<div class="empty">جارٍ تحميل الآيات والتفسير...</div>';window.scrollTo({top:0,behavior:'smooth'});
+ try{
+  const [quran,editions]=await Promise.all([getJSON(API+'/surah/'+num+'/quran-uthmani'),getJSON(API+'/edition?format=text&language=ar&type=tafsir').catch(()=>[])]);
+  let edition=editions.find(e=>/muyassar|الميسر|الميسّر/i.test(e.identifier+' '+e.name+' '+e.englishName));
+  let tafsir=[];
+  if(edition){try{tafsir=await getJSON(API+'/surah/'+num+'/'+edition.identifier)}catch(e){tafsir=[]}}
+  renderAyahs(s,quran.ayahs,tafsir?.ayahs||[],edition?.name||'التفسير الميسّر');
+ }catch(e){$('ayahList').innerHTML='<div class="empty">لم نتمكن من تحميل الآيات الآن. تأكد من اتصال الإنترنت ثم حاول مرة أخرى.<br><button class="toolbtn" id="retryBtn">إعادة المحاولة</button></div>';$('retryBtn').onclick=()=>openSurah(num);status(e.message)}
+}
+function renderAyahs(s,ayahs,tafsirs,tafsirName){
+ $('ayahList').innerHTML='';
+ ayahs.forEach(a=>{
+  const box=document.createElement('article'),key=s.number+':'+a.numberInSurah,t=tafsirs.find(x=>x.numberInSurah===a.numberInSurah);
+  box.className='ayah';box.id='ayah-'+a.numberInSurah;
+  box.innerHTML='<div class="ayah-top"><span>الآية '+arNum(a.numberInSurah)+'</span><span>الجزء '+arNum(a.juz||'—')+'</span></div><div class="ayah-text"></div><div class="ayah-actions"><button class="smallbtn tafsirBtn">📖 عرض التفسير فوق الآية</button><button class="smallbtn saveBtn '+(saved.has(key)?'on':'')+'">'+(saved.has(key)?'★ محفوظة':'☆ حفظ الآية')+'</button><button class="smallbtn copyBtn">نسخ الآية</button></div><div class="tafsir" hidden><h4>'+tafsirName+' — تفسير الآية '+arNum(a.numberInSurah)+'</h4><p></p></div>';
+  box.querySelector('.ayah-text').textContent=a.text;
+  const panel=box.querySelector('.tafsir');
+  box.querySelector('.tafsirBtn').onclick=()=>{panel.querySelector('p').textContent=t?t.text:'التفسير غير متاح حاليًا من مصدر البيانات. حاول لاحقًا.';panel.hidden=!panel.hidden;box.classList.toggle('selected',!panel.hidden);box.querySelector('.tafsirBtn').textContent=panel.hidden?'📖 عرض التفسير فوق الآية':'إخفاء التفسير'};
+  box.querySelector('.saveBtn').onclick=()=>{if(saved.has(key))saved.delete(key);else saved.add(key);localStorage.setItem('quran-saved-ayahs',JSON.stringify([...saved]));const b=box.querySelector('.saveBtn');b.classList.toggle('on',saved.has(key));b.textContent=saved.has(key)?'★ محفوظة':'☆ حفظ الآية'};
+  box.querySelector('.copyBtn').onclick=async()=>{try{await navigator.clipboard.writeText(a.text+' ﴿'+arNum(a.numberInSurah)+'﴾');box.querySelector('.copyBtn').textContent='تم النسخ ✓';setTimeout(()=>box.querySelector('.copyBtn').textContent='نسخ الآية',1400)}catch(e){box.querySelector('.copyBtn').textContent='تعذر النسخ'}};
+  $('ayahList').appendChild(box);
+ });
+ if(s.number!==1&&s.number!==9){const b=document.createElement('div');b.className='bismillah';b.textContent='بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ';$('ayahList').prepend(b)}
+}
+$('search').addEventListener('input',renderSurahs);
+$('savedBtn').onclick=()=>{const keys=[...saved];if(!keys.length){status('لم تحفظ أي آيات بعد. افتح سورة واضغط «حفظ الآية».');return} $('indexView').classList.add('hidden');$('reader').classList.add('active');$('readerHead').innerHTML='<h2>الآيات المحفوظة</h2><p>اختر السورة من الفهرس لفتح الآيات المحفوظة داخلها.</p>';const nums=[...new Set(keys.map(k=>Number(k.split(':')[0])))];$('ayahList').innerHTML='';nums.forEach(n=>{const s=surahs.find(x=>x.number===n);if(!s)return;const b=document.createElement('button');b.className='surah';b.style.width='100%';b.style.margin='8px 0';b.textContent=s.name+' — '+arNum(keys.filter(k=>k.startsWith(n+':')).length)+' آية محفوظة';b.onclick=()=>openSurah(n);$('ayahList').appendChild(b)})};
+$('allBtn').onclick=()=>{$('indexView').classList.remove('hidden');$('reader').classList.remove('active');$('search').value='';renderSurahs();window.scrollTo({top:0,behavior:'smooth'})};
+$('backBtn').onclick=()=>{$('reader').classList.remove('active');$('indexView').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})};
+(async()=>{try{surahs=await getJSON(API+'/surah');renderSurahs()}catch(e){status('تعذر تحميل الفهرس. تأكد من الإنترنت ثم أعد تحميل الصفحة.');$('surahGrid').innerHTML='<div class="empty">تعذر الاتصال بمصدر البيانات.<br><button class="toolbtn" onclick="location.reload()">إعادة المحاولة</button></div>'}})();
+</script></body></html>
