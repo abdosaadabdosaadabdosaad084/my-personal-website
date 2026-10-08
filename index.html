@@ -1,1 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عبده سعد - مصمم مواقع احترافي في الإسكندرية | تسليم 24 ساعة</title>
+<meta name="description" content="مصمم مواقع محترف من الإسكندرية، أصمم موقعك في 24 ساعة. +120 موقع، تقييم 4.9، دعم مجاني شهر. تواصل واتساب 01005309110">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Cairo',sans-serif;background:#fafaf9;color:#1c1917;line-height:1.7}
+a{text-decoration:none;color:inherit}
+.container{max-width:1120px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:50;background:rgba(250,250,249,0.85);backdrop-filter:blur(12px);border-bottom:1px solid #e7e5e4;height:68px;display:flex;align-items:center}
+header .container{display:flex;justify-content:space-between;align-items:center;width:100%}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-mark{width:36px;height:36px;background:#1c1917;color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800}
+.badge{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #e7e5e4;padding:6px 14px;border-radius:999px;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.dot{width:8px;height:8px;background:#10b981;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.hero{padding:60px 0 40px;display:grid;grid-template-columns:1.1fr .9fr;gap:40px}
+@media(max-width:900px){.hero{grid-template-columns:1fr}}
+h1{font-size:52px;font-weight:800;line-height:.95;letter-spacing:-1px;margin-top:24px}
+@media(max-width:600px){h1{font-size:32px}}
+h1 span.sub{display:block;font-size:42px;color:#78716c;margin-top:12px}
+@media(max-width:600px){h1 span.sub{font-size:26px}}
+h1 span.hl{color:#1c1917;position:relative}
+h1 span.hl::after{content:'';position:absolute;bottom:4px;left:0;right:0;height:10px;background:#a7f3d0;z-index:-1}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:28px;max-width:420px}
+.stat{background:#fff;border:1px solid #e7e5e4;border-radius:16px;padding:14px}
+.stat b{font-size:22px;display:block}
+.stat span{font-size:11px;color:#78716c}
+.btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{height:48px;padding:0 24px;border-radius:999px;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;transition:.2s}
+.btn-green{background:#10b981;color:#fff;box-shadow:0 8px 24px rgba(16,185,129,.3)}
+.btn-green:hover{background:#059669}
+.btn-dark{background:#1c1917;color:#fff}
+.btn-dark:hover{opacity:.9}
+.section{padding:50px 0}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:900px){.grid4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.grid4{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid #e7e5e4;border-radius:20px;padding:20px}
+.card .icon{width:44px;height:44px;background:#f5f5f4;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px}
+.card h3{font-size:16px;font-weight:800}
+.card p{font-size:13px;color:#78716c;margin-top:4px}
+.price{margin-top:12px;font-weight:800;color:#10b981}
+.portfolio{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:20px}
+@media(max-width:600px){.portfolio{grid-template-columns:1fr}}
+.p-card{background:#fff;border:1px solid #e7e5e4;border-radius:20px;overflow:hidden}
+.p-img{height:160px;background:linear-gradient(135deg,#e7e5e4,#f5f5f4);display:flex;align-items:center;justify-content:center;font-size:36px}
+.p-body{padding:16px;display:flex;justify-content:space-between;align-items:center}
+.p-body b{font-size:14px}
+.p-body span{font-size:11px;color:#78716c;display:block;margin-top:2px}
+.why{background:#1c1917;color:#fafaf9;border-radius:28px;padding:36px;display:grid;grid-template-columns:1.1fr 1.9fr;gap:32px;position:relative;overflow:hidden}
+@media(max-width:900px){.why{grid-template-columns:1fr}}
+.why-item{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:18px}
+.cta{background:#fff;border:1px solid #e7e5e4;border-radius:28px;padding:32px;display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center}
+@media(max-width:900px){.cta{grid-template-columns:1fr}}
+.secure-note{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:12px;padding:12px;font-size:12px;color:#065f46;margin-top:16px}
+footer{padding:24px 0;border-top:1px solid #e7e5e4;margin-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:11px;color:#78716c}
+</style>
+</head>
+<body>
+<header>
+<div class="container">
+<div class="logo"><div class="logo-mark">ع س</div><div><b style="font-size:14px;display:block;line-height:1">عبده سعد</b><span style="font-size:11px;color:#78716c">مصمم مواقع • الإسكندرية</span></div></div>
+<a href="https://wa.me/201005309110" class="btn btn-dark" style="height:36px">تواصل الآن</a>
+</div>
+</header>
 
+<div class="container">
+<section class="hero">
+<div>
+<div class="badge"><span class="dot"></span> متاح الآن • 📍 الإسكندرية • ⏱️ تسليم 24 ساعة</div>
+<h1>عبده سعد <span class="sub">أصمم موقعك في <span class="hl">24 ساعة</span></span></h1>
+<p style="margin-top:18px;color:#57534e;font-size:17px;max-width:520px">مصمم مواقع محترف من الإسكندرية، أحول فكرتك لموقع سريع، آمن، ومتجاوب، بدون أي ثغرات أو صور خاصة. تركيز كامل على نتيجتك وبيعك.</p>
+<div class="stats">
+<div class="stat"><b>+120</b><span>موقع تم تسليمه</span></div>
+<div class="stat"><b>4.9★</b><span>تقييم العملاء</span></div>
+<div class="stat"><b>24س</b><span>متوسط التسليم</span></div>
+</div>
+<div class="btns">
+<a href="https://wa.me/201005309110?text=سلام%20عبده%20عايز%20موقع%20في%2024%20ساعة" class="btn btn-green">💬 كلمني واتساب - برد في 5 دقايق</a>
+<a href="#portfolio" class="btn btn-dark">شاهد أعمالي</a>
+</div>
+<div style="margin-top:14px;font-size:11px;color:#78716c">🔒 موقع ثابت 100% - لا يوجد مكان للكتابة - آمن تماماً</div>
+</div>
+<div style="background:#fff;border:1px solid #e7e5e4;border-radius:24px;padding:20px">
+<div style="font-size:11px;font-weight:700;letter-spacing:1px;color:#78716c;margin-bottom:12px">خدمات سريعة</div>
+<div style="display:grid;gap:10px">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f5f5f4"><span style="font-size:13px">📍 الإسكندرية</span><b style="font-size:12px">متاح أونلاين</b></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f5f5f4"><span style="font-size:13px">📞 الهاتف</span><b dir="ltr" style="font-size:13px">01005309110</b></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0"><span style="font-size:13px">⚡ التسليم</span><b style="font-size:13px">خلال 24 ساعة</b></div>
+</div>
+<div class="secure-note">✅ تم حذف الصورة الخاصة وجميع أقسام كتابة الزوار. هذا الموقع لا يسمح لأي شخص بالكتابة إطلاقاً.</div>
+</div>
+</section>
+
+<section id="services" class="section">
+<h2 style="font-size:28px;font-weight:800;margin-bottom:18px">خدماتي الاحترافية</h2>
+<div class="grid4">
+<div class="card"><div class="icon">🌐</div><h3>مواقع شخصية</h3><p>بروفايل يخلي العميل يثق فيك</p><div class="price">يبدأ من 1500 جنيه</div></div>
+<div class="card"><div class="icon">🛒</div><h3>متاجر إلكترونية</h3><p>بيع واكسب أونلاين بسهولة</p><div class="price">يبدأ من 3500 جنيه</div></div>
+<div class="card"><div class="icon">🏢</div><h3>مواقع شركات</h3><p>واجهة شركتك الاحترافية</p><div class="price">يبدأ من 2500 جنيه</div></div>
+<div class="card"><div class="icon">🚀</div><h3>سيو وسرعة</h3><p>اظهر في أول جوجل</p><div class="price">يبدأ من 1000 جنيه</div></div>
+</div>
+</section>
+
+<section id="portfolio" class="section">
+<h2 style="font-size:28px;font-weight:800">معرض أعمالي</h2>
+<p style="color:#78716c;font-size:13px;margin-top:4px">أمثلة حقيقية - بدون صور شخصية</p>
+<div class="portfolio">
+<div class="p-card"><div class="p-img">⚖️</div><div class="p-body"><div><b>موقع محامي</b><span>زاد العملاء 300%</span></div><div>🌐</div></div></div>
+<div class="p-card"><div class="p-img">🛍️</div><div class="p-body"><div><b>متجر إلكتروني</b><span>مبيعات 20 ألف/يوم</span></div><div>🌐</div></div></div>
+<div class="p-card"><div class="p-img">🏗️</div><div class="p-body"><div><b>موقع شركة</b><span>عقود بملايين</span></div><div>🌐</div></div></div>
+<div class="p-card"><div class="p-img">🩺</div><div class="p-body"><div><b>موقع دكتور</b><span>حجز أونلاين</span></div><div>🌐</div></div></div>
+</div>
+</section>
+
+<section class="section">
+<div class="why">
+<div>
+<div style="display:inline-block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.1);padding:4px 10px;border-radius:999px;font-size:10px;letter-spacing:1px">لماذا عبده؟</div>
+<h2 style="font-size:32px;font-weight:800;line-height:1.1;margin-top:14px">شغل احترافي،<br>بدون قلق أمني</h2>
+<p style="font-size:13px;color:rgba(255,255,255,.6);margin-top:10px">الموقع الجديد ثابت تماماً، بدون أي مكان للكتابة، بدون صور خاصة، وبدون إضافات خطرة.</p>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+<div class="why-item"><div style="width:36px;height:36px;background:#fff;color:#000;border-radius:10px;display:flex;align-items:center;justify-content:center">⚡</div><b style="display:block;margin-top:12px;font-size:14px">تسليم 24 ساعة</b><span style="font-size:12px;color:rgba(255,255,255,.6)">تصميم أولي في نفس اليوم</span></div>
+<div class="why-item"><div style="width:36px;height:36px;background:#fff;color:#000;border-radius:10px;display:flex;align-items:center;justify-content:center">🎧</div><b style="display:block;margin-top:12px;font-size:14px">دعم شهر مجاني</b><span style="font-size:12px;color:rgba(255,255,255,.6)">معك على واتساب مباشرة</span></div>
+<div class="why-item"><div style="width:36px;height:36px;background:#fff;color:#000;border-radius:10px;display:flex;align-items:center;justify-content:center">📱</div><b style="display:block;margin-top:12px;font-size:14px">متجاوب 100%</b><span style="font-size:12px;color:rgba(255,255,255,.6)">85% من العملاء موبايل</span></div>
+</div>
+</div>
+</section>
+
+<section class="section">
+<div class="cta">
+<div>
+<h2 style="font-size:34px;font-weight:800;line-height:.95">جاهز نبدأ؟<br><span style="color:#78716c">برد في 5 دقايق</span></h2>
+<div class="btns">
+<a href="https://wa.me/201005309110" class="btn btn-dark">💬 واتساب: 01005309110</a>
+<span class="btn" style="background:#f5f5f4;border:1px solid #e7e5e4">📍 الإسكندرية • سموحة</span>
+</div>
+</div>
+<div style="background:#fafaf9;border:1px solid #e7e5e4;border-radius:16px;padding:16px">
+<div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#78716c">بيانات رسمية</div>
+<div style="margin-top:10px;font-size:13px;display:grid;gap:8px">
+<div style="display:flex;justify-content:space-between"><span style="color:#78716c">المكان</span><b>الإسكندرية، مصر</b></div>
+<div style="display:flex;justify-content:space-between"><span style="color:#78716c">الهاتف</span><b dir="ltr">01005309110</b></div>
+<div style="display:flex;justify-content:space-between"><span style="color:#78716c">الأمان</span><b>✅ بدون ثغرات</b></div>
+</div>
+</div>
+</div>
+</section>
+
+<footer>
+<div>© 2026 عبده سعد - مصمم مواقع من الإسكندرية • 🔒 آمن • سريع • بدون ثغرات كتابة</div>
+<div>GitHub Pages Ready</div>
+</footer>
+</div>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
+</html>
