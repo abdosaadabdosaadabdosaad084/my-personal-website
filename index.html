@@ -83,5 +83,8 @@ function playAyah(i){if(i<0||i>=ayahs.length)return; cur=i; document.querySelect
 audio.onended=()=>{ if(cur+1<ayahs.length) playAyah(cur+1); };
 init();
 </script>
+ <script>
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
+ </script>
 </body>
 </html>
