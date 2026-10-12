@@ -10,13 +10,13 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-
 .header{position:sticky;top:0;z-index:99;background:var(--card);padding:12px;border-bottom:1px solid var(--border)}
 .top{max-width:950px;margin:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 button,select,audio{border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);padding:9px 12px}
-button{cursor:pointer;font-weight:bold;background:var(--border)}.active{background:#22c55e!important;color:#000!important}
+button{cursor:pointer;font-weight:bold;background:var(--border)}.active-ayah{background:#1e3a3a!important;border:1px solid #22c55e}
 .container{max-width:900px;margin:auto;padding:16px}
 .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
 .surah{background:var(--card);border:1px solid var(--border);padding:12px;border-radius:12px;text-align:center;cursor:pointer}
-#reader{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;line-height:3.2;font-family:'Amiri';font-size:30px;display:none}
-.word{transition:.2s;padding:2px 4px;border-radius:6px}
-.word.lit{background:#facc15;color:#000;box-shadow:0 0 10px #facc15}
+#reader{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;line-height:3.6;font-family:'Amiri';font-size:32px;display:none}
+.word{transition:.25s;padding:2px 6px;border-radius:8px;display:inline-block;margin:2px}
+.word.lit{background:#facc15!important;color:#000!important;box-shadow:0 0 12px #facc15;transform:scale(1.1)}
 .ayah-num{font-size:14px;opacity:.5}
 </style>
 </head>
@@ -36,8 +36,9 @@ reciterSel.onchange=()=>{localStorage.setItem('reciter',reciterSel.value); curre
 
 async function init(){const r=await fetch('https://api.alquran.cloud/v1/surah'); const j=await r.json(); renderList(j.data);}
 function renderList(data){listEl.innerHTML=''; data.forEach(s=>{const d=document.createElement('div'); d.className='surah'; d.innerHTML=`${s.name}<br><small>${s.number}</small>`; d.onclick=()=>loadSurah(s.number); listEl.appendChild(d);});}
-function showList(){readerEl.style.display='none'; listEl.style.display='grid'; audio.pause(); clearLit();}
-function clearLit(){if(wordInterval) clearInterval(wordInterval); document.querySelectorAll('.word.lit').forEach(w=>w.classList.remove('lit'));}
+function showList(){readerEl.style.display='none'; listEl.style.display='grid'; audio.pause(); stopHighlight();}
+function stopHighlight(){if(wordInterval) clearInterval(wordInterval); wordInterval=null; document.querySelectorAll('.word.lit').forEach(w=>w.classList.remove('lit'));}
+function removeOnlyLit(){document.querySelectorAll('.word.lit').forEach(w=>w.classList.remove('lit'));}
 
 async function loadSurah(num){
  listEl.style.display='none'; readerEl.style.display='block'; readerEl.innerHTML='جاري التحميل...';
@@ -52,25 +53,31 @@ function drawAyahs(){
  readerEl.innerHTML=html;
 }
 function playAyah(i){
- if(i<0||i>=ayahs.length) return; cur=i; clearLit();
- document.querySelectorAll('.ayah').forEach(e=>e.classList.remove('active'));
- const ayahEl=document.getElementById(`a-${i}`); ayahEl.classList.add('active'); ayahEl.scrollIntoView({behavior:'smooth',block:'center'});
+ if(i<0||i>=ayahs.length) return; cur=i; stopHighlight();
+ document.querySelectorAll('.ayah').forEach(e=>e.classList.remove('active-ayah'));
+ const ayahEl=document.getElementById(`a-${i}`); ayahEl.classList.add('active-ayah'); ayahEl.scrollIntoView({behavior:'smooth',block:'center'});
  curWords = ayahEl.querySelectorAll('.word');
  audio.src=ayahs[i].audio; audio.play();
-
- // نظام إضاءة الكلمات مع الصوت
- audio.onloadedmetadata = () => {
-   let duration = audio.duration; if(!duration) return;
+ startWordLighting();
+}
+function startWordLighting(){
+ // استنى الصوت يحمل مدته
+ const start = () => {
+   let duration = audio.duration;
+   if(!duration || isNaN(duration)) { setTimeout(start, 200); return; }
    let wordTime = duration / curWords.length;
    let idx=0;
    wordInterval = setInterval(()=>{
-     clearLit(); // امسح القديم
+     removeOnlyLit();
      if(idx < curWords.length){ curWords[idx].classList.add('lit'); idx++; }
-     else clearInterval(wordInterval);
+     else { clearInterval(wordInterval); wordInterval=null; }
    }, wordTime*1000);
  };
+ audio.onloadedmetadata = start;
+ // لو المدة جاهزة بالفعل
+ if(audio.readyState >= 1) start();
 }
-audio.onended=()=>{clearLit(); if(cur+1<ayahs.length) playAyah(cur+1);}
+audio.onended=()=>{stopHighlight(); if(cur+1<ayahs.length) playAyah(cur+1);}
 init();
 </script>
 </body>
