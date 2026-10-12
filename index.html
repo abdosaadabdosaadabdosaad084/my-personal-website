@@ -3,26 +3,114 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>عبدو سعد - موقعي الشخصي</title>
+<title>القرآن الكريم</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 <style>
-body{margin:0;font-family:system-ui;background:#0f172a;color:white;text-align:center;padding:40px 20px}
-.card{max-width:600px;margin:auto;background:#1e293b;padding:30px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
-h1{margin:0 0 10px} p{color:#94a3b8}
-.links{display:grid;gap:12px;margin-top:25px}
-a.btn{display:block;padding:14px;background:#334155;color:white;text-decoration:none;border-radius:12px;font-weight:bold;transition:.2s}
-a.btn:hover{background:#475569;transform:scale(1.02)}
-a.quran{background:#22c55e;color:black}
+*{box-sizing:border-box}
+body{margin:0;background:#0f172a;color:#e2e8f0;font-family:'Tajawal',system-ui}
+.header{position:sticky;top:0;z-index:99;background:#1e293bcc;backdrop-filter:blur(10px);border-bottom:1px solid #334155;padding:12px 16px}
+.player-wrap{max-width:900px;margin:auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.player-wrap audio{flex:1;min-width:250px;height:45px}
+.player-wrap button{background:#334155;color:white;border:0;padding:10px 14px;border-radius:10px;cursor:pointer}
+.player-wrap button.active{background:#22c55e;color:black}
+#info{max-width:900px;margin:10px auto 0;color:#94a3b8;font-size:14px}
+.container{max-width:900px;margin:auto;padding:20px}
+.surah-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.surah{background:#1e293b;padding:14px;border-radius:12px;cursor:pointer;text-align:center;border:1px solid #334155}
+.surah:hover{background:#334155}
+#reader{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px;line-height:2.8;font-family:'Amiri',serif;font-size:26px;display:none}
+.ayah{padding:8px 12px;border-radius:8px;cursor:pointer;transition:.2s;display:inline}
+.ayah:hover{background:#334155}
+.ayah.active{background:#22c55e;color:#000;box-shadow:0 0 0 2px #22c55e, 0 4px 15px rgba(34,197,94,.4)}
+.ayah-num{font-family:'Tajawal';font-size:14px;color:#94a3b8;margin:0 4px}
 </style>
 </head>
 <body>
-<div class="card">
-<h1>أهلاً، أنا عبدو سعد 👋</h1>
-<p>مطور ويب | مهتم بالقرآن والتقنية</p>
-<div class="links">
-<a class="btn quran" href="quran.html">📖 القرآن الكريم - تلاوة وقراءة</a>
-<a class="btn" href="https://github.com/abdosaadabdosaadabdosaad084">💻 GitHub الخاص بي</a>
-<a class="btn" href="https://wa.me/201234567890">📱 تواصل واتساب</a>
+
+<div class="header">
+  <div class="player-wrap">
+    <button onclick="showList()">📚 السور</button>
+    <audio id="mainAudio" controls controlsList="nodownload"></audio>
+    <button id="autoBtn" onclick="toggleAuto()">🔁 تلقائي: شغال</button>
+    <button onclick="location.href='index.html'">🏠 رئيسية</button>
+  </div>
+  <div id="info">اختار سورة من القائمة - الصوت فوق هيشتغل والآية هتنور</div>
 </div>
+
+<div class="container">
+  <div id="list" class="surah-list"></div>
+  <div id="reader"></div>
 </div>
+
+<script>
+const listDiv=document.getElementById('list');
+const readerDiv=document.getElementById('reader');
+const audio=document.getElementById('mainAudio');
+const info=document.getElementById('info');
+let ayahs=[]; let currentIndex=-1; let autoPlay=true;
+
+fetch('https://api.alquran.cloud/v1/surah').then(r=>r.json()).then(d=>{
+  listDiv.innerHTML='';
+  d.data.forEach(s=>{
+    const el=document.createElement('div');
+    el.className='surah';
+    el.innerHTML=`${s.name}<br><small style="color:#94a3b8">${s.number} - ${s.numberOfAyahs} آية</small>`;
+    el.onclick=()=>loadSurah(s.number,s.name);
+    listDiv.appendChild(el);
+  });
+});
+
+function showList(){
+  readerDiv.style.display='none';
+  listDiv.style.display='grid';
+  info.textContent='اختار سورة';
+  audio.pause();
+}
+
+function toggleAuto(){
+  autoPlay=!autoPlay;
+  document.getElementById('autoBtn').textContent= autoPlay ? '🔁 تلقائي: شغال' : '🔁 تلقائي: متوقف';
+  document.getElementById('autoBtn').classList.toggle('active',autoPlay);
+}
+
+async function loadSurah(num,name){
+  listDiv.style.display='none';
+  readerDiv.style.display='block';
+  readerDiv.innerHTML='جاري التحميل...';
+  info.textContent=`سورة ${name} - جاري التحميل`;
+  
+  const res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/ar.alafasy`).then(r=>r.json());
+  ayahs=res.data.ayahs;
+  currentIndex=-1;
+  
+  let html='';
+  ayahs.forEach((a,i)=>{
+    html+=`<span class="ayah" id="ayah-${i}" onclick="playAyah(${i})">${a.text}<span class="ayah-num">﴿${a.numberInSurah}﴾</span></span> `;
+  });
+  readerDiv.innerHTML=html;
+  info.textContent=`سورة ${name} - دوس على أي آية عشان تسمعها، أو شغل من فوق`;
+  
+  // شغل أول آية تلقائي
+  playAyah(0);
+}
+
+function playAyah(i){
+  if(i<0 || i>=ayahs.length) return;
+  currentIndex=i;
+  document.querySelectorAll('.ayah').forEach(e=>e.classList.remove('active'));
+  const el=document.getElementById(`ayah-${i}`);
+  if(el){ el.classList.add('active'); el.scrollIntoView({behavior:'smooth',block:'center'}); }
+  
+  audio.src=ayahs[i].audio;
+  audio.play();
+  info.textContent=`الآية ${ayahs[i].numberInSurah} من ${ayahs.length}`;
+}
+
+audio.onended=()=>{
+  if(autoPlay && currentIndex+1 < ayahs.length){
+    playAyah(currentIndex+1);
+  }
+};
+</script>
 </body>
 </html>
