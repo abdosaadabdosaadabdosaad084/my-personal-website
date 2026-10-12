@@ -1,48 +1,76 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quran Kareem - English</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>القرآن الكريم - عربي</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f172a;--card:#1e293b;--text:#e2e8f0;--border:#334155}
-body{margin:0;background:var(--bg);color:var(--text);font-family:sans-serif}
-.header{position:sticky;top:0;z-index:99;background:var(--card);border-bottom:1px solid var(--border);padding:10px}
-.top{max-width:950px;margin:auto;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-select,audio,button{border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);padding:9px 10px}
-audio{flex:1;min-width:180px;height:40px}
-button{cursor:pointer;background:var(--border);font-weight:bold}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif}
+.header{position:sticky;top:0;z-index:99;background:var(--card);padding:12px;border-bottom:1px solid var(--border)}
+.top{max-width:950px;margin:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+button,select,audio{border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);padding:9px 12px}
+button{cursor:pointer;font-weight:bold;background:var(--border)}.active{background:#22c55e!important;color:#000!important}
+.container{max-width:900px;margin:auto;padding:16px}
 .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
 .surah{background:var(--card);border:1px solid var(--border);padding:12px;border-radius:12px;text-align:center;cursor:pointer}
-#reader{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;line-height:2.5;font-size:22px;display:none}
-.ayah{padding:10px;border-radius:8px;cursor:pointer;display:block;margin-bottom:10px;border-bottom:1px solid var(--border)}
-.ayah.active{background:#22c55e22}
-.ar-text{direction:rtl;display:block;font-size:24px;margin-bottom:6px}
-.en-text{color:#94a3b8;display:block;font-size:15px;line-height:1.6}
-.container{max-width:950px;margin:auto;padding:14px}
+#reader{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;line-height:3.2;font-family:'Amiri';font-size:30px;display:none}
+.word{transition:.2s;padding:2px 4px;border-radius:6px}
+.word.lit{background:#facc15;color:#000;box-shadow:0 0 10px #facc15}
+.ayah-num{font-size:14px;opacity:.5}
 </style>
 </head>
 <body>
-<div class="header">
-<div class="top">
-<button onclick="showList()">📚 Surahs</button>
-<button onclick="location.href='index.html'" style="background:#22c55e;color:black">🇸🇦 عربي</button>
-<select id="reciter" onchange="changeReciter()"><option value="ar.alafasy">Alafasy</option><option value="ar.husary">Husary</option><option value="ar.abdulbasitmurattal">Abdul Basit</option></select>
+<div class="header"><div class="top">
+<button onclick="showList()">📚 السور</button>
+<button onclick="location.href='quran-en.html'" style="background:#22c55e;color:#000">🇺🇸 English Translation</button>
+<select id="reciter"><option value="ar.alafasy">العفاسي</option><option value="ar.husary">الحصري</option><option value="ar.abdulbasitmurattal">عبد الباسط</option></select>
 <audio id="audio" controls></audio>
-</div>
-</div>
+</div></div>
 <div class="container"><div id="list" class="list"></div><div id="reader"></div></div>
 <script>
 const listEl=document.getElementById('list'), readerEl=document.getElementById('reader'), audio=document.getElementById('audio'), reciterSel=document.getElementById('reciter');
-let ayahs=[], enAyahs=[], cur=-1, curSurahNum=0, currentReciter=localStorage.getItem('reciter')||'ar.alafasy'; reciterSel.value=currentReciter;
+let ayahs=[], cur=-1, curWords=[], wordInterval=null;
+let currentReciter=localStorage.getItem('reciter')||'ar.alafasy'; reciterSel.value=currentReciter;
+reciterSel.onchange=()=>{localStorage.setItem('reciter',reciterSel.value); currentReciter=reciterSel.value; if(cur>=0) playAyah(cur);}
+
 async function init(){const r=await fetch('https://api.alquran.cloud/v1/surah'); const j=await r.json(); renderList(j.data);}
-function renderList(data){listEl.innerHTML=''; data.forEach(s=>{const d=document.createElement('div'); d.className='surah'; d.innerHTML=`${s.englishName}<br><small>${s.number}</small>`; d.onclick=()=>loadSurah(s.number); listEl.appendChild(d);});}
-function showList(){readerEl.style.display='none'; listEl.style.display='grid'; audio.pause();}
-function changeReciter(){currentReciter=reciterSel.value; localStorage.setItem('reciter',currentReciter); if(curSurahNum) loadSurah(curSurahNum);}
-async function loadSurah(num){curSurahNum=num; listEl.style.display='none'; readerEl.style.display='block'; readerEl.innerHTML='Loading...'; const arRes=await fetch(`https://api.alquran.cloud/v1/surah/${num}/${currentReciter}`).then(r=>r.json()); const enRes=await fetch(`https://api.alquran.cloud/v1/surah/${num}/en.sahih`).then(r=>r.json()); ayahs=arRes.data.ayahs; enAyahs=enRes.data.ayahs; drawAyahs(); playAyah(0);}
-function drawAyahs(){let html=''; ayahs.forEach((a,i)=>{const en=enAyahs[i]?enAyahs[i].text:''; html+=`<div class="ayah" id="a-${i}" onclick="playAyah(${i})"><span class="ar-text">${a.text} ﴿${a.numberInSurah}﴾</span><span class="en-text">${en}</span></div>`;}); readerEl.innerHTML=html;}
-function playAyah(i){cur=i; document.querySelectorAll('.ayah').forEach(e=>e.classList.remove('active')); const el=document.getElementById(`a-${i}`); if(el){el.classList.add('active'); el.scrollIntoView({behavior:'smooth',block:'center'});} audio.src=ayahs[i].audio; audio.play().catch(()=>{});}
-audio.onended=()=>{ if(cur+1<ayahs.length) playAyah(cur+1); };
+function renderList(data){listEl.innerHTML=''; data.forEach(s=>{const d=document.createElement('div'); d.className='surah'; d.innerHTML=`${s.name}<br><small>${s.number}</small>`; d.onclick=()=>loadSurah(s.number); listEl.appendChild(d);});}
+function showList(){readerEl.style.display='none'; listEl.style.display='grid'; audio.pause(); clearLit();}
+function clearLit(){if(wordInterval) clearInterval(wordInterval); document.querySelectorAll('.word.lit').forEach(w=>w.classList.remove('lit'));}
+
+async function loadSurah(num){
+ listEl.style.display='none'; readerEl.style.display='block'; readerEl.innerHTML='جاري التحميل...';
+ const res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/${currentReciter}`).then(r=>r.json());
+ ayahs=res.data.ayahs; drawAyahs(); playAyah(0);
+}
+function drawAyahs(){
+ let html=''; ayahs.forEach((a,i)=>{
+  let words=a.text.split(' ').map((w,wi)=>`<span class="word" id="w-${i}-${wi}">${w}</span>`).join(' ');
+  html+=`<span class="ayah" id="a-${i}" onclick="playAyah(${i})">${words} <span class="ayah-num">﴿${a.numberInSurah}﴾</span></span> `;
+ });
+ readerEl.innerHTML=html;
+}
+function playAyah(i){
+ if(i<0||i>=ayahs.length) return; cur=i; clearLit();
+ document.querySelectorAll('.ayah').forEach(e=>e.classList.remove('active'));
+ const ayahEl=document.getElementById(`a-${i}`); ayahEl.classList.add('active'); ayahEl.scrollIntoView({behavior:'smooth',block:'center'});
+ curWords = ayahEl.querySelectorAll('.word');
+ audio.src=ayahs[i].audio; audio.play();
+
+ // نظام إضاءة الكلمات مع الصوت
+ audio.onloadedmetadata = () => {
+   let duration = audio.duration; if(!duration) return;
+   let wordTime = duration / curWords.length;
+   let idx=0;
+   wordInterval = setInterval(()=>{
+     clearLit(); // امسح القديم
+     if(idx < curWords.length){ curWords[idx].classList.add('lit'); idx++; }
+     else clearInterval(wordInterval);
+   }, wordTime*1000);
+ };
+}
+audio.onended=()=>{clearLit(); if(cur+1<ayahs.length) playAyah(cur+1);}
 init();
 </script>
 </body>
