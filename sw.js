@@ -1,25 +1,22 @@
-const CACHE_NAME = 'quran-v3';
-const FILES = [
-  './',
-  './index.html',
-  './quran-en.html',
-  './manifest.json'
-];
+const CACHE_NAME = 'quran-v15';
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(FILES)));
   self.skipWaiting();
 });
 
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.map(k => { if(k !== CACHE_NAME) return caches.delete(k); }))));
+  e.waitUntil(
+    caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))))
+  );
   self.clients.claim();
 });
 
 self.addEventListener('fetch', e => {
-  // سيب الـ API يجي من النت مباشر، متخزنوش
+  // متخزنش أي حاجة - هات الجديد من النت على طول
   if (e.request.url.includes('alquran.cloud')) return;
-  e.respondWith(
-    caches.match(e.request).then(res => res || fetch(e.request))
-  );
+  if (e.request.destination === 'document') {
+    e.respondWith(fetch(e.request, {cache: 'no-store'}));
+    return;
+  }
+  e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));
 });
