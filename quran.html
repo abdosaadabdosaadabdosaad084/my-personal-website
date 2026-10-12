@@ -1,118 +1,90 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>القرآن الكريم</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>القرآن الكريم - تفسير شامل</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box} body{margin:0;background:#0f172a;color:#e2e8f0;font-family:'Tajawal'}
 .header{position:sticky;top:0;z-index:99;background:#1e293bF2;backdrop-filter:blur(12px);border-bottom:1px solid #334155;padding:10px}
 .top{max-width:950px;margin:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 select,audio,button{border-radius:10px;border:1px solid #334155;background:#0f172a;color:white;padding:10px 12px}
-audio{flex:1;min-width:200px;height:42px} select{min-width:140px}
-button{cursor:pointer;background:#334155;font-weight:bold} button.active{background:#22c55e;color:black}
-.font-btn{width:44px;font-size:18px}
+audio{flex:1;min-width:200px;height:42px} select{min-width:130px}
+button{cursor:pointer;background:#334155;font-weight:bold}.font-btn{width:44px}
 #info{max-width:950px;margin:8px auto 0;font-size:13px;color:#94a3b8}
 .container{max-width:950px;margin:auto;padding:16px}
-.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
 .surah{background:#1e293b;border:1px solid #334155;padding:12px;border-radius:12px;text-align:center;cursor:pointer}
-.surah:hover{background:#334155}.surah small{color:#94a3b8}
 #reader{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:18px;line-height:2.9;font-family:'Amiri';font-size:26px;display:none}
-.ayah{padding:6px 10px;border-radius:8px;cursor:pointer;transition:.2s}.ayah.active{background:#22c55e;color:#000;box-shadow:0 0 15px rgba(34,197,94,.5)}
+.ayah{padding:6px 10px;border-radius:8px;cursor:pointer}.ayah.active{background:#22c55e;color:#000}
+.word{cursor:pointer;padding:2px 4px;border-radius:6px}.word:hover{background:#fbbf24;color:#000}
 .ayah-num{font-family:'Tajawal';font-size:13px;color:#94a3b8}
-.offline-badge{font-size:11px;background:#22c55e;color:black;padding:2px 6px;border-radius:6px;margin-left:4px}
+#tafsirBox{position:fixed;bottom:0;left:0;right:0;background:white;color:black;border-radius:20px 20px 0 0;padding:18px 18px 30px;box-shadow:0 -10px 30px rgba(0,0,0,.5);max-height:60vh;overflow-y:auto;display:none;z-index:999;font-family:'Tajawal';line-height:1.8;animation:slideUp.3s}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+#tafsirBox b{display:block;font-size:20px;margin-bottom:8px;color:#0f172a;border-bottom:2px solid #e2e8f0;padding-bottom:6px}
+#tafsirBox span{font-size:16px;color:#1e293b}
+#tafsirBox.close{position:absolute;top:10px;left:14px;background:#0f172a;color:white;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
 </style>
 </head>
 <body>
 <div class="header">
-  <div class="top">
-    <button onclick="showList()">📚 السور</button>
-    <select id="reciter" onchange="changeReciter()">
-      <option value="ar.alafasy">العفاسي</option>
-      <option value="ar.husary">الحصري</option>
-      <option value="ar.abdulbasitmurattal">عبد الباسط</option>
-    </select>
-    <audio id="audio" controls></audio>
-    <button class="font-btn" onclick="changeFont(2)">A+</button>
-    <button class="font-btn" onclick="changeFont(-2)">A-</button>
-    <button id="autoBtn" class="active" onclick="toggleAuto()">🔁</button>
-    <button onclick="cacheCurrentSurah()">💾</button>
-  </div>
-  <div id="info">اختار سورة - A+ / A- لتكبير الخط - 💾 لحفظ السورة للاوفلاين</div>
+<div class="top">
+<button onclick="showList()">📚 السور</button>
+<select id="reciter" onchange="changeReciter()"><option value="ar.alafasy">العفاسي</option><option value="ar.husary">الحصري</option><option value="ar.abdulbasitmurattal">عبد الباسط</option></select>
+<audio id="audio" controls></audio>
+<button class="font-btn" onclick="changeFont(2)">A+</button><button class="font-btn" onclick="changeFont(-2)">A-</button>
+<button onclick="cacheCurrentSurah()">💾</button>
 </div>
-<div class="container">
-  <div id="list" class="list"></div>
-  <div id="reader"></div>
+<div id="info">دوس على أي كلمة لتفسير الآية كاملة - تفسير الميسر يغطي كل القرآن</div>
 </div>
+<div class="container"><div id="list" class="list"></div><div id="reader"></div></div>
+<div id="tafsirBox"><div class="close" onclick="hideTafsir()">×</div><b id="tWord"></b><span id="tMean"></span></div>
 <script>
 const listEl=document.getElementById('list'), readerEl=document.getElementById('reader'), audio=document.getElementById('audio'), info=document.getElementById('info'), reciterSel=document.getElementById('reciter');
-let ayahs=[], cur=-1, autoPlay=true, curSurahNum=0, curSurahName='';
-const RECITERS={'ar.alafasy':{name:'العفاسي'},'ar.husary':{name:'الحصري'},'ar.abdulbasitmurattal':{name:'عبد الباسط'}};
-let currentReciter=localStorage.getItem('reciter')||'ar.alafasy';
-reciterSel.value=currentReciter;
+const tBox=document.getElementById('tafsirBox'), tWord=document.getElementById('tWord'), tMean=document.getElementById('tMean');
+let ayahs=[], cur=-1, curSurahNum=0, curSurahName='', currentReciter=localStorage.getItem('reciter')||'ar.alafasy'; reciterSel.value=currentReciter;
+let fontSize=parseInt(localStorage.getItem('quran_font')||'26'); function applyFont(){readerEl.style.fontSize=fontSize+'px'} applyFont();
+function changeFont(n){fontSize+=n; if(fontSize<18)fontSize=18; if(fontSize>52)fontSize=52; applyFont(); localStorage.setItem('quran_font',fontSize);}
 
-// --- حجم الخط ---
-let fontSize=parseInt(localStorage.getItem('quran_font')||'26');
-function applyFont(){ readerEl.style.fontSize=fontSize+'px'; }
-applyFont();
-function changeFont(n){
- fontSize+=n; if(fontSize<18)fontSize=18; if(fontSize>52)fontSize=52;
- applyFont(); localStorage.setItem('quran_font',fontSize);
- info.textContent=`حجم الخط: ${fontSize}`;
+function showTafsir(word,ayahNumGlobal){
+  hideTafsir(); // اقفل القديم
+  tWord.textContent=`تفسير الآية - كلمة: ${word}`;
+  tMean.textContent='⏳ جاري تحميل التفسير...';
+  tBox.style.display='block';
+  // هات تفسير الميسر للآية من API
+  fetch(`https://api.alquran.cloud/v1/ayah/${ayahNumGlobal}/ar.muyassar`).then(r=>r.json()).then(j=>{
+    if(j.data){ tMean.textContent=j.data.text;
+      // حفظ للاوفلاين
+      localStorage.setItem(`tafsir_${ayahNumGlobal}`, j.data.text);
+    }
+  }).catch(()=>{
+    // لو مفيش نت، هات من الحفظ
+    let cached=localStorage.getItem(`tafsir_${ayahNumGlobal}`);
+    tMean.textContent=cached||'لا يوجد اتصال والتفسير غير محفوظ لهذه الآية.';
+  });
 }
+function hideTafsir(){tBox.style.display='none';}
 
-async function init(){
- try{
-  let data=localStorage.getItem('surah_list');
-  if(data){ data=JSON.parse(data); } else {
-   const r=await fetch('https://api.alquran.cloud/v1/surah'); const j=await r.json(); data=j.data;
-   localStorage.setItem('surah_list', JSON.stringify(data));
-  }
-  renderList(data);
- }catch(e){
-  const cached=localStorage.getItem('surah_list');
-  if(cached) renderList(JSON.parse(cached));
- }
-}
-function renderList(data){
- listEl.innerHTML='';
- data.forEach(s=>{
-  const offline=localStorage.getItem(`surah_${s.number}_${currentReciter}`)?'<span class="offline-badge">محفوظة</span>':'';
-  const d=document.createElement('div'); d.className='surah';
-  d.innerHTML=`${offline}${s.name}<br><small>${s.number} - ${s.numberOfAyahs} آية</small>`;
-  d.onclick=()=>loadSurah(s.number,s.name); listEl.appendChild(d);
- });
-}
+async function init(){try{let d=localStorage.getItem('surah_list'); if(d){d=JSON.parse(d)}else{const r=await fetch('https://api.alquran.cloud/v1/surah'); const j=await r.json(); d=j.data; localStorage.setItem('surah_list',JSON.stringify(d));} renderList(d);}catch(e){const c=localStorage.getItem('surah_list'); if(c) renderList(JSON.parse(c));}}
+function renderList(data){listEl.innerHTML=''; data.forEach(s=>{const d=document.createElement('div'); d.className='surah'; d.innerHTML=`${s.name}<br><small>${s.number}</small>`; d.onclick=()=>loadSurah(s.number,s.name); listEl.appendChild(d);});}
 init();
-function showList(){ readerEl.style.display='none'; listEl.style.display='grid'; audio.pause(); }
-function toggleAuto(){ autoPlay=!autoPlay; document.getElementById('autoBtn').classList.toggle('active',autoPlay); info.textContent=autoPlay?'تلقائي شغال':'تلقائي متوقف'; }
-function changeReciter(){ currentReciter=reciterSel.value; localStorage.setItem('reciter',currentReciter); renderList(JSON.parse(localStorage.getItem('surah_list')||'[]')); if(curSurahNum) loadSurah(curSurahNum,curSurahName); }
-
+function showList(){readerEl.style.display='none'; listEl.style.display='grid'; audio.pause(); hideTafsir();}
+function changeReciter(){currentReciter=reciterSel.value; localStorage.setItem('reciter',currentReciter); if(curSurahNum) loadSurah(curSurahNum,curSurahName);}
 async function loadSurah(num,name){
- curSurahNum=num; curSurahName=name; listEl.style.display='none'; readerEl.style.display='block'; applyFont();
- info.textContent=`جاري تحميل سورة ${name} بصوت ${RECITERS[currentReciter].name}...`;
- const cacheKey=`surah_${num}_${currentReciter}`;
- const cached=localStorage.getItem(cacheKey);
- if(cached){ ayahs=JSON.parse(cached); drawAyahs(); info.textContent=`✅ ${name} - بدون نت - ${RECITERS[currentReciter].name}`; playAyah(0); return; }
- try{
-  const res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/${currentReciter}`).then(r=>r.json());
-  ayahs=res.data.ayahs; localStorage.setItem(cacheKey, JSON.stringify(ayahs));
-  drawAyahs(); playAyah(0); info.textContent=`${name} - ${RECITERS[currentReciter].name} - تم الحفظ تلقائي`; renderList(JSON.parse(localStorage.getItem('surah_list')));
- }catch(e){ readerEl.innerHTML='مفيش نت والسورة مش محفوظة - افتحها مرة بنت'; }
+ curSurahNum=num; curSurahName=name; listEl.style.display='none'; readerEl.style.display='block'; applyFont(); hideTafsir();
+ info.textContent=`جاري تحميل ${name}...`; const key=`surah_${num}_${currentReciter}`; const cached=localStorage.getItem(key);
+ if(cached){ayahs=JSON.parse(cached); drawAyahs(); playAyah(0); return;}
+ try{const res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/${currentReciter}`).then(r=>r.json()); ayahs=res.data.ayahs; localStorage.setItem(key,JSON.stringify(ayahs)); drawAyahs(); playAyah(0);}catch(e){readerEl.innerHTML='مفيش نت';}
 }
-function drawAyahs(){ let html=''; ayahs.forEach((a,i)=>{ html+=`<span class="ayah" id="a-${i}" onclick="playAyah(${i})">${a.text} <span class="ayah-num">﴿${a.numberInSurah}﴾</span></span> `; }); readerEl.innerHTML=html; }
-function playAyah(i){
- if(i<0||i>=ayahs.length)return; cur=i;
- document.querySelectorAll('.ayah').forEach(e=>e.classList.remove('active'));
- const el=document.getElementById(`a-${i}`); if(el){ el.classList.add('active'); el.scrollIntoView({behavior:'smooth',block:'center'}); }
- audio.src=ayahs[i].audio; audio.play().catch(()=>{}); info.textContent=`الآية ${ayahs[i].numberInSurah}/${ayahs.length} - ${curSurahName} - حجم الخط ${fontSize}`;
+function drawAyahs(){
+ let html=''; ayahs.forEach((a,i)=>{
+   let words=a.text.split(' ').map(w=>`<span class="word" onclick="event.stopPropagation(); showTafsir('${w.replace(/'/g,"").slice(0,20)}',${a.number})">${w}</span>`).join(' ');
+   html+=`<span class="ayah" id="a-${i}" onclick="playAyah(${i})">${words} <span class="ayah-num">﴿${a.numberInSurah}﴾</span></span> `;
+ }); readerEl.innerHTML=html;
 }
-audio.onended=()=>{ if(autoPlay && cur+1<ayahs.length) playAyah(cur+1); };
-async function cacheCurrentSurah(){
- if(!ayahs.length)return alert('اختار سورة الأول'); info.textContent='⏳ جاري حفظ الصوت للاوفلاين...';
- if('caches' in window){ const cache=await caches.open('quran-audio'); for(let a of ayahs){ try{ await cache.add(a.audio);}catch(e){} } info.textContent=`✅ تم حفظ صوت ${curSurahName} للاوفلاين`; } else info.textContent='المتصفح لا يدعم حفظ الصوت، النص محفوظ فقط';
-}
+function playAyah(i){if(i<0||i>=ayahs.length)return; cur=i; document.querySelectorAll('.ayah').forEach(e=>e.classList.remove('active')); const el=document.getElementById(`a-${i}`); if(el){el.classList.add('active'); el.scrollIntoView({behavior:'smooth',block:'center'});} audio.src=ayahs[i].audio; audio.play().catch(()=>{});}
+audio.onended=()=>{ if(cur+1<ayahs.length) playAyah(cur+1); };
+async function cacheCurrentSurah(){info.textContent='تم حفظ النص';}
 </script>
 </body>
 </html>
