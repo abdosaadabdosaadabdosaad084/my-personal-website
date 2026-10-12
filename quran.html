@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -27,7 +28,7 @@ button.active{background:#22c55e;color:black}
 #tafsirBox b{font-size:19px;display:block;margin-bottom:6px}
 #tafsirBox.ar{font-size:16px;color:#1e293b;margin-bottom:12px;border-bottom:1px solid #eee;padding-bottom:10px;display:block}
 #tafsirBox.en{font-size:14px;color:#475569;direction:ltr;text-align:left;display:block}
-#tafsirBox.close{position:absolute;top:10px;left:14px;background:#0f172a;color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.close{position:absolute;top:10px;left:14px;background:#0f172a;color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
 </style>
 </head>
 <body>
@@ -35,12 +36,12 @@ button.active{background:#22c55e;color:black}
 <div class="top">
 <button onclick="showList()">📚 السور</button>
 <button onclick="toggleTheme()" id="themeBtn">🌙 ليلي</button>
+<button onclick="location.href='quran-en.html'" style="background:#22c55e;color:black">🇺🇸 English</button>
 <select id="reciter" onchange="changeReciter()"><option value="ar.alafasy">العفاسي</option><option value="ar.husary">الحصري</option><option value="ar.abdulbasitmurattal">عبد الباسط</option></select>
 <audio id="audio" controls></audio>
 <button class="font-btn" onclick="changeFont(2)">A+</button><button class="font-btn" onclick="changeFont(-2)">A-</button>
-<button onclick="cacheCurrentSurah()">💾</button>
 </div>
-<div id="info">دوس على أي كلمة = تفسير عربي + ترجمة انجليزية</div>
+<div id="info">دوس على أي كلمة = تفسير عربي + ترجمة انجليزية | دوس على الآية = استماع</div>
 </div>
 <div class="container"><div id="list" class="list"></div><div id="reader"></div></div>
 <div id="tafsirBox"><div class="close" onclick="hideTafsir()">×</div><b id="tWord"></b><span class="ar" id="tAr"></span><span class="en" id="tEn"></span></div>
@@ -54,21 +55,20 @@ let theme=localStorage.getItem('theme')||'dark'; if(theme==='light') document.bo
 function toggleTheme(){document.body.classList.toggle('light'); theme=document.body.classList.contains('light')?'light':'dark'; localStorage.setItem('theme',theme); updateThemeBtn();}
 function updateThemeBtn(){document.getElementById('themeBtn').textContent=theme==='light'?'🌙 ليلي':'☀️ نهاري';}
 function showTafsir(word,ayahNum){
- tWord.textContent=`كلمة: ${word}`; tAr.textContent='⏳ جاري تحميل التفسير...'; tEn.textContent='Loading English translation...'; tBox.style.display='block';
- fetch(`https://api.alquran.cloud/v1/ayah/${ayahNum}/ar.muyassar`).then(r=>r.json()).then(j=>{ if(j.data){ tAr.textContent=j.data.text; localStorage.setItem(`tafsir_${ayahNum}`,j.data.text);} }).catch(()=>{ let c=localStorage.getItem(`tafsir_${ayahNum}`); tAr.textContent=c||'لا يوجد نت'; });
- fetch(`https://api.alquran.cloud/v1/ayah/${ayahNum}/en.sahih`).then(r=>r.json()).then(j=>{ if(j.data){ tEn.textContent=j.data.text; localStorage.setItem(`en_${ayahNum}`,j.data.text);} }).catch(()=>{ let c=localStorage.getItem(`en_${ayahNum}`); tEn.textContent=c||''; });
+ tWord.textContent=`كلمة: ${word}`; tAr.textContent='⏳ جاري تحميل التفسير...'; tEn.textContent='Loading English...'; tBox.style.display='block';
+ fetch(`https://api.alquran.cloud/v1/ayah/${ayahNum}/ar.muyassar`).then(r=>r.json()).then(j=>{ if(j.data){ tAr.textContent=j.data.text;}}).catch(()=>{});
+ fetch(`https://api.alquran.cloud/v1/ayah/${ayahNum}/en.sahih`).then(r=>r.json()).then(j=>{ if(j.data){ tEn.textContent=j.data.text;}}).catch(()=>{});
 }
 function hideTafsir(){tBox.style.display='none';}
-async function init(){try{let d=localStorage.getItem('surah_list'); if(d){d=JSON.parse(d)}else{const r=await fetch('https://api.alquran.cloud/v1/surah'); const j=await r.json(); d=j.data; localStorage.setItem('surah_list',JSON.stringify(d));} renderList(d);}catch(e){const c=localStorage.getItem('surah_list'); if(c) renderList(JSON.parse(c));}}
+async function init(){try{const r=await fetch('https://api.alquran.cloud/v1/surah'); const j=await r.json(); renderList(j.data);}catch(e){}}
 function renderList(data){listEl.innerHTML=''; data.forEach(s=>{const d=document.createElement('div'); d.className='surah'; d.innerHTML=`${s.name}<br><small>${s.number}</small>`; d.onclick=()=>loadSurah(s.number,s.name); listEl.appendChild(d);});}
-init();
 function showList(){readerEl.style.display='none'; listEl.style.display='grid'; audio.pause(); hideTafsir();}
 function changeReciter(){currentReciter=reciterSel.value; localStorage.setItem('reciter',currentReciter); if(curSurahNum) loadSurah(curSurahNum,curSurahName);}
-async function loadSurah(num,name){curSurahNum=num; curSurahName=name; listEl.style.display='none'; readerEl.style.display='block'; applyFont(); hideTafsir(); const key=`surah_${num}_${currentReciter}`; const cached=localStorage.getItem(key); if(cached){ayahs=JSON.parse(cached); drawAyahs(); playAyah(0); return;} try{const res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/${currentReciter}`).then(r=>r.json()); ayahs=res.data.ayahs; localStorage.setItem(key,JSON.stringify(ayahs)); drawAyahs(); playAyah(0);}catch(e){readerEl.innerHTML='مفيش نت';}}
+async function loadSurah(num,name){curSurahNum=num; curSurahName=name; listEl.style.display='none'; readerEl.style.display='block'; applyFont(); hideTafsir(); try{const res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/${currentReciter}`).then(r=>r.json()); ayahs=res.data.ayahs; drawAyahs(); playAyah(0);}catch(e){readerEl.innerHTML='مفيش نت';}}
 function drawAyahs(){let html=''; ayahs.forEach((a,i)=>{let words=a.text.split(' ').map(w=>`<span class="word" onclick="event.stopPropagation(); showTafsir('${w.replace(/'/g,"").slice(0,15)}',${a.number})">${w}</span>`).join(' '); html+=`<span class="ayah" id="a-${i}" onclick="playAyah(${i})">${words} <span class="ayah-num">﴿${a.numberInSurah}﴾</span></span> `;}); readerEl.innerHTML=html;}
 function playAyah(i){if(i<0||i>=ayahs.length)return; cur=i; document.querySelectorAll('.ayah').forEach(e=>e.classList.remove('active')); const el=document.getElementById(`a-${i}`); if(el){el.classList.add('active'); el.scrollIntoView({behavior:'smooth',block:'center'});} audio.src=ayahs[i].audio; audio.play().catch(()=>{});}
 audio.onended=()=>{ if(cur+1<ayahs.length) playAyah(cur+1); };
-async function cacheCurrentSurah(){}
+init();
 </script>
 </body>
 </html>
