@@ -1,4 +1,4 @@
-const CACHE_NAME = 'quran-v15';
+const CACHE_NAME = 'quran-v30';
 
 self.addEventListener('install', e => {
   self.skipWaiting();
