@@ -7,34 +7,44 @@
 <style>
 :root{--bg:#0f172a;--card:#1e293b;--text:#e2e8f0;--border:#334155}
 body{margin:0;background:var(--bg);color:var(--text);font-family:'Tajawal',sans-serif}
-.header{position:sticky;top:0;z-index:99;background:var(--card);padding:12px;border-bottom:1px solid var(--border)}
-.top{max-width:950px;margin:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-button,select,audio{border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);padding:9px 12px}
-button{cursor:pointer;font-weight:bold;background:var(--border)}.active-ayah{background:#1e3a3a!important;border:1px solid #22c55e}
+.header{position:sticky;top:0;z-index:99;background:var(--card);padding:10px;border-bottom:1px solid var(--border)}
+.top{max-width:980px;margin:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+button,select,audio{border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);padding:8px 11px}
+button{cursor:pointer;font-weight:bold;background:var(--border)}
+.active-ayah{background:#1e3a3a!important;border:1px solid #22c55e}
 .container{max-width:900px;margin:auto;padding:16px}
 .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
 .surah{background:var(--card);border:1px solid var(--border);padding:12px;border-radius:12px;text-align:center;cursor:pointer}
-#reader{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;line-height:3.6;font-family:'Amiri';font-size:32px;display:none}
+#reader{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;line-height:3.6;font-family:'Amiri';font-size:30px;display:none}
 .word{transition:.25s;padding:2px 6px;border-radius:8px;display:inline-block;margin:2px}
-.word.lit{background:#facc15!important;color:#000!important;box-shadow:0 0 12px #facc15;transform:scale(1.1)}
+.word.lit{background:#facc15!important;color:#000!important;box-shadow:0 0 12px #facc15;transform:scale(1.12)}
 .ayah-num{font-size:14px;opacity:.5}
+.fontBox{display:flex;gap:4px;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:3px 6px}
 </style>
 </head>
 <body>
 <div class="header"><div class="top">
 <button onclick="showList()">📚 السور</button>
-<button onclick="location.href='quran-en.html'" style="background:#22c55e;color:#000">🇺🇸 English Translation</button>
+<div class="fontBox">
+  <button onclick="changeFont(-2)" style="padding:4px 9px">- A</button>
+  <span id="fontLabel" style="font-size:12px;min-width:22px;text-align:center">30</span>
+  <button onclick="changeFont(2)" style="padding:4px 9px">+ A</button>
+</div>
+<button onclick="location.href='quran-en.html'" style="background:#22c55e;color:#000">🇺🇸 English</button>
 <select id="reciter"><option value="ar.alafasy">العفاسي</option><option value="ar.husary">الحصري</option><option value="ar.abdulbasitmurattal">عبد الباسط</option></select>
 <audio id="audio" controls></audio>
 </div></div>
 <div class="container"><div id="list" class="list"></div><div id="reader"></div></div>
 <script>
-const listEl=document.getElementById('list'), readerEl=document.getElementById('reader'), audio=document.getElementById('audio'), reciterSel=document.getElementById('reciter');
+const listEl=document.getElementById('list'), readerEl=document.getElementById('reader'), audio=document.getElementById('audio'), reciterSel=document.getElementById('reciter'), fontLabel=document.getElementById('fontLabel');
 let ayahs=[], cur=-1, curWords=[], wordInterval=null;
 let currentReciter=localStorage.getItem('reciter')||'ar.alafasy'; reciterSel.value=currentReciter;
+let fontSize=parseInt(localStorage.getItem('quranFontSize')||'30');
+function applyFont(){ readerEl.style.fontSize=fontSize+'px'; fontLabel.innerText=fontSize; localStorage.setItem('quranFontSize',fontSize); }
+function changeFont(d){ fontSize+=d; if(fontSize<18) fontSize=18; if(fontSize>64) fontSize=64; applyFont(); }
 reciterSel.onchange=()=>{localStorage.setItem('reciter',reciterSel.value); currentReciter=reciterSel.value; if(cur>=0) playAyah(cur);}
 
-async function init(){const r=await fetch('https://api.alquran.cloud/v1/surah'); const j=await r.json(); renderList(j.data);}
+async function init(){const r=await fetch('https://api.alquran.cloud/v1/surah'); const j=await r.json(); renderList(j.data); applyFont();}
 function renderList(data){listEl.innerHTML=''; data.forEach(s=>{const d=document.createElement('div'); d.className='surah'; d.innerHTML=`${s.name}<br><small>${s.number}</small>`; d.onclick=()=>loadSurah(s.number); listEl.appendChild(d);});}
 function showList(){readerEl.style.display='none'; listEl.style.display='grid'; audio.pause(); stopHighlight();}
 function stopHighlight(){if(wordInterval) clearInterval(wordInterval); wordInterval=null; document.querySelectorAll('.word.lit').forEach(w=>w.classList.remove('lit'));}
@@ -50,7 +60,7 @@ function drawAyahs(){
   let words=a.text.split(' ').map((w,wi)=>`<span class="word" id="w-${i}-${wi}">${w}</span>`).join(' ');
   html+=`<span class="ayah" id="a-${i}" onclick="playAyah(${i})">${words} <span class="ayah-num">﴿${a.numberInSurah}﴾</span></span> `;
  });
- readerEl.innerHTML=html;
+ readerEl.innerHTML=html; applyFont();
 }
 function playAyah(i){
  if(i<0||i>=ayahs.length) return; cur=i; stopHighlight();
@@ -61,7 +71,6 @@ function playAyah(i){
  startWordLighting();
 }
 function startWordLighting(){
- // استنى الصوت يحمل مدته
  const start = () => {
    let duration = audio.duration;
    if(!duration || isNaN(duration)) { setTimeout(start, 200); return; }
@@ -74,7 +83,6 @@ function startWordLighting(){
    }, wordTime*1000);
  };
  audio.onloadedmetadata = start;
- // لو المدة جاهزة بالفعل
  if(audio.readyState >= 1) start();
 }
 audio.onended=()=>{stopHighlight(); if(cur+1<ayahs.length) playAyah(cur+1);}
