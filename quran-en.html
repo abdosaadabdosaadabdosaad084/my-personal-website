@@ -1,47 +1,75 @@
-
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quran English Translation with Audio</title>
+<title>Quran English</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f172a;--card:#1e293b;--text:#e2e8f0;--border:#334155}
-*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:'Tajawal';transition:.3s}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:'Tajawal'}
 .header{position:sticky;top:0;z-index:99;background:var(--card);border-bottom:1px solid var(--border);padding:10px}
 .top{max-width:950px;margin:auto;display:flex;gap:6px;flex-wrap:wrap}
 button{border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);padding:9px 12px;cursor:pointer;font-weight:bold}
 .container{max-width:950px;margin:auto;padding:14px}
-.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
 .surah{background:var(--card);border:1px solid var(--border);padding:12px;border-radius:12px;text-align:center;cursor:pointer}
 #reader{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;line-height:2.2;font-size:18px;display:none;direction:ltr;text-align:left}
-.ayah{display:block;padding:10px;border-radius:8px;cursor:pointer;margin-bottom:6px;border-bottom:1px solid var(--border)}
+.ayah{display:block;padding:12px;border-radius:8px;cursor:pointer;margin-bottom:6px;border-bottom:1px solid var(--border)}
 .ayah.active{background:#22c55e;color:#000}
-.ayah-num{font-size:12px;opacity:.6;margin-left:6px}
-#info{max-width:950px;margin:6px auto 0;font-size:12px;opacity:.7}
+.loader{padding:30px;text-align:center;opacity:.7}
 </style>
 </head>
 <body>
-<div class="header">
-<div class="top">
+<div class="header"><div class="top">
 <button onclick="showList()">📚 Surahs</button>
-<button onclick="location.href='quran.html'">العربية</button>
-<button onclick="stopSpeech()">⏹ Stop</button>
-</div>
-<div id="info">Click any verse to listen to English translation</div>
-</div>
-<div class="container"><div id="list" class="list"></div><div id="reader"></div></div>
+<button onclick="location.href='quran.html'" style="background:#22c55e;color:#000">العربية</button>
+<button onclick="speechSynthesis.cancel()">⏹ Stop</button>
+</div></div>
+<div class="container"><div id="list" class="list"><div class="loader">Loading Surahs... ⏳</div></div><div id="reader"></div></div>
 <script>
 const listEl=document.getElementById('list'), readerEl=document.getElementById('reader');
 let ayahs=[], cur=-1;
-async function init(){const r=await fetch('https://api.alquran.cloud/v1/surah'); const j=await r.json(); renderList(j.data);}
-function renderList(data){listEl.innerHTML=''; data.forEach(s=>{const d=document.createElement('div'); d.className='surah'; d.textContent=s.englishName+' - '+s.number; d.onclick=()=>loadSurah(s.number); listEl.appendChild(d);});}
-init();
+async function init(){
+ try{
+  const r=await fetch('https://api.alquran.cloud/v1/surah');
+  const j=await r.json();
+  renderList(j.data);
+ }catch(e){
+  // fallback list لو الAPI معلق
+  const fallback = Array.from({length:114},(_,i)=>({number:i+1, englishName:'Surah '+(i+1)}));
+  renderList(fallback);
+  listEl.innerHTML += '<p style="opacity:.6;text-align:center">API is slow, click any Surah and it will load</p>' + listEl.innerHTML;
+ }
+}
+function renderList(data){listEl.innerHTML=''; data.forEach(s=>{const d=document.createElement('div'); d.className='surah'; d.textContent=(s.englishName||'Surah')+' - '+s.number; d.onclick=()=>loadSurah(s.number,s.englishName||''); listEl.appendChild(d);});}
 function showList(){readerEl.style.display='none'; listEl.style.display='grid'; speechSynthesis.cancel();}
-async function loadSurah(num){listEl.style.display='none'; readerEl.style.display='block'; readerEl.innerHTML='Loading...'; try{const res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/en.sahih`).then(r=>r.json()); ayahs=res.data.ayahs; draw();}catch(e){readerEl.innerHTML='No internet';}}
-function draw(){let html=`<h3>${ayahs[0].surah.englishName}</h3>`; ayahs.forEach((a,i)=>{html+=`<span class="ayah" id="a-${i}" onclick="playEn(${i})">${a.text} <span class="ayah-num">[${a.numberInSurah}]</span></span>`;}); readerEl.innerHTML=html;}
-function playEn(i){cur=i; document.querySelectorAll('.ayah').forEach(e=>e.classList.remove('active')); const el=document.getElementById(`a-${i}`); if(el){el.classList.add('active'); el.scrollIntoView({behavior:'smooth',block:'center'});} const utter=new SpeechSynthesisUtterance(ayahs[i].text); utter.lang='en-US'; utter.rate=0.9; utter.onend=()=>{if(cur+1<ayahs.length) playEn(cur+1)}; speechSynthesis.cancel(); speechSynthesis.speak(utter);}
-function stopSpeech(){speechSynthesis.cancel();}
+async function loadSurah(num, name){
+ listEl.style.display='none'; readerEl.style.display='block';
+ readerEl.innerHTML='<div class="loader">Loading translation... ⏳<br>Please wait</div>';
+ try{
+  const res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/en.sahih`);
+  const data=await res.json();
+  ayahs=data.data.ayahs;
+  draw(name);
+ }catch(e){
+  readerEl.innerHTML='Internet weak, please try again. اضغط Surahs وجرب تاني';
+ }
+}
+function draw(name){
+ let html=`<h3>${name}</h3><p style="opacity:.6">Click verse to hear English</p>`;
+ ayahs.forEach((a,i)=>{html+=`<span class="ayah" id="a-${i}" onclick="playEn(${i})">${a.text} <small>[${a.numberInSurah}]</small></span>`;});
+ readerEl.innerHTML=html;
+}
+function playEn(i){
+ cur=i;
+ document.querySelectorAll('.ayah').forEach(e=>e.classList.remove('active'));
+ const el=document.getElementById(`a-${i}`); if(el){el.classList.add('active'); el.scrollIntoView({behavior:'smooth',block:'center'});}
+ const utter=new SpeechSynthesisUtterance(ayahs[i].text);
+ utter.lang='en-US'; utter.rate=0.9;
+ utter.onend=()=>{if(cur+1<ayahs.length) playEn(cur+1)};
+ speechSynthesis.cancel(); speechSynthesis.speak(utter);
+}
+init();
 </script>
 </body>
 </html>
