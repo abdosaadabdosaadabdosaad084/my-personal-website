@@ -1,69 +1,75 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>القرآن</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>القرآن الكريم</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f172a">
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
 <style>
-body{margin:0;background:#0f172a;color:#e2e8f0;font-family:system-ui}
-.header{position:sticky;top:0;background:#1e293b;padding:10px;border-bottom:1px solid #334155}
+body{margin:0;background:#0f172a;color:#e2e8f0}
+.header{position:sticky;top:0;background:#1e293b;padding:8px;border-bottom:1px solid #334155;z-index:10}
 .top{max-width:980px;margin:auto;display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center}
 button,select,audio{border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff;padding:7px 10px}
 button{background:#334155;font-weight:bold}
-#reader{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:22px;line-height:3.7;font-family:'Amiri',serif;font-size:30px;max-width:900px;margin:14px auto;display:none}
-.word{display:inline-block;padding:0 2px;border-radius:3px}
+#reader{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px;line-height:3.2;font-family:'Amiri',serif;font-size:30px;max-width:900px;margin:14px auto;display:none;word-spacing:6px}
+.word{padding:0 2px;border-radius:4px;line-height:1.8}
 .word.lit{background:#facc15!important;color:#000!important}
-.basmala{display:block;text-align:center;margin:0 0 16px 0}
+.basmala{display:block;text-align:center;margin:0 0 22px 0;font-size:32px}
 .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;max-width:900px;margin:14px auto}
 .surah{background:#1e293b;border:1px solid #334155;padding:12px;border-radius:12px;text-align:center;cursor:pointer}
+#installBtn{display:none;background:#facc15;color:#000}
 </style>
 </head>
 <body>
 <div class="header"><div class="top">
 <button onclick="showList()">📚 السور</button>
-<button onclick="changeFont(-2)">A -</button><span id="fl">30</span><button onclick="changeFont(2)">A +</button>
-<select id="rec"><option value="ar.alafasy">العفاسي</option></select>
+<button id="installBtn">📲 تثبيت التطبيق</button>
+<button onclick="changeFont(-2)">A-</button><span id="fl">30</span><button onclick="changeFont(2)">A+</button>
+<select id="rec" onchange="if(cur>=0)playAyah(cur)">
+<option value="ar.alafasy">العفاسي</option>
+<option value="ar.husary">الحصري</option>
+<option value="ar.abdulbasitmurattal">عبدالباسط</option>
+<option value="ar.mahermuaiqly">المعيقلي</option>
+<option value="ar.minshawi">المنشاوي</option>
+</select>
 <audio id="audio" controls></audio>
 </div></div>
 <div id="list" class="list"></div><div id="reader"></div>
-
 <script>
-const listEl=document.getElementById('list'),readerEl=document.getElementById('reader'),audio=document.getElementById('audio');
+const listEl=document.getElementById('list'),readerEl=document.getElementById('reader'),audio=document.getElementById('audio'),recSel=document.getElementById('rec');
 let ayahs=[],cur=-1,curWords=[],timer=null,fs=30;
 function changeFont(d){fs+=d;if(fs<18)fs=18;if(fs>64)fs=64;readerEl.style.fontSize=fs+'px';document.getElementById('fl').innerText=fs}
 fetch('https://api.alquran.cloud/v1/surah').then(r=>r.json()).then(j=>{j.data.forEach(s=>{let d=document.createElement('div');d.className='surah';d.innerText=s.name;d.onclick=()=>loadSurah(s.number);listEl.appendChild(d)})});
 function showList(){readerEl.style.display='none';listEl.style.display='grid';audio.pause();clearInterval(timer)}
 function stopLit(){clearInterval(timer);document.querySelectorAll('.word.lit').forEach(w=>w.classList.remove('lit'))}
-function cleanBasmala(t){return t.replace(/^\s*بِسْمِ?\s*اللَّهِ?\s*الرَّحْمَٰنِ?\s*الرَّحِيمِ?\s*/,'').replace(/^\s*بسم\s*الله\s*الرحمن\s*الرحيم\s*/,'').trim()}
+function removeBasmalaFromAyah(text){
+  let t=text.trim();
+  if(t.slice(0,60).includes('الرَّحْمَٰنِ') || t.slice(0,60).includes('الرحمن')){
+     let idx = t.indexOf('الرَّحِيمِ'); if(idx===-1) idx = t.indexOf('الرحيم');
+     if(idx!==-1){ return t.slice(idx + (t.includes('الرَّحِيمِ')? 9 : 6)).trim(); }
+     return t.split(/\s+/).slice(4).join(' ').trim();
+  }
+  return t;
+}
 async function loadSurah(num){
  listEl.style.display='none';readerEl.style.display='block';readerEl.innerHTML='تحميل...';
- let res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/ar.alafasy`).then(r=>r.json());
+ let res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/${recSel.value}`).then(r=>r.json());
  ayahs=res.data.ayahs; let html='';
- if(num!==1 && num!==9){ html+=`<div class="basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`; ayahs[0].text = cleanBasmala(ayahs[0].text); }
+ if(num!==1 && num!==9){html+=`<div class="basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;}
  ayahs.forEach((a,i)=>{
-   let ws=a.text.split(' ').filter(Boolean).map((w,wi)=>`<span class="word">${w}</span>`).join(' ');
+   let txt = a.text;
+   if(i===0 && num!==1 && num!==9){txt = removeBasmalaFromAyah(txt);}
+   let ws=txt.split(/\s+/).filter(Boolean).map(w=>`<span class="word">${w}</span>`).join(' ');
    html+=`<span id="a-${i}" onclick="playAyah(${i})">${ws} <span style="opacity:.5;font-size:14px">﴿${a.numberInSurah}﴾</span> </span>`;
  });
  readerEl.innerHTML=html;readerEl.style.fontSize=fs+'px';playAyah(0);
 }
-function playAyah(i){
- cur=i;stopLit();
- let el=document.getElementById(`a-${i}`);curWords=el.querySelectorAll('.word');
- el.scrollIntoView({behavior:'smooth',block:'center'});
- audio.src=ayahs[i].audio;audio.play();
- audio.onplay=()=>{
-   clearInterval(timer);
-   let d=audio.duration; if(!d){setTimeout(()=>audio.onplay(),200);return}
-   let wt=d/curWords.length; let idx=0;
-   timer=setInterval(()=>{
-     document.querySelectorAll('.word.lit').forEach(x=>x.classList.remove('lit'));
-     if(idx<curWords.length){curWords[idx].classList.add('lit');idx++}
-     else clearInterval(timer);
-   },wt*1000);
- };
-}
+function playAyah(i){cur=i;stopLit();let el=document.getElementById(`a-${i}`);curWords=el.querySelectorAll('.word');el.scrollIntoView({behavior:'smooth',block:'center'});audio.src=`https://cdn.islamic.network/quran/audio/128/${recSel.value}/${ayahs[i].number}.mp3`;audio.play();audio.onplay=()=>{clearInterval(timer);let d=audio.duration;if(!d||isNaN(d)){setTimeout(()=>audio.onplay(),200);return}let wt=d/curWords.length;let idx=0;timer=setInterval(()=>{document.querySelectorAll('.word.lit').forEach(x=>x.classList.remove('lit'));if(idx<curWords.length){curWords[idx].classList.add('lit');idx++}else clearInterval(timer)},wt*1000)}}
 audio.onended=()=>{stopLit();if(cur+1<ayahs.length)playAyah(cur+1)}
-</script>
-</body>
-</html>
+// تثبيت التطبيق
+let deferredPrompt; const installBtn=document.getElementById('installBtn');
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;installBtn.style.display='inline-block'});
+installBtn.onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; installBtn.style.display='none';}};
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js');}
+</script></body></html>
