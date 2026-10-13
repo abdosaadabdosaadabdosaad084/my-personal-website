@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>القرآن الكريم</title>
-<link rel="manifest" href="manifest.json?v=94">
+<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3137/3137819.png">
+<link rel="manifest" href="manifest.json?v=99">
 <meta name="theme-color" content="#0f172a">
+
+<!-- دي اللي هتصلح صورة فيسبوك -->
 <meta property="og:title" content="القرآن الكريم - استماع وتفسير">
 <meta property="og:description" content="استمع وحمل القرآن الكريم كامل مع تتبع الكلمات">
-<meta property="og:image" content="https://cdn-icons-png.flaticon.com/512/2500/2500524.png">
+<meta property="og:image" content="https://cdn-icons-png.flaticon.com/512/3137/3137819.png">
 <meta property="og:url" content="https://abdosaadabdosaadabdosaad084.github.io/my-personal-website/">
 <meta property="og:type" content="website">
+
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
 <style>
 body{margin:0;background:#0f172a;color:#e2e8f0}
@@ -55,9 +60,9 @@ fetch('https://api.alquran.cloud/v1/surah').then(r=>r.json()).then(j=>{j.data.fo
 function showList(){readerEl.style.display='none';listEl.style.display='grid';audio.pause();stopLit();}
 function stopLit(){clearInterval(timer);document.querySelectorAll('.word.lit').forEach(w=>w.classList.remove('lit'))}
 function removeBasmalaFromAyah(text){let t=text.trim();if(t.startsWith('بِسْمِ')||t.startsWith('بسم')||t.includes('ٱلرَّحْمَٰنِ')){let p=t.split('ٱلرَّحِيمِ');if(p.length<2)p=t.split('الرَّحِيمِ');if(p.length>=2){return p[p.length-1].trim();}return t.split(/\s+/).slice(4).join(' ').trim();}return t;}
-async function loadSurah(num){listEl.style.display='none';readerEl.style.display='block';readerEl.innerHTML='تحميل...';let res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/${rec.value}?v=94`).then(r=>r.json());ayahs=res.data.ayahs;let html='';if(num!==1&&num!==9){html+=`<div class="basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;}ayahs.forEach((a,i)=>{let txt=a.text;if(i===0&&num!==1&&num!==9){txt=removeBasmalaFromAyah(txt);}if(!txt)return;let ws=txt.split(/\s+/).filter(Boolean).map(w=>`<span class="word">${w}</span>`).join(' ');html+=`<span id="a-${i}" onclick="playAyah(${i})">${ws} <span style="opacity:.5;font-size:14px">﴿${a.numberInSurah}﴾</span> </span>`;});readerEl.innerHTML=html;readerEl.style.fontSize=fs+'px';playAyah(0);}
+async function loadSurah(num){listEl.style.display='none';readerEl.style.display='block';readerEl.innerHTML='تحميل...';let res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/${rec.value}?v=99`).then(r=>r.json());ayahs=res.data.ayahs;let html='';if(num!==1&&num!==9){html+=`<div class="basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;}ayahs.forEach((a,i)=>{let txt=a.text;if(i===0&&num!==1&&num!==9){txt=removeBasmalaFromAyah(txt);}if(!txt)return;let ws=txt.split(/\s+/).filter(Boolean).map(w=>`<span class="word">${w}</span>`).join(' ');html+=`<span id="a-${i}" onclick="playAyah(${i})">${ws} <span style="opacity:.5;font-size:14px">﴿${a.numberInSurah}﴾</span> </span>`;});readerEl.innerHTML=html;readerEl.style.fontSize=fs+'px';playAyah(0);}
 function playAyah(i){cur=i;stopLit();let el=document.getElementById(`a-${i}`);if(!el)return;curWords=el.querySelectorAll('.word');el.scrollIntoView({behavior:'smooth',block:'center'});audio.pause();audio.src=`https://cdn.islamic.network/quran/audio/128/${rec.value}/${ayahs[i].number}.mp3`;audio.load();audio.onloadedmetadata=()=>{audio.play().catch(()=>{});clearInterval(timer);timer=setInterval(()=>{if(!audio.duration)return;let p=audio.currentTime/audio.duration;let wi=Math.floor(p*curWords.length);if(wi>=curWords.length)wi=curWords.length-1;document.querySelectorAll('.word.lit').forEach(x=>x.classList.remove('lit'));if(curWords[wi])curWords[wi].classList.add('lit');},90);};}audio.onended=()=>{stopLit();clearInterval(timer);if(cur+1<ayahs.length)playAyah(cur+1)};
 function downloadAyah(){if(cur<0||!ayahs[cur]){alert('شغل آية الأول');return;}let url=`https://cdn.islamic.network/quran/audio/128/${rec.value}/${ayahs[cur].number}.mp3`;let a=document.createElement('a');a.href=url;a.download=`ayah-${ayahs[cur].numberInSurah}.mp3`;document.body.appendChild(a);a.click();a.remove();}
-function downloadSurahAll(){if(!ayahs.length){alert('افتح سورة الأول');return;}if(!confirm(`هتحمل ${ayahs.length} آية؟ المتصفح هيطلب منك السماح بالتحميلات المتعددة`))return;ayahs.forEach((a,i)=>{setTimeout(()=>{let url=`https://cdn.islamic.network/quran/audio/128/${rec.value}/${a.number}.mp3`;let an=document.createElement('a');an.href=url;an.download=`${String(i+1).padStart(3,'0')}.mp3`;document.body.appendChild(an);an.click();an.remove();},i*700);});}
+function downloadSurahAll(){if(!ayahs.length){alert('افتح سورة الأول');return;}if(!confirm(`هتحمل ${ayahs.length} آية؟`))return;ayahs.forEach((a,i)=>{setTimeout(()=>{let url=`https://cdn.islamic.network/quran/audio/128/${rec.value}/${a.number}.mp3`;let an=document.createElement('a');an.href=url;an.download=`${String(i+1).padStart(3,'0')}.mp3`;document.body.appendChild(an);an.click();an.remove();},i*700);});}
 let deferredPrompt;const installBtn=document.getElementById('installBtn');window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;installBtn.style.display='inline-block'});installBtn.onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBtn.style.display='none';}};
 </script></body></html>
