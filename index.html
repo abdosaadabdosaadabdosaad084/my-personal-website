@@ -13,11 +13,12 @@ body{margin:0;background:#0f172a;color:#e2e8f0}
 button,select,audio{border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff;padding:7px 10px}
 button{background:#334155;font-weight:bold}
 #reader{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px;line-height:3.2;font-family:'Amiri',serif;font-size:30px;max-width:900px;margin:14px auto;display:none;word-spacing:6px}
-.word{padding:0 2px;border-radius:4px;line-height:1.8}
-.word.lit{background:#facc15!important;color:#000!important}
-.basmala{display:block;text-align:center;margin:0 0 22px 0;font-size:32px}
+.word{padding:0 2px;border-radius:4px;line-height:1.8;transition:.2s}
+.word.lit{background:#facc15!important;color:#000!important;transform:scale(1.1)}
+.basmala{display:block;text-align:center;margin:0 0 22px 0;font-size:32px;color:#facc15}
 .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;max-width:900px;margin:14px auto}
 .surah{background:#1e293b;border:1px solid #334155;padding:12px;border-radius:12px;text-align:center;cursor:pointer}
+.surah:hover{background:#334155}
 #installBtn{display:none;background:#facc15;color:#000}
 </style>
 </head>
@@ -41,33 +42,52 @@ const listEl=document.getElementById('list'),readerEl=document.getElementById('r
 let ayahs=[],cur=-1,curWords=[],timer=null,fs=30;
 function changeFont(d){fs+=d;if(fs<18)fs=18;if(fs>64)fs=64;readerEl.style.fontSize=fs+'px';document.getElementById('fl').innerText=fs}
 fetch('https://api.alquran.cloud/v1/surah').then(r=>r.json()).then(j=>{j.data.forEach(s=>{let d=document.createElement('div');d.className='surah';d.innerText=s.name;d.onclick=()=>loadSurah(s.number);listEl.appendChild(d)})});
-function showList(){readerEl.style.display='none';listEl.style.display='grid';audio.pause();clearInterval(timer)}
+function showList(){readerEl.style.display='none';listEl.style.display='grid';audio.pause();stopLit();}
 function stopLit(){clearInterval(timer);document.querySelectorAll('.word.lit').forEach(w=>w.classList.remove('lit'))}
 function removeBasmalaFromAyah(text){
-  let t=text.trim();
-  if(t.slice(0,60).includes('الرَّحْمَٰنِ') || t.slice(0,60).includes('الرحمن')){
-     let idx = t.indexOf('الرَّحِيمِ'); if(idx===-1) idx = t.indexOf('الرحيم');
-     if(idx!==-1){ return t.slice(idx + (t.includes('الرَّحِيمِ')? 9 : 6)).trim(); }
-     return t.split(/\s+/).slice(4).join(' ').trim();
-  }
-  return t;
+  return text.replace(/^\s*بِسْمِ[\s\u0640]*ٱ?للَّهِ[\s\u0640]*ٱ?لرَّحْمَٰنِ[\s\u0640]*ٱ?لرَّحِيمِ[\s\u0640]*/u, '').replace(/^\s*بسم الله الرحمن الرحيم\s*/u, '').trim();
 }
 async function loadSurah(num){
  listEl.style.display='none';readerEl.style.display='block';readerEl.innerHTML='تحميل...';
  let res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/${recSel.value}`).then(r=>r.json());
  ayahs=res.data.ayahs; let html='';
- if(num!==1 && num!==9){html+=`<div class="basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;}
+ if(num!==1 && num!==9){html+=`<div class="basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;}
  ayahs.forEach((a,i)=>{
    let txt = a.text;
    if(i===0 && num!==1 && num!==9){txt = removeBasmalaFromAyah(txt);}
+   if(!txt) return;
    let ws=txt.split(/\s+/).filter(Boolean).map(w=>`<span class="word">${w}</span>`).join(' ');
    html+=`<span id="a-${i}" onclick="playAyah(${i})">${ws} <span style="opacity:.5;font-size:14px">﴿${a.numberInSurah}﴾</span> </span>`;
  });
  readerEl.innerHTML=html;readerEl.style.fontSize=fs+'px';playAyah(0);
 }
-function playAyah(i){cur=i;stopLit();let el=document.getElementById(`a-${i}`);curWords=el.querySelectorAll('.word');el.scrollIntoView({behavior:'smooth',block:'center'});audio.src=`https://cdn.islamic.network/quran/audio/128/${recSel.value}/${ayahs[i].number}.mp3`;audio.play();audio.onplay=()=>{clearInterval(timer);let d=audio.duration;if(!d||isNaN(d)){setTimeout(()=>audio.onplay(),200);return}let wt=d/curWords.length;let idx=0;timer=setInterval(()=>{document.querySelectorAll('.word.lit').forEach(x=>x.classList.remove('lit'));if(idx<curWords.length){curWords[idx].classList.add('lit');idx++}else clearInterval(timer)},wt*1000)}}
-audio.onended=()=>{stopLit();if(cur+1<ayahs.length)playAyah(cur+1)}
-// تثبيت التطبيق
+function playAyah(i){
+  cur=i; stopLit();
+  let el=document.getElementById(`a-${i}`);
+  if(!el) return;
+  curWords=el.querySelectorAll('.word');
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  audio.pause();
+  audio.src=`https://cdn.islamic.network/quran/audio/128/${recSel.value}/${ayahs[i].number}.mp3`;
+  audio.load();
+  audio.onloadedmetadata=()=>{
+    audio.play().catch(()=>{});
+    clearInterval(timer);
+    timer=setInterval(()=>{
+      if(!audio.duration) return;
+      let progress=audio.currentTime / audio.duration;
+      let wordIndex=Math.floor(progress * curWords.length);
+      if(wordIndex>=curWords.length) wordIndex=curWords.length-1;
+      document.querySelectorAll('.word.lit').forEach(x=>x.classList.remove('lit'));
+      if(curWords[wordIndex]) curWords[wordIndex].classList.add('lit');
+    },90);
+  };
+  audio.onerror=()=>{
+    if(cur+1<ayahs.length) playAyah(cur+1);
+  };
+}
+audio.onended=()=>{stopLit();clearInterval(timer);if(cur+1<ayahs.length)playAyah(cur+1)};
+// تثبيت
 let deferredPrompt; const installBtn=document.getElementById('installBtn');
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;installBtn.style.display='inline-block'});
 installBtn.onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; installBtn.style.display='none';}};
