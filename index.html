@@ -103,7 +103,10 @@ doInstallBtn.addEventListener('click', promptInstall);
 closeInstallBtn.addEventListener('click', () => {
   installBox.style.display = 'none';
 });
-
+// تشغيل ملف الكاش عشان يشتغل بدون نت
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}
 window.addEventListener('appinstalled', () => {
   installBox.style.display = 'none';
   deferredPrompt = null;
