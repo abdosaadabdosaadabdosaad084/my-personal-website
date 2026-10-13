@@ -3,8 +3,17 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>القرآن الكريم</title>
-<link rel="manifest" href="manifest.json?v=91">
+<link rel="manifest" href="manifest.json?v=92">
 <meta name="theme-color" content="#0f172a">
+
+<!-- كود فيسبوك وواتساب -->
+<meta property="og:title" content="القرآن الكريم - استماع وتفسير">
+<meta property="og:description" content="استمع واقرأ القرآن الكريم كامل مع تتبع الكلمات وصوت العفاسي والحصرى والمعيقلي وعبدالباسط">
+<meta property="og:image" content="https://cdn-icons-png.flaticon.com/512/2500/2500524.png">
+<meta property="og:url" content="https://abdosaadabdosaadabdosaad084.github.io/my-personal-website/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ar_AR">
+
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
 <style>
 body{margin:0;background:#0f172a;color:#e2e8f0}
@@ -18,6 +27,7 @@ button{background:#334155;font-weight:bold}
 .basmala{display:block;text-align:center;margin:0 0 22px 0;font-size:32px;color:#facc15}
 .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;max-width:900px;margin:14px auto}
 .surah{background:#1e293b;border:1px solid #334155;padding:12px;border-radius:12px;text-align:center;cursor:pointer}
+.surah:hover{background:#334155}
 #installBtn{display:none;background:#facc15;color:#000}
 </style>
 </head>
@@ -37,42 +47,30 @@ button{background:#334155;font-weight:bold}
 </div></div>
 <div id="list" class="list"></div><div id="reader"></div>
 <script>
-// امسح الكاش القديم اللي عامل المشكلة
 if('caches' in window){caches.keys().then(n=>n.forEach(k=>caches.delete(k)));}
 if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()))}
-
 const listEl=document.getElementById('list'),readerEl=document.getElementById('reader'),audio=document.getElementById('audio'),recSel=document.getElementById('rec');
 let ayahs=[],cur=-1,curWords=[],timer=null,fs=30;
 function changeFont(d){fs+=d;if(fs<18)fs=18;if(fs>64)fs=64;readerEl.style.fontSize=fs+'px';document.getElementById('fl').innerText=fs}
 fetch('https://api.alquran.cloud/v1/surah').then(r=>r.json()).then(j=>{j.data.forEach(s=>{let d=document.createElement('div');d.className='surah';d.innerText=s.name;d.onclick=()=>loadSurah(s.number);listEl.appendChild(d)})});
 function showList(){readerEl.style.display='none';listEl.style.display='grid';audio.pause();stopLit();}
 function stopLit(){clearInterval(timer);document.querySelectorAll('.word.lit').forEach(w=>w.classList.remove('lit'))}
-
-// الحل الأكيد - يمسح البسملة مهما كان شكلها
 function removeBasmalaFromAyah(text){
-  let t = text.trim();
-  // لو فيه بسم في الأول
+  let t=text.trim();
   if(t.startsWith('بِسْمِ') || t.startsWith('بسم') || t.includes('ٱلرَّحْمَٰنِ')){
-    // اقسم النص على كلمة الرحيم وخد الجزء التاني
-    let parts = t.split('ٱلرَّحِيمِ');
-    if(parts.length < 2) parts = t.split('الرَّحِيمِ');
-    if(parts.length < 2) parts = t.split('الرحيم');
-    if(parts.length >= 2){
-      return parts[parts.length-1].trim(); // هيرجع "قُلْ أَعُوذُ..."
-    }
-    // لو فشل، احذف أول 4 كلمات
+    let parts=t.split('ٱلرَّحِيمِ'); if(parts.length<2) parts=t.split('الرَّحِيمِ'); if(parts.length<2) parts=t.split('الرحيم');
+    if(parts.length>=2){return parts[parts.length-1].trim();}
     return t.split(/\s+/).slice(4).join(' ').trim();
   }
   return t;
 }
 async function loadSurah(num){
  listEl.style.display='none';readerEl.style.display='block';readerEl.innerHTML='تحميل...';
- let res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/${recSel.value}?v=91`).then(r=>r.json());
+ let res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/${recSel.value}?v=92`).then(r=>r.json());
  ayahs=res.data.ayahs; let html='';
  if(num!==1 && num!==9){html+=`<div class="basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;}
  ayahs.forEach((a,i)=>{
-   let txt = a.text;
-   if(i===0 && num!==1 && num!==9){txt = removeBasmalaFromAyah(txt);}
+   let txt=a.text; if(i===0 && num!==1 && num!==9){txt=removeBasmalaFromAyah(txt);}
    if(!txt) return;
    let ws=txt.split(/\s+/).filter(Boolean).map(w=>`<span class="word">${w}</span>`).join(' ');
    html+=`<span id="a-${i}" onclick="playAyah(${i})">${ws} <span style="opacity:.5;font-size:14px">﴿${a.numberInSurah}﴾</span> </span>`;
