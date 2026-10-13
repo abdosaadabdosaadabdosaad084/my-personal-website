@@ -1,13 +1,14 @@
-{
-  "name": "القرآن الكريم",
-  "short_name": "القرآن",
-  "start_url": "/my-personal-website/",
-  "scope": "/my-personal-website/",
+{"name": "المصحف الشريف",
+  "short_name": "المصحف",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0f2e1f",
-  "theme_color": "#0f2e1f",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
   "icons": [
-    { "src": "icon.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icon.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1702/1702285.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
   ]
 }
