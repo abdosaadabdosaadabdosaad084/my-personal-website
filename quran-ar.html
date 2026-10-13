@@ -5,57 +5,117 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>القرآن - عربي</title>
 <style>
-body{background:#0f172a;color:#fff;font-family:Tahoma;margin:0;padding:15px}
-.top{display:flex;gap:8px;margin-bottom:15px;flex-wrap:wrap}
-.top a{background:#1e293b;padding:10px 14px;border-radius:10px;color:#fff;text-decoration:none;font-size:14px}
+body{background:#0f172a;color:#fff;font-family:Tahoma;margin:0;padding:10px}
+.top{display:flex;gap:6px;position:sticky;top:0;background:#0f172a;z-index:30;padding:10px 0;flex-wrap:wrap}
+.top a{background:#1e293b;padding:9px 12px;border-radius:10px;color:#fff;text-decoration:none;font-size:13px}
 .top a.active{background:#22c55e;color:#000;font-weight:bold}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.card{background:#1e293b;padding:16px;border-radius:14px;text-align:center;cursor:pointer;border:0;width:100%;color:#fff;font-size:16px}
-.card:active{background:#22c55e;color:#000}
-.card span{color:#94a3b8;font-size:12px;display:block;margin-top:4px}
-#reader{display:none;background:#1e293b;border-radius:16px;padding:15px;margin-top:15px}
-.ayah{padding:12px;border-bottom:1px solid #334155;font-size:21px;line-height:2.2}
-audio{width:100%;margin-top:10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.card{background:#1e293b;padding:14px;border-radius:12px;text-align:center;cursor:pointer;border:0;width:100%;color:#fff}
+#reader{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172a;z-index:100;overflow-y:auto;padding:12px}
+.qari-bar{background:#1e293b;padding:10px;border-radius:10px;margin:10px 0;display:flex;gap:8px;align-items:center;position:sticky;top:0;z-index:20}
+select{background:#0f172a;color:#fff;border:1px solid #334155;padding:8px;border-radius:8px;width:100%}
+.ayah{padding:14px;background:#1e293b;margin-bottom:8px;border-radius:10px;font-size:23px;line-height:2.3;transition:.2s}
+.ayah.active{outline:2px solid #facc15}
+.word{padding:2px 3px;border-radius:6px;transition:.3s;display:inline-block}
+.word.active-word{background:#facc15;color:#000;font-weight:bold;transform:scale(1.1)}
+audio{width:100%;margin:8px 0}
 </style>
 </head>
 <body>
 <div class="top">
 <a href="index.html">🏠 الرئيسية</a>
-<a class="active" href="quran-ar.html">🇸🇦 عربي فقط</a>
-<a href="quran-en.html">Surahs</a>
+<a class="active">🇸🇦 قرآن</a>
+<a href="tafsir.html">📖 تفسير</a>
 </div>
 <div class="grid" id="list"></div>
+
 <div id="reader">
-<button onclick="document.getElementById('reader').style.display='none';window.scrollTo(0,0)" style="background:#ffeb3b;border:0;padding:8px 15px;border-radius:8px;margin-bottom:10px">⬅ رجوع</button>
-<h2 id="sname"></h2>
-<audio id="audio" controls></audio>
+<div style="display:flex;justify-content:space-between;align-items:center">
+<button onclick="closeReader()" style="background:#facc15;border:0;padding:10px 18px;border-radius:8px;font-weight:bold">⬅ رجوع</button>
+<span id="sname" style="font-weight:bold;font-size:18px"></span>
+</div>
+
+<div class="qari-bar">
+<label>🎙️ القارئ:</label>
+<select id="qari" onchange="changeQari()">
+<option value="ar.alafasy">مشاري العفاسي</option>
+<option value="ar.abdurrahmaansudais">عبدالرحمن السديس</option>
+<option value="ar.husary">محمود خليل الحصري</option>
+<option value="ar.minshawi">محمد صديق المنشاوي</option>
+<option value="ar.mahermuaiqly">ماهر المعيقلي</option>
+<option value="ar.shaatree">أبو بكر الشاطري</option>
+</select>
+</div>
+
+<audio id="audio" controls autoplay></audio>
+<div style="display:flex;gap:8px;margin:8px 0">
+<button onclick="playFull()" style="flex:1;background:#22c55e;border:0;padding:10px;border-radius:8px;font-weight:bold">▶ تشغيل السورة كاملة</button>
+<button onclick="stopWords()" style="background:#334155;color:#fff;border:0;padding:10px;border-radius:8px">⏹ إيقاف التمييز</button>
+</div>
 <div id="ayahs"></div>
 </div>
+
 <script>
-const surahs=[
-["الفاتحة",1],["البقرة",2],["آل عمران",3],["النساء",4],["المائدة",5],["الأنعام",6],["الأعراف",7],["الأنفال",8],["التوبة",9],["يونس",10],["هود",11],["يوسف",12],["الرعد",13],["إبراهيم",14],["الحجر",15],["النحل",16],["الإسراء",17],["الكهف",18],["مريم",19],["طه",20],["الأنبياء",21],["الحج",22],["المؤمنون",23],["النور",24],["الفرقان",25],["الشعراء",26],["النمل",27],["القصص",28],["العنكبوت",29],["الروم",30],["لقمان",31],["السجدة",32],["الأحزاب",33],["سبأ",34],["فاطر",35],["يس",36],["الصافات",37],["ص",38],["الزمر",39],["غافر",40],["فصلت",41],["الشورى",42],["الزخرف",43],["الدخان",44],["الجاثية",45],["الأحقاف",46],["محمد",47],["الفتح",48],["الحجرات",49],["ق",50],["الذاريات",51],["الطور",52],["النجم",53],["القمر",54],["الرحمن",55],["الواقعة",56],["الحديد",57],["المجادلة",58],["الحشر",59],["الممتحنة",60],["الصف",61],["الجمعة",62],["المنافقون",63],["التغابن",64],["الطلاق",65],["التحريم",66],["الملك",67],["القلم",68],["الحاقة",69],["المعارج",70],["نوح",71],["الجن",72],["المزمل",73],["المدثر",74],["القيامة",75],["الإنسان",76],["المرسلات",77],["النبأ",78],["النازعات",79],["عبس",80],["التكوير",81],["الانفطار",82],["المطففين",83],["الانشقاق",84],["البروج",85],["الطارق",86],["الأعلى",87],["الغاشية",88],["الفجر",89],["البلد",90],["الشمس",91],["الليل",92],["الضحى",93],["الشرح",94],["التين",95],["العلق",96],["القدر",97],["البينة",98],["الزلزلة",99],["العاديات",100],["القارعة",101],["التكاثر",102],["العصر",103],["الهمزة",104],["الفيل",105],["قريش",106],["الماعون",107],["الكوثر",108],["الكافرون",109],["النصر",110],["المسد",111],["الإخلاص",112],["الفلق",113],["الناس",114]
-];
+const surahs=[["الفاتحة",1],["البقرة",2],["آل عمران",3],["النساء",4],["المائدة",5],["الأنعام",6],["الأعراف",7],["الأنفال",8],["التوبة",9],["يونس",10],["هود",11],["يوسف",12],["الرعد",13],["إبراهيم",14],["الحجر",15],["النحل",16],["الإسراء",17],["الكهف",18],["مريم",19],["طه",20],["الأنبياء",21],["الحج",22],["المؤمنون",23],["النور",24],["الفرقان",25],["الشعراء",26],["النمل",27],["القصص",28],["العنكبوت",29],["الروم",30],["لقمان",31],["السجدة",32],["الأحزاب",33],["سبأ",34],["فاطر",35],["يس",36],["الصافات",37],["ص",38],["الزمر",39],["غافر",40],["فصلت",41],["الشورى",42],["الزخرف",43],["الدخان",44],["الجاثية",45],["الأحقاف",46],["محمد",47],["الفتح",48],["الحجرات",49],["ق",50],["الذاريات",51],["الطور",52],["النجم",53],["القمر",54],["الرحمن",55],["الواقعة",56],["الحديد",57],["المجادلة",58],["الحشر",59],["الممتحنة",60],["الصف",61],["الجمعة",62],["المنافقون",63],["التغابن",64],["الطلاق",65],["التحريم",66],["الملك",67],["القلم",68],["الحاقة",69],["المعارج",70],["نوح",71],["الجن",72],["المزمل",73],["المدثر",74],["القيامة",75],["الإنسان",76],["المرسلات",77],["النبأ",78],["النازعات",79],["عبس",80],["التكوير",81],["الانفطار",82],["المطففين",83],["الانشقاق",84],["البروج",85],["الطارق",86],["الأعلى",87],["الغاشية",88],["الفجر",89],["البلد",90],["الشمس",91],["الليل",92],["الضحى",93],["الشرح",94],["التين",95],["العلق",96],["القدر",97],["البينة",98],["الزلزلة",99],["العاديات",100],["القارعة",101],["التكاثر",102],["العصر",103],["الهمزة",104],["الفيل",105],["قريش",106],["الماعون",107],["الكوثر",108],["الكافرون",109],["النصر",110],["المسد",111],["الإخلاص",112],["الفلق",113],["الناس",114]];
+let currentSurah=1, currentAyahs=[], wordTimer=null, qariNow="ar.alafasy";
 const list=document.getElementById('list');
-surahs.forEach(s=>{
-  const b=document.createElement('button');
-  b.className='card';
-  b.innerHTML=`${s[0]}<span>${s[1]}</span>`;
-  b.onclick=()=>openSurah(s[0],s[1]);
-  list.appendChild(b);
-});
+surahs.forEach(s=>{const b=document.createElement('button');b.className='card';b.innerHTML=`${s[0]}<br><small style="color:#94a3b8">${s[1]}</small>`;b.onclick=()=>openSurah(s[0],s[1]);list.appendChild(b);});
+
+function closeReader(){document.getElementById('reader').style.display='none';document.getElementById('audio').pause();stopWords();document.body.style.overflow='auto';}
+function changeQari(){qariNow=document.getElementById('qari').value;playFull();}
+function playFull(){
+  const audio=document.getElementById('audio');
+  audio.src=`https://cdn.islamic.network/quran/audio-surah/128/${qariNow}/${currentSurah}.mp3`;
+  audio.play();
+  highlightFollow();
+}
 async function openSurah(name,id){
+  currentSurah=id;
   document.getElementById('sname').innerText=name;
   document.getElementById('reader').style.display='block';
+  document.body.style.overflow='hidden';
   document.getElementById('ayahs').innerHTML='جاري التحميل...';
-  document.getElementById('audio').src=`https://cdn.islamic.network/quran/audio/128/ar.alafasy/${id}.mp3`;
+  document.getElementById('reader').scrollTop=0;
+  window.scrollTo(0,0);
   try{
     const res=await fetch(`https://api.alquran.cloud/v1/surah/${id}/ar.alafasy`);
     const data=await res.json();
+    currentAyahs=data.data.ayahs;
     let html='';
-    data.data.ayahs.forEach(a=>{html+=`<div class="ayah">${a.text} <span style="color:#22c55e">﴿${a.numberInSurah}﴾</span></div>`});
+    data.data.ayahs.forEach(a=>{
+      const words=a.text.split(' ').map(w=>`<span class="word">${w}</span>`).join(' ');
+      html+=`<div class="ayah" id="ayah-${a.numberInSurah}" onclick="playAyahNum(${a.number},${a.numberInSurah})">${words} <span style="color:#22c55e">﴿${a.numberInSurah}﴾</span></div>`;
+    });
     document.getElementById('ayahs').innerHTML=html;
-    window.scrollTo(0,500);
-  }catch(e){document.getElementById('ayahs').innerHTML='خطأ، جرب تاني';}
+    playFull();
+  }catch(e){document.getElementById('ayahs').innerHTML='خطأ في التحميل';}
+}
+function playAyahNum(globalNum,localNum){
+  const audio=document.getElementById('audio');
+  audio.src=`https://cdn.islamic.network/quran/audio/128/${qariNow}/${globalNum}.mp3`;
+  audio.play();
+  document.querySelectorAll('.ayah').forEach(el=>el.classList.remove('active'));
+  document.getElementById(`ayah-${localNum}`).classList.add('active');
+  startWordHighlight(localNum);
+  audio.onended=()=>{
+    if(localNum < currentAyahs.length){playAyahNum(currentAyahs[localNum].number, localNum+1);}
+  };
+}
+function startWordHighlight(localNum){
+  stopWords();
+  const ayahEl=document.getElementById(`ayah-${localNum}`);
+  if(!ayahEl) return;
+  const words=ayahEl.querySelectorAll('.word');
+  let i=0;
+  wordTimer=setInterval(()=>{
+    words.forEach(w=>w.classList.remove('active-word'));
+    if(i < words.length){words[i].classList.add('active-word');i++;}else{clearInterval(wordTimer);}
+  },400);
+}
+function stopWords(){if(wordTimer)clearInterval(wordTimer);document.querySelectorAll('.word').forEach(w=>w.classList.remove('active-word'));}
+function highlightFollow(){
+  const audio=document.getElementById('audio');
+  audio.ontimeupdate=null;
 }
 </script>
 </body>
