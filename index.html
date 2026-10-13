@@ -3,42 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>القرآن الكريم</title>
+<title>المصحف</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f2e1f">
-<link rel="icon" href="icon.png">
+<meta name="theme-color" content="#0f172a">
 <style>
-body{margin:0;font-family:Tahoma;background:#0f2e1f;color:#fff;text-align:center}
-#installBar{display:none;background:#ffeb3b;color:#000;padding:12px;position:fixed;bottom:0;width:100%;left:0;z-index:9999;font-weight:bold}
-#installBar button{background:#0f2e1f;color:#fff;border:0;padding:8px 18px;border-radius:8px;margin-right:10px}
-header{padding:50px 20px}
-.logo{width:130px;border-radius:22px}
-.btn{display:inline-block;background:#ffeb3b;color:#000;padding:15px 35px;border-radius:12px;text-decoration:none;font-weight:bold;margin:10px;font-size:18px}
+body{background:#0f172a;color:#fff;font-family:Tahoma;margin:0;padding:20px;text-align:center}
+.card{background:#1e293b;padding:25px;border-radius:20px;margin-top:30px}
+.btn{display:block;padding:16px;border-radius:12px;text-decoration:none;font-weight:bold;font-size:18px;margin-top:12px}
+.install{background:#22c55e;color:#000;display:none}
 </style>
 </head>
 <body>
-<header>
-<img src="icon.png" class="logo">
-<h1>القرآن الكريم</h1>
-<p>استماع وتفسير وتتبع الكلمات</p>
-<a class="btn" href="quran-ar.html">📖 ابدأ القراءة - عربي</a>
-<br>
-<a class="btn" style="background:#fff" href="quran-en.html">English - ابدأ القراءة</a>
-</header>
-
-<div id="installBar">
-  📖 تثبيت تطبيق القرآن على موبايلك
-  <button id="installBtn">تثبيت</button>
+<h1 style="color:#22c55e">📖 المصحف الشريف</h1>
+<div class="card">
+<h2>اختر القراءة</h2>
+<a class="btn" style="background:#1e293b;color:#fff;border:1px solid #334155" href="quran-en.html">🇬🇧 Surahs - English</a>
+<a class="btn" style="background:#22c55e;color:#000" href="quran-ar.html">🇸🇦 القرآن - عربي</a>
+<a class="btn" style="background:#facc15;color:#000" href="tafsir.html">📖 تفسير الميسر</a>
+<a id="installBtn" class="btn install">📲 تثبيت التطبيق</a>
+<p style="color:#94a3b8;margin-top:15px;font-size:14px">اقرأ واسمع القرآن في أي وقت حتى بدون إنترنت بعد التثبيت</p>
 </div>
-
 <script>
 let deferredPrompt;
-const bar=document.getElementById('installBar');
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;bar.style.display='block';});
-document.getElementById('installBtn').addEventListener('click',async()=>{
-  bar.style.display='none';
-  if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;}
-});
+const installBtn=document.getElementById('installBtn');
+window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredPrompt=e;installBtn.style.display='block';});
+installBtn.addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();const r=await deferredPrompt.userChoice;deferredPrompt=null;installBtn.style.display='none';});
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js');}
 </script>
 </body>
