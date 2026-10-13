@@ -7,7 +7,7 @@
 <meta name="description" content="المصحف الشريف - اقرأ واسمع القرآن الكريم مع التلاوة والتفسير والترجمة الإنجليزية، يعمل حتى بدون إنترنت بعد التثبيت.">
 <meta property="og:title" content="المصحف الشريف">
 <meta property="og:description" content="اقرأ واسمع القرآن حتى بدون إنترنت">
-<meta property="og:image" content="./icon.png">
+<meta property="og:image" content="icon.png">
 <meta name="theme-color" content="#0f172a">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="icon.png">
@@ -21,47 +21,101 @@ p{color:#cbd5e1;font-size:16px}
 .btn{display:block;background:#1e293b;color:#fff;padding:18px;border-radius:14px;margin:12px 0;text-decoration:none;font-size:18px;font-weight:bold;transition:0.2s}
 .btn:active{transform:scale(0.98)}
 .btn.main{background:#22c55e;color:#000}
-#installBtn{background:#facc15;color:#000;cursor:pointer}
+#installBtn{background:#facc15;color:#000;display:none;cursor:pointer;border:none;width:100%}
+
+/* خانة التثبيت */
+.install-box{
+  position:fixed; bottom:20px; left:15px; right:15px;
+  background:#ffffff; color:#000; border-radius:20px;
+  padding:16px; display:none; align-items:center; gap:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,.5); z-index:9999;
+  animation:slideUp .4s ease;
+}
+.install-box img{width:50px;height:50px;border-radius:12px;flex-shrink:0}
+.install-box .text{flex:1;text-align:right}
+.install-box .text b{display:block;font-size:16px}
+.install-box .text span{font-size:13px;color:#64748b}
+.install-box .btns{display:flex;gap:8px;flex-shrink:0}
+.install-box button{border:none;padding:10px 16px;border-radius:10px;font-weight:bold;cursor:pointer;font-family:inherit}
+.install-box .install{background:#22c55e;color:#000}
+.install-box .close{background:#e2e8f0;color:#000}
+@keyframes slideUp{from{transform:translateY(100px);opacity:0}to{transform:translateY(0);opacity:1}}
 </style>
 </head>
 <body>
+
 <img src="icon.png" class="logo" alt="شعار المصحف الشريف" width="110" height="110">
 <h1>📖 المصحف الشريف</h1>
 <p>اقرأ واسمع القرآن حتى بدون إنترنت</p>
 
-<button id="installBtn" class="btn" style="display:none" aria-label="تثبيت التطبيق">📲 تثبيت التطبيق</button>
+<button id="installBtn" class="btn">📲 تثبيت التطبيق</button>
 <a href="quran-ar.html" class="btn main">🇸🇦 القرآن العربي مع التلاوة</a>
 <a href="quran-en.html" class="btn">🇺🇸 القرآن الإنجليزي</a>
 <a href="tafsir.html" class="btn">📖 التفسير</a>
 
+<!-- خانة التثبيت المنبثقة -->
+<div id="installBox" class="install-box">
+  <img src="icon.png" alt="icon">
+  <div class="text">
+    <b>المصحف الشريف</b>
+    <span>ثبّت التطبيق ليعمل بدون إنترنت</span>
+  </div>
+  <div class="btns">
+    <button class="close" id="closeInstall">لاحقاً</button>
+    <button class="install" id="doInstall">تثبيت</button>
+  </div>
+</div>
+
 <script>
-// تسجيل الـ Service Worker مع معالجة الخطأ
+let deferredPrompt;
+const installBox = document.getElementById('installBox');
+const doInstallBtn = document.getElementById('doInstall');
+const closeInstallBtn = document.getElementById('closeInstall');
+const oldInstallBtn = document.getElementById('installBtn');
+
+// تسجيل الـ SW
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').catch(err => console.log('SW failed', err));
 }
 
-let deferredPrompt;
-const installBtn = document.getElementById('installBtn');
-
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  installBtn.style.display = 'block';
+  
+  // لو المستخدم قفلها قبل اقل من يوم متظهرش
+  const closed = localStorage.getItem('installClosed');
+  if(closed && (Date.now() - parseInt(closed) < 86400000)) return;
+
+  setTimeout(()=> {
+    installBox.style.display = 'flex';
+    oldInstallBtn.style.display = 'none';
+  }, 2000);
 });
 
-installBtn.addEventListener('click', async () => {
+async function promptInstall(){
   if(!deferredPrompt) return;
   deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  console.log('User choice:', outcome);
+  await deferredPrompt.userChoice;
   deferredPrompt = null;
-  installBtn.style.display = 'none';
+  installBox.style.display = 'none';
+  oldInstallBtn.style.display = 'none';
+}
+
+doInstallBtn.addEventListener('click', promptInstall);
+oldInstallBtn.addEventListener('click', promptInstall);
+
+closeInstallBtn.addEventListener('click', () => {
+  installBox.style.display = 'none';
+  oldInstallBtn.style.display = 'block';
+  localStorage.setItem('installClosed', Date.now().toString());
 });
 
 window.addEventListener('appinstalled', () => {
-  installBtn.style.display = 'none';
+  installBox.style.display = 'none';
+  oldInstallBtn.style.display = 'none';
   deferredPrompt = null;
 });
 </script>
+
 </body>
 </html>
