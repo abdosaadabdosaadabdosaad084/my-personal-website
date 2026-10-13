@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>القرآن الكريم</title>
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="manifest.json?v=91">
 <meta name="theme-color" content="#0f172a">
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap" rel="stylesheet">
 <style>
@@ -18,7 +18,6 @@ button{background:#334155;font-weight:bold}
 .basmala{display:block;text-align:center;margin:0 0 22px 0;font-size:32px;color:#facc15}
 .list{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;max-width:900px;margin:14px auto}
 .surah{background:#1e293b;border:1px solid #334155;padding:12px;border-radius:12px;text-align:center;cursor:pointer}
-.surah:hover{background:#334155}
 #installBtn{display:none;background:#facc15;color:#000}
 </style>
 </head>
@@ -38,18 +37,37 @@ button{background:#334155;font-weight:bold}
 </div></div>
 <div id="list" class="list"></div><div id="reader"></div>
 <script>
+// امسح الكاش القديم اللي عامل المشكلة
+if('caches' in window){caches.keys().then(n=>n.forEach(k=>caches.delete(k)));}
+if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()))}
+
 const listEl=document.getElementById('list'),readerEl=document.getElementById('reader'),audio=document.getElementById('audio'),recSel=document.getElementById('rec');
 let ayahs=[],cur=-1,curWords=[],timer=null,fs=30;
 function changeFont(d){fs+=d;if(fs<18)fs=18;if(fs>64)fs=64;readerEl.style.fontSize=fs+'px';document.getElementById('fl').innerText=fs}
 fetch('https://api.alquran.cloud/v1/surah').then(r=>r.json()).then(j=>{j.data.forEach(s=>{let d=document.createElement('div');d.className='surah';d.innerText=s.name;d.onclick=()=>loadSurah(s.number);listEl.appendChild(d)})});
 function showList(){readerEl.style.display='none';listEl.style.display='grid';audio.pause();stopLit();}
 function stopLit(){clearInterval(timer);document.querySelectorAll('.word.lit').forEach(w=>w.classList.remove('lit'))}
+
+// الحل الأكيد - يمسح البسملة مهما كان شكلها
 function removeBasmalaFromAyah(text){
-  return text.replace(/^\s*بِسْمِ[\s\u0640]*ٱ?للَّهِ[\s\u0640]*ٱ?لرَّحْمَٰنِ[\s\u0640]*ٱ?لرَّحِيمِ[\s\u0640]*/u, '').replace(/^\s*بسم الله الرحمن الرحيم\s*/u, '').trim();
+  let t = text.trim();
+  // لو فيه بسم في الأول
+  if(t.startsWith('بِسْمِ') || t.startsWith('بسم') || t.includes('ٱلرَّحْمَٰنِ')){
+    // اقسم النص على كلمة الرحيم وخد الجزء التاني
+    let parts = t.split('ٱلرَّحِيمِ');
+    if(parts.length < 2) parts = t.split('الرَّحِيمِ');
+    if(parts.length < 2) parts = t.split('الرحيم');
+    if(parts.length >= 2){
+      return parts[parts.length-1].trim(); // هيرجع "قُلْ أَعُوذُ..."
+    }
+    // لو فشل، احذف أول 4 كلمات
+    return t.split(/\s+/).slice(4).join(' ').trim();
+  }
+  return t;
 }
 async function loadSurah(num){
  listEl.style.display='none';readerEl.style.display='block';readerEl.innerHTML='تحميل...';
- let res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/${recSel.value}`).then(r=>r.json());
+ let res=await fetch(`https://api.alquran.cloud/v1/surah/${num}/${recSel.value}?v=91`).then(r=>r.json());
  ayahs=res.data.ayahs; let html='';
  if(num!==1 && num!==9){html+=`<div class="basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;}
  ayahs.forEach((a,i)=>{
@@ -63,8 +81,7 @@ async function loadSurah(num){
 }
 function playAyah(i){
   cur=i; stopLit();
-  let el=document.getElementById(`a-${i}`);
-  if(!el) return;
+  let el=document.getElementById(`a-${i}`); if(!el) return;
   curWords=el.querySelectorAll('.word');
   el.scrollIntoView({behavior:'smooth',block:'center'});
   audio.pause();
@@ -82,14 +99,9 @@ function playAyah(i){
       if(curWords[wordIndex]) curWords[wordIndex].classList.add('lit');
     },90);
   };
-  audio.onerror=()=>{
-    if(cur+1<ayahs.length) playAyah(cur+1);
-  };
 }
 audio.onended=()=>{stopLit();clearInterval(timer);if(cur+1<ayahs.length)playAyah(cur+1)};
-// تثبيت
 let deferredPrompt; const installBtn=document.getElementById('installBtn');
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;installBtn.style.display='inline-block'});
 installBtn.onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; installBtn.style.display='none';}};
-if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js');}
 </script></body></html>
