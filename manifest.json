@@ -1,6 +1,9 @@
-{"name": "المصحف الشريف",
+{
+  "name": "المصحف الشريف",
   "short_name": "المصحف",
-  "start_url": "./index.html",
+  "description": "اقرأ واسمع القرآن في أي وقت حتى بدون إنترنت",
+  "start_url": "/my-personal-website/index.html",
+  "scope": "/my-personal-website/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#22c55e",
@@ -8,12 +11,14 @@
     {
       "src": "icon.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
