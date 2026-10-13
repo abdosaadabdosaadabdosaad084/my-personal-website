@@ -14,11 +14,11 @@ body{background:#0f172a;color:#fff;font-family:Tahoma;margin:0;padding:10px}
 #reader{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172a;z-index:100;overflow-y:auto;padding:12px}
 .qari-bar{background:#1e293b;padding:10px;border-radius:10px;margin:10px 0;display:flex;gap:8px;align-items:center;position:sticky;top:5px;z-index:20}
 select{background:#0f172a;color:#fff;border:1px solid #334155;padding:8px;border-radius:8px;width:100%}
-.basmala{text-align:center;font-size:26px;color:#22c55e;padding:18px;background:#1e293b;border-radius:12px;margin:12px 0;border:1px solid #22c55e33}
-.ayah{padding:16px;background:#1e293b;margin-bottom:8px;border-radius:10px;font-size:24px;line-height:2.5}
-.ayah.active{border:2px solid #facc15}
-.word{padding:3px 4px;border-radius:7px;display:inline-block;transition:.2s}
-.word.active-word{background:#facc15;color:#000;font-weight:bold;transform:scale(1.15)}
+.basmala-out{text-align:center;font-size:28px;color:#facc15;padding:20px;background:#00040;border-radius:14px;margin:12px 0;border:2px solid #facc1533;font-weight:bold}
+.ayah{padding:16px;background:#1e293b;margin-bottom:8px;border-radius:10px;font-size:24px;line-height:2.6}
+.ayah.active{border:2px solid #facc15;box-shadow:0 0 10px #facc1544}
+.word{padding:3px 5px;border-radius:7px;display:inline-block;transition:.25s}
+.word.active-word{background:#facc15;color:#000;font-weight:bold;transform:scale(1.2)}
 audio{width:100%;margin:8px 0}
 </style>
 </head>
@@ -38,7 +38,7 @@ audio{width:100%;margin:8px 0}
 <label>🎙️</label>
 <select id="qari" onchange="restartCurrent()">
 <option value="ar.alafasy">مشاري العفاسي</option>
-<option value="ar.abdurrahmaansudais">السديس</option>
+<option value="ar.tablawi">محمد الطبلاوي</option>
 <option value="ar.husary">الحصري</option>
 <option value="ar.minshawi">المنشاوي</option>
 <option value="ar.mahermuaiqly">المعيقلي</option>
@@ -50,43 +50,43 @@ audio{width:100%;margin:8px 0}
 </div>
 <script>
 const surahs=[["الفاتحة",1],["البقرة",2],["آل عمران",3],["النساء",4],["المائدة",5],["الأنعام",6],["الأعراف",7],["الأنفال",8],["التوبة",9],["يونس",10],["هود",11],["يوسف",12],["الرعد",13],["إبراهيم",14],["الحجر",15],["النحل",16],["الإسراء",17],["الكهف",18],["مريم",19],["طه",20],["الأنبياء",21],["الحج",22],["المؤمنون",23],["النور",24],["الفرقان",25],["الشعراء",26],["النمل",27],["القصص",28],["العنكبوت",29],["الروم",30],["لقمان",31],["السجدة",32],["الأحزاب",33],["سبأ",34],["فاطر",35],["يس",36],["الصافات",37],["ص",38],["الزمر",39],["غافر",40],["فصلت",41],["الشورى",42],["الزخرف",43],["الدخان",44],["الجاثية",45],["الأحقاف",46],["محمد",47],["الفتح",48],["الحجرات",49],["ق",50],["الذاريات",51],["الطور",52],["النجم",53],["القمر",54],["الرحمن",55],["الواقعة",56],["الحديد",57],["المجادلة",58],["الحشر",59],["الممتحنة",60],["الصف",61],["الجمعة",62],["المنافقون",63],["التغابن",64],["الطلاق",65],["التحريم",66],["الملك",67],["القلم",68],["الحاقة",69],["المعارج",70],["نوح",71],["الجن",72],["المزمل",73],["المدثر",74],["القيامة",75],["الإنسان",76],["المرسلات",77],["النبأ",78],["النازعات",79],["عبس",80],["التكوير",81],["الانفطار",82],["المطففين",83],["الانشقاق",84],["البروج",85],["الطارق",86],["الأعلى",87],["الغاشية",88],["الفجر",89],["البلد",90],["الشمس",91],["الليل",92],["الضحى",93],["الشرح",94],["التين",95],["العلق",96],["القدر",97],["البينة",98],["الزلزلة",99],["العاديات",100],["القارعة",101],["التكاثر",102],["العصر",103],["الهمزة",104],["الفيل",105],["قريش",106],["الماعون",107],["الكوثر",108],["الكافرون",109],["النصر",110],["المسد",111],["الإخلاص",112],["الفلق",113],["الناس",114]];
-let currentSurah=1, ayahsData=[], currentIdx=0, wordTimer=null, qariNow="ar.alafasy";
+let ayahsData=[],currentIdx=0,wordTimer=null,qariNow="ar.alafasy";
 const list=document.getElementById('list');
 surahs.forEach(s=>{const b=document.createElement('button');b.className='card';b.innerHTML=`${s[0]}<br><small style="color:#94a3b8">${s[1]}</small>`;b.onclick=()=>openSurah(s[0],s[1]);list.appendChild(b);});
 function closeReader(){document.getElementById('reader').style.display='none';document.getElementById('audio').pause();clearInterval(wordTimer);document.body.style.overflow='auto';}
 function restartCurrent(){qariNow=document.getElementById('qari').value;playAyahByIndex(0);}
 async function openSurah(name,id){
- currentSurah=id;currentIdx=0;
  document.getElementById('sname').innerText=name;
  document.getElementById('reader').style.display='block';
  document.body.style.overflow='hidden';
  document.getElementById('content').innerHTML='جاري التحميل...';
  document.getElementById('reader').scrollTop=0;
- const res=await fetch(`https://api.alquran.cloud/v1/surah/${id}/ar.alafasy`);
+ const res=await fetch(`https://api.alquran.cloud/v1/surah/${id}/quran-uthmani`);
  const data=await res.json();ayahsData=data.data.ayahs;
  let html='';
- if(id!==1 && id!==9){html+=`<div class="basmala">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;}
+ if(id!==1 && id!==9){html+=`<div class="basmala-out">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;}
  data.data.ayahs.forEach((a,i)=>{
-   const words=a.text.replace('بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ','').trim().split(' ').filter(w=>w).map(w=>`<span class="word">${w}</span>`).join(' ');
+   let txt=a.text;
+   txt=txt.replace(/^بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\s*/,'');
+   const words=txt.split(' ').filter(w=>w).map(w=>`<span class="word">${w}</span>`).join(' ');
    html+=`<div class="ayah" id="ayah-${i}">${words} <span style="color:#22c55e">﴿${a.numberInSurah}﴾</span></div>`;
  });
  document.getElementById('content').innerHTML=html;
  playAyahByIndex(0);
 }
 function playAyahByIndex(idx){
- if(idx>=ayahsData.length) return;
- currentIdx=idx;
+ if(idx>=ayahsData.length) return;currentIdx=idx;
  document.querySelectorAll('.ayah').forEach(el=>el.classList.remove('active'));
  const el=document.getElementById(`ayah-${idx}`);if(el){el.classList.add('active');el.scrollIntoView({behavior:'smooth',block:'center'});}
  const audio=document.getElementById('audio');
  audio.src=`https://cdn.islamic.network/quran/audio/128/${qariNow}/${ayahsData[idx].number}.mp3`;
- audio.play();
+ audio.play().catch(()=>{});
  audio.onloadedmetadata=()=>{
    const words=el.querySelectorAll('.word');
-   const duration=audio.duration|| (words.length*0.6);
-   const perWord=(duration*1000)/words.length;
+   const dur=audio.duration||words.length*0.7;
+   const per=(dur*1000)/words.length;
    clearInterval(wordTimer);let w=0;words.forEach(x=>x.classList.remove('active-word'));
-   wordTimer=setInterval(()=>{words.forEach(x=>x.classList.remove('active-word'));if(w<words.length){words[w].classList.add('active-word');w++;}else{clearInterval(wordTimer);}},perWord);
+   wordTimer=setInterval(()=>{words.forEach(x=>x.classList.remove('active-word'));if(w<words.length){words[w].classList.add('active-word');w++;}else{clearInterval(wordTimer);}},per);
  };
  audio.onended=()=>{playAyahByIndex(idx+1);};
 }
