@@ -3,37 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>المصحف الشريف</title>
-<link rel="manifest" href="./manifest.json">
-<link rel="icon" href="./icon.png">
-<link rel="apple-touch-icon" href="./icon.png">
-<meta name="theme-color" content="#22c55e">
+<title>المصحف الشريف - تلاوة وتفسير بدون إنترنت</title>
+<meta name="description" content="المصحف الشريف - اقرأ واسمع القرآن الكريم مع التلاوة والتفسير والترجمة الإنجليزية، يعمل حتى بدون إنترنت بعد التثبيت.">
+<meta property="og:title" content="المصحف الشريف">
+<meta property="og:description" content="اقرأ واسمع القرآن حتى بدون إنترنت">
+<meta property="og:image" content="./icon.png">
+<meta name="theme-color" content="#0f172a">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
 <style>
-*{box-sizing:border-box}body{margin:0;background:#0f172a;color:#fff;font-family:Tahoma;text-align:center;padding:20px}
-.logo{width:110px;height:110px;border-radius:22px;margin:20px auto;display:block}
-h1{color:#22c55e} .btn{display:block;background:#1e293b;color:#fff;padding:18px;border-radius:14px;margin:12px 0;text-decoration:none;font-size:18px;font-weight:bold}
-.btn.main{background:#22c55e;color:#000} #installBtn{background:#facc15;color:#000;display:none}
+*{box-sizing:border-box}
+body{margin:0;background:#0f172a;color:#fff;font-family:system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;text-align:center;padding:20px;min-height:100vh}
+.logo{width:110px;height:110px;border-radius:22px;margin:20px auto;display:block;object-fit:cover}
+h1{color:#22c55e;margin:10px 0;font-size:28px}
+p{color:#cbd5e1;font-size:16px}
+.btn{display:block;background:#1e293b;color:#fff;padding:18px;border-radius:14px;margin:12px 0;text-decoration:none;font-size:18px;font-weight:bold;transition:0.2s}
+.btn:active{transform:scale(0.98)}
+.btn.main{background:#22c55e;color:#000}
+#installBtn{background:#facc15;color:#000;cursor:pointer}
 </style>
 </head>
 <body>
-<img src="./icon.png" class="logo">
+<img src="icon.png" class="logo" alt="شعار المصحف الشريف" width="110" height="110">
 <h1>📖 المصحف الشريف</h1>
 <p>اقرأ واسمع القرآن حتى بدون إنترنت</p>
-<a id="installBtn" class="btn">📲 تثبيت التطبيق</a>
+
+<button id="installBtn" class="btn" style="display:none" aria-label="تثبيت التطبيق">📲 تثبيت التطبيق</button>
 <a href="quran-ar.html" class="btn main">🇸🇦 القرآن العربي مع التلاوة</a>
 <a href="quran-en.html" class="btn">🇺🇸 القرآن الإنجليزي</a>
 <a href="tafsir.html" class="btn">📖 التفسير</a>
+
 <script>
-if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js')}
-let promptEvent; 
-const btn=document.getElementById('installBtn');
-window.addEventListener('beforeinstallprompt',e=>{
- e.preventDefault(); promptEvent=e; btn.style.display='block';
+// تسجيل الـ Service Worker مع معالجة الخطأ
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(err => console.log('SW failed', err));
+}
+
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'block';
 });
-btn.addEventListener('click',async()=>{
- if(promptEvent){promptEvent.prompt(); await promptEvent.userChoice; promptEvent=null; btn.style.display='none';}
+
+installBtn.addEventListener('click', async () => {
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  console.log('User choice:', outcome);
+  deferredPrompt = null;
+  installBtn.style.display = 'none';
 });
-window.addEventListener('appinstalled',()=>{btn.style.display='none';});
+
+window.addEventListener('appinstalled', () => {
+  installBtn.style.display = 'none';
+  deferredPrompt = null;
+});
 </script>
 </body>
 </html>
