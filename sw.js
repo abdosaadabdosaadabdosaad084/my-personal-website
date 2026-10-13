@@ -1,22 +1,15 @@
-const CACHE_NAME = 'quran-v30';
-
-self.addEventListener('install', e => {
+const CACHE_NAME = 'quran-v80';
+const FILES = ['./','./index.html','./manifest.json'];
+self.addEventListener('install',e=>{
+  e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(FILES)));
   self.skipWaiting();
 });
-
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))))
-  );
+self.addEventListener('activate',e=>{
+  e.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(k=>{if(k!==CACHE_NAME) return caches.delete(k)}))));
   self.clients.claim();
 });
-
-self.addEventListener('fetch', e => {
-  // متخزنش أي حاجة - هات الجديد من النت على طول
-  if (e.request.url.includes('alquran.cloud')) return;
-  if (e.request.destination === 'document') {
-    e.respondWith(fetch(e.request, {cache: 'no-store'}));
-    return;
-  }
-  e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));
+self.addEventListener('fetch',e=>{
+  e.respondWith(caches.match(e.request).then(r=> r || fetch(e.request).then(res=>{
+    return caches.open(CACHE_NAME).then(cache=>{cache.put(e.request,res.clone()); return res;});
+  }).catch(()=> caches.match('./index.html'))));
 });
