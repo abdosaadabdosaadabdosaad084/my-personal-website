@@ -1,25 +1,15 @@
 {
   "name": "القرآن الكريم - استماع وتفسير",
   "short_name": "القرآن",
-  "description": "استمع وحمل القرآن الكريم كامل مع تتبع الكلمات",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
-  "lang": "ar",
-  "dir": "rtl",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/3137/3137819.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "https://cdn-icons-png.flaticon.com/512/3137/3137819.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }
