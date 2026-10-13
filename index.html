@@ -21,9 +21,6 @@ p{color:#cbd5e1;font-size:16px}
 .btn{display:block;background:#1e293b;color:#fff;padding:18px;border-radius:14px;margin:12px 0;text-decoration:none;font-size:18px;font-weight:bold;transition:0.2s}
 .btn:active{transform:scale(0.98)}
 .btn.main{background:#22c55e;color:#000}
-#installBtn{background:#facc15;color:#000;display:none;cursor:pointer;border:none;width:100%}
-
-/* خانة التثبيت */
 .install-box{
   position:fixed; bottom:20px; left:15px; right:15px;
   background:#ffffff; color:#000; border-radius:20px;
@@ -48,12 +45,11 @@ p{color:#cbd5e1;font-size:16px}
 <h1>📖 المصحف الشريف</h1>
 <p>اقرأ واسمع القرآن حتى بدون إنترنت</p>
 
-<button id="installBtn" class="btn">📲 تثبيت التطبيق</button>
 <a href="quran-ar.html" class="btn main">🇸🇦 القرآن العربي مع التلاوة</a>
 <a href="quran-en.html" class="btn">🇺🇸 القرآن الإنجليزي</a>
 <a href="tafsir.html" class="btn">📖 التفسير</a>
 
-<!-- خانة التثبيت المنبثقة -->
+<!-- خانة تثبيت التطبيق -->
 <div id="installBox" class="install-box">
   <img src="icon.png" alt="icon">
   <div class="text">
@@ -71,48 +67,45 @@ let deferredPrompt;
 const installBox = document.getElementById('installBox');
 const doInstallBtn = document.getElementById('doInstall');
 const closeInstallBtn = document.getElementById('closeInstall');
-const oldInstallBtn = document.getElementById('installBtn');
 
-// تسجيل الـ SW
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').catch(err => console.log('SW failed', err));
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  
-  // لو المستخدم قفلها قبل اقل من يوم متظهرش
-  const closed = localStorage.getItem('installClosed');
-  if(closed && (Date.now() - parseInt(closed) < 86400000)) return;
-
-  setTimeout(()=> {
-    installBox.style.display = 'flex';
-    oldInstallBtn.style.display = 'none';
-  }, 2000);
+  installBox.style.display = 'flex';
 });
 
+// لو كروم ما سمحش، اظهر الخانة بعد 3 ثواني بردو
+setTimeout(() => {
+  if(installBox.style.display !== 'flex'){
+    if(!deferredPrompt){
+      document.querySelector('#installBox .text b').innerText = 'ثبّت المصحف';
+      document.querySelector('#installBox .text span').innerText = 'دوس ⋮ فوق واختار تثبيت التطبيق';
+      doInstallBtn.innerText = 'فهمت';
+    }
+    installBox.style.display = 'flex';
+  }
+}, 3000);
+
 async function promptInstall(){
-  if(!deferredPrompt) return;
-  deferredPrompt.prompt();
-  await deferredPrompt.userChoice;
-  deferredPrompt = null;
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+  }
   installBox.style.display = 'none';
-  oldInstallBtn.style.display = 'none';
 }
 
 doInstallBtn.addEventListener('click', promptInstall);
-oldInstallBtn.addEventListener('click', promptInstall);
-
 closeInstallBtn.addEventListener('click', () => {
   installBox.style.display = 'none';
-  oldInstallBtn.style.display = 'block';
-  localStorage.setItem('installClosed', Date.now().toString());
 });
 
 window.addEventListener('appinstalled', () => {
   installBox.style.display = 'none';
-  oldInstallBtn.style.display = 'none';
   deferredPrompt = null;
 });
 </script>
