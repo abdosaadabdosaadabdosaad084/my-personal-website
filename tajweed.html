@@ -3,30 +3,114 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>احكام التجويد</title>
+<title>أحكام التجويد - دليل شامل</title>
 <style>
-body{margin:0;background:#0f172a;color:#fff;font-family:Tahoma,sans-serif}
-.topbar{background:#1e293b;padding:12px;display:flex;gap:8px;position:sticky;top:0}
-.topbar a{background:#0f172a;padding:8px 14px;border-radius:8px;font-size:13px;color:#fff;text-decoration:none}
-.topbar a.active{background:#22c55e;color:#000;font-weight:bold}
-.wrap{max-width:700px;margin:0 auto;padding:16px}
-.h{background:#1e293b;border-radius:16px;padding:24px;text-align:center;border:1px solid #334155;margin-bottom:16px}
-.h h1{margin:0;color:#22c55e;font-size:28px}
-.card{background:#1e293b;border-radius:14px;padding:16px;margin:12px 0;border:1px solid #2a3a52}
-.card h2{margin:0 0 10px;color:#facc15;font-size:18px}
-.ex{background:#0f172a;padding:12px;border-radius:10px;margin:8px 0;font-size:20px;border-right:4px solid #facc15;line-height:2}
-.ex span{color:#22c55e;font-size:14px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+*{box-sizing:border-box}
+body{margin:0;background:#0f172a;color:#fff;font-family:Tahoma,system-ui;padding:0}
+.top{display:flex;gap:6px;position:sticky;top:0;background:#0f172aee;backdrop-filter:blur(8px);z-index:30;padding:12px;border-bottom:1px solid #1e293b;overflow-x:auto}
+.top a{background:#1e293b;padding:9px 14px;border-radius:10px;color:#fff;text-decoration:none;font-size:13px;white-space:nowrap}
+.top a.active{background:#22c55e;color:#000;font-weight:bold}
+.hero{background:linear-gradient(135deg,#1e293b,#0f172a);padding:30px 20px;text-align:center;border-bottom:2px solid #22c55e30}
+.hero h1{font-size:28px;margin:0;color:#22c55e}
+.hero p{color:#94a3b8;font-size:14px;margin-top:10px;line-height:1.7}
+.container{max-width:800px;margin:0 auto;padding:12px}
+.card{background:#1e293b;border-radius:16px;padding:18px;margin:14px 0;border:1px solid #334155}
+.card h2{margin:0 0 10px;color:#facc15;font-size:19px}
+.card h3{color:#22c55e;margin:14px 0 8px;font-size:16px}
+.badge{display:inline-block;background:#22c55e;color:#000;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:bold;margin-right:6px}
+.example{background:#0f172a;padding:12px;border-radius:10px;margin:8px 0;border-right:4px solid #facc15;font-size:19px;line-height:2}
+.example span{color:#22c55e;font-size:13px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .box{background:#0f172a;padding:10px;border-radius:10px;text-align:center;border:1px solid #334155}
-.box b{color:#22c55e;display:block}
+.box b{display:block;color:#22c55e;font-size:16px;margin-bottom:4px}
+.rule{display:flex;gap:10px;margin:8px 0;background:#0f172a;padding:10px;border-radius:10px;align-items:center}
+.rule .icon{width:34px;height:34px;background:#22c55e;color:#000;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:bold;flex-shrink:0}
+details{background:#0f172a;border-radius:10px;padding:12px;margin:8px 0}
+details summary{font-weight:bold;color:#facc15;cursor:pointer}
+footer{text-align:center;padding:30px;color:#64748b;font-size:12px}
 </style>
 </head>
 <body>
-<div class="topbar"><a href="index.html">🏠 الرئيسية</a><a href="quran-ar.html">📖 القران</a><a class="active">✨ التجويد</a></div>
-<div class="wrap">
-<div class="h"><h1>📖 علم التجويد الميسر</h1><p>دليل شامل مبسط لكل احكام التجويد</p></div>
-<div class="card"><h2>🌙 النون الساكنة والتنوين</h2><div class="ex">مِنْ خَشْيَةٍ <span>اظهار</span></div><div class="ex">مَن يَعْمَلْ <span>ادغام بغنة</span></div><div class="ex">مِن بَعْدِ <span>اقلاب</span></div></div>
-<div class="card"><h2>⏸️ علامات الوقف</h2><div class="grid"><div class="box"><b>مـ</b>وقف لازم</div><div class="box"><b>قلى</b>الوقف اولى</div><div class="box"><b>صلى</b>الوصل اولى</div><div class="box"><b>ج</b>جائز</div></div></div>
+<div class="top">
+<a href="index.html">🏠 الرئيسية</a>
+<a href="quran-ar.html">🇸🇦 قرآن</a>
+<a class="active">✨ تجويد</a>
+<a href="tafsir.html">📖 تفسير</a>
 </div>
+<div class="hero">
+<h1>📖 علم التجويد الميسر</h1>
+<p>دليل شامل مبسط لكل أحكام تجويد القرآن الكريم<br>من البداية حتى الإتقان - مع أمثلة قرآنية واضحة</p>
+</div>
+<div class="container">
+<div class="card">
+<h2>🌟 ما هو التجويد؟</h2>
+<p style="color:#cbd5e1;line-height:1.9">التجويد لغة: التحسين. واصطلاحا: إعطاء كل حرف حقه ومستحقه من الصفات والمخارج.<br><b style="color:#facc15">حكمه:</b> فرض عين على كل من يقرأ القرآن.</p>
+</div>
+<div class="card">
+<h2>🗣️ أولا: مخارج الحروف <span class="badge">17 مخرج</span></h2>
+<h3>1- الجوف (حروف المد)</h3>
+<div class="example">ا - و - ي <span>— قَالَ - يَقُولُ - قِيلَ</span></div>
+<h3>2- الحلق (6 حروف)</h3>
+<div class="grid2">
+<div class="box"><b>أقصى الحلق</b>ء - هـ</div>
+<div class="box"><b>وسط الحلق</b>ع - ح</div>
+<div class="box"><b>أدنى الحلق</b>غ - خ</div>
+</div>
+<h3>3- اللسان (10 مخارج)</h3>
+<details open><summary>📌 تفصيل مخارج اللسان</summary>
+<p style="color:#cbd5e1;line-height:2">
+ق - أقصى اللسان<br>ك - أسفل منه<br>ج ش ي - وسط اللسان<br>ض - حافة اللسان<br>ل - أدنى الحافة<br>ن - طرف اللسان<br>ر - أدخل من ن<br>ط د ت - أصول الثنايا<br>ص ز س - بين الثنايا<br>ظ ذ ث - أطراف الثنايا
+</p>
+</details>
+</div>
+<div class="card">
+<h2>🌙 ثانيا: أحكام النون الساكنة والتنوين <span class="badge">4 أحكام</span></h2>
+<h3>1- الإظهار - ء هـ ع ح غ خ</h3>
+<div class="example">مِنْ خَشْيَةٍ — مِنْ عِلْمٍ <span>نظهر النون</span></div>
+<h3>2- الإدغام - يرملون</h3>
+<div class="example">مَن يَعْمَلْ → مَيَّعْمَلْ <span>بغنة - ينمو</span></div>
+<div class="example">مِن رَّبِّهِمْ → مِرَّبِّهِمْ <span>بغير غنة - ل ر</span></div>
+<h3>3- الإقلاب - ب</h3>
+<div class="example">مِن بَعْدِ → مِمْبَعْدِ <span>نقلب النون ميما</span></div>
+<h3>4- الإخفاء - 15 حرف</h3>
+<div class="example">مِن شَرِّ — مِن سُوءٍ <span>نخفي مع غنة</span></div>
+</div>
+<div class="card">
+<h2>🌸 ثالثا: أحكام الميم الساكنة</h2>
+<div class="rule"><div class="icon">1</div><div><b>الإخفاء الشفوي:</b> م + ب</div></div>
+<div class="rule"><div class="icon">2</div><div><b>الإدغام:</b> م + م</div></div>
+<div class="rule"><div class="icon">3</div><div><b>الإظهار:</b> باقي الحروف</div></div>
+</div>
+<div class="card">
+<h2>📏 رابعا: المدود <span class="badge">9 أنواع</span></h2>
+<div class="example">قَالَ - يَقُولُ - قِيلَ <span>طبيعي حركتان</span></div>
+<div class="example">جَاءَ <span>متصل 4-5</span> — إِنَّا أَعْطَيْنَاكَ <span>منفصل</span> — الضَّالِّينَ <span>لازم 6</span></div>
+<div class="example">نَسْتَعِينُ <span>عارض للسكون 2-4-6</span></div>
+</div>
+<div class="card">
+<h2>🔔 خامسا: القلقلة - قطب جد</h2>
+<div class="grid2">
+<div class="box"><b>صغرى</b>قَدْ - يَجْعَلُ</div>
+<div class="box"><b>كبرى</b>الْحَقُّ - الْفَلَقِ</div>
+</div>
+</div>
+<div class="card">
+<h2>⏸️ سادسا: علامات الوقف</h2>
+<div class="grid2">
+<div class="box"><b>مـ</b>وقف لازم</div>
+<div class="box"><b>قلى</b>الوقف أولى</div>
+<div class="box"><b>صلى</b>الوصل أولى</div>
+<div class="box"><b>ج</b>جائز</div>
+<div class="box"><b>لا</b>لا تقف</div>
+<div class="box"><b>۝</b>نهاية آية</div>
+<div class="box"><b>۩</b>سجدة</div>
+</div>
+</div>
+<div class="card" style="background:linear-gradient(135deg,#22c55e22,#facc1522);border:1px solid #22c55e40">
+<h2>🎯 نصيحة للمبتدئ</h2>
+<p style="line-height:2;color:#e2e8f0">ابدأ بالنون والميم الساكنة - اسمع الحصري المعلم - 10 دقايق يوميا</p>
+</div>
+</div>
+<footer>صفحة التجويد - ضمن تطبيق المصحف الشريف<br>نسألكم الدعاء 🤲</footer>
 </body>
 </html>
