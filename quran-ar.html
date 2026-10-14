@@ -85,6 +85,15 @@ async function openSurah(name,id){
  document.getElementById('content').innerHTML=html;
  playAyahByIndex(0);
 }
+const WAQF_MARKS = ['ۘ','ۗ','ۚ','ۙ','ۖ','ۛ','ۜ','۝','۞','۟','۠','ۡ','ۢ','ۣ','ۤ','ۥ','ۦ','ۧ','ۨ','۩','ؗ','ؘ','ؙ','ؚ','صلى','قلى','صه','قل','ج','لا','صل','قلي','ص','مـ','ه','ـ','ۓ'];
+function isWaqfMark(txt){
+  let w = txt.trim().replace(/[﴿﴾۝٠-٩0-9]/g,'').trim();
+  if(!w) return true;
+  if(WAQF_MARKS.includes(w)) return true;
+  if(/^[\u06D6-\u06ED\u08D4-\u08E1]+$/.test(w)) return true;
+  if(w.length <= 3 && /^[صقلجمهلا]+[ىي]?$/.test(w)) return true;
+  return false;
+}
 function playAyahByIndex(idx){
  if(idx>=ayahsData.length) return;currentIdx=idx;
  document.querySelectorAll('.ayah').forEach(el=>el.classList.remove('active'));
@@ -94,10 +103,24 @@ function playAyahByIndex(idx){
  audio.src=`https://cdn.islamic.network/quran/audio/128/${qariNow}/${ayahsData[idx].number}.mp3`;
  audio.play().catch(()=>{});
  audio.onloadedmetadata=()=>{
-   const words=el.querySelectorAll('.word');if(words.length===0) return;
-   const dur=audio.duration||words.length*0.7;const per=(dur*1000)/words.length;
-   clearInterval(wordTimer);let w=0;words.forEach(x=>x.classList.remove('active-word'));
-   wordTimer=setInterval(()=>{words.forEach(x=>x.classList.remove('active-word'));if(w<words.length){words[w].classList.add('active-word');w++;}else{clearInterval(wordTimer);}},per);
+   const allWords=Array.from(el.querySelectorAll('.word'));
+   if(allWords.length===0) return;
+   const highlightWords = allWords.filter(span =>!isWaqfMark(span.innerText));
+   if(highlightWords.length===0) return;
+   const dur=audio.duration||highlightWords.length*0.65;
+   const per=(dur*1000)/highlightWords.length;
+   clearInterval(wordTimer);
+   let w=0;
+   allWords.forEach(x=>x.classList.remove('active-word'));
+   wordTimer=setInterval(()=>{
+     allWords.forEach(x=>x.classList.remove('active-word'));
+     if(w<highlightWords.length){
+       highlightWords[w].classList.add('active-word');
+       w++;
+     }else{
+       clearInterval(wordTimer);
+     }
+   },per);
  };
  audio.onended=()=>{playAyahByIndex(idx+1);};
 }
