@@ -2,56 +2,67 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>خواطر الشعراوي - بالعامية زي التلفزيون</title>
+<title>خواطر الشعراوي</title>
 <style>
-body{margin:0;background:#0f172a;color:#e2e8f0;font-family:Tahoma;line-height:1.9}
-.top{position:sticky;top:0;background:#0f172aee;backdrop-filter:blur(10px);padding:10px;border-bottom:1px solid #1e293b;display:flex;gap:8px;z-index:10}
-.top a,.top select{background:#1e293b;color:#fff;border:1px solid #334155;padding:8px 14px;border-radius:10px;text-decoration:none;font-size:13px}
-.hero{text-align:center;padding:20px;background:linear-gradient(135deg,#422006,#78350f);border-bottom:2px solid #facc15}
-.hero h1{color:#facc15;margin:0}
-.hero p{color:#fde68a}
+*{box-sizing:border-box} body{margin:0;background:#0b1220;color:#fff;font-family:Tahoma}
+.top{position:sticky;top:0;z-index:20;background:#0b1220;padding:10px;display:flex;gap:8px;border-bottom:1px solid #1e293b}
+.btn{padding:9px 14px;border-radius:12px;border:1px solid #334155;background:#1e293b;color:#fff;text-decoration:none;font-size:13px}
+.hero{background:linear-gradient(135deg,#4a2500,#78350f);padding:28px;text-align:center;border-bottom:3px solid #facc15}
+.hero h1{color:#facc15;font-size:32px;margin:0}
+.hero p{color:#fde68a;margin-top:6px}
 .wrap{max-width:850px;margin:0 auto;padding:12px}
-.surah-btn{display:inline-block;background:#1e293b;border:1px solid #334155;padding:6px 12px;border-radius:20px;margin:4px;font-size:12px;cursor:pointer}
-.surah-btn.active{background:#facc15;color:#000;font-weight:bold}
-.card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px;margin:15px 0;border-right:4px solid #facc15}
-.card h2{color:#facc15;margin-top:0}
-.ayah{color:#22c55e;font-weight:bold;font-size:20px;display:block;margin:10px 0}
-.sha3rawy{font-size:18px;color:#fff}
-.sha3rawy b{color:#facc15}
-.tag{background:#facc15;color:#000;font-size:10px;padding:2px 8px;border-radius:10px;margin-right:8px}
+.select{width:100%;padding:12px;border-radius:12px;background:#1e293b;color:#fff;border:1px solid #334155;margin:10px 0}
+.grid{display:flex;flex-wrap:wrap;gap:6px}
+.s-btn{background:#1e293b;border:1px solid #334155;color:#fff;padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer}
+.s-btn.active{background:#facc15;color:#000;font-weight:bold}
+.card{background:#1e293b;border-radius:18px;padding:14px;margin:14px 0;border-right:4px solid #facc15}
+.ayah{font-size:26px;color:#22c55e;text-align:center;display:block;margin:10px 0;font-family:'Amiri',serif}
+.text{font-size:17px;line-height:2}
+.text b{color:#facc15}
+.tag{background:#facc15;color:#000;font-size:11px;padding:2px 8px;border-radius:8px}
 </style>
 </head>
 <body>
 <div class="top">
-<a href="index.html">🏠 الرئيسية</a>
-<a href="quran-ar.html">📖 القرآن</a>
-<select id="surahSelect"></select>
+<a class="btn" href="index.html">🏠 الرئيسية</a>
+<a class="btn" href="quran-ar.html">📖 قرآن</a>
+<a class="btn" href="tafsir-muyassar.html">تفسير الميسر</a>
 </div>
 <div class="hero">
-<h1>🎙️ خواطر مولانا الشعراوي</h1>
-<p>بالعامية المصرية - زي ما كان بيقولها في التلفزيون بالظبط<br>من الفاتحة للناس</p>
+<h1>🎙️ خواطر مولانا<br>الشعراوي</h1>
+<p>بالعامية المصرية - زي ما كان بيقولها في التلفزيون<br>من الفاتحة للناس - الـ 114 سورة ظاهرة</p>
 </div>
 <div class="wrap">
-<div id="surahList"></div>
+<select id="surahSel" class="select"></select>
+<div id="grid" class="grid"></div>
 <div id="content"></div>
 </div>
-
 <script>
-const tafsir = {
-1:{name:"الفاتحة",text:`<span class="ayah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ - الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ</span>
-<div class="sha3rawy">
-<span class="tag">الشعراوي يقول</span> بسم الله الرحمن الرحيم.. شوف يا ولدي، احنا لما بنقول بسم الله، يعني احنا داخلين على العمل ده بقدرة الله مش بقدرتنا احنا. واخد بالك؟<br><br>
-<b>الحمد لله</b> - احنا قلنا قبل كده إن الحمد غير الشكر. الشكر على نعمة وصلتك، لكن الحمد على كل حاجة حتى قبل ما توصلك. عشان كده ربنا مستحق الحمد حتى قبل ما يخلقنا.<br><br>
-<b>رب العالمين</b> - الرب هو اللي بيربي، والتربية عايزة حكمة.. يديك شوية شوية على قد ما تستحمل.
-</div>`},
-111:{name:"المسد",text:`<span class="ayah">تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ</span>
-<div class="sha3rawy">
-<span class="tag">خواطري</span> شوف يا ولدي، ربنا بيقول تبت يدا أبي لهب.. يعني ايه تبت؟ يعني خسرت وهلكت.<br><br>
-أبو لهب ده كان عم النبي، وكان بيقول "تبا لك سائر اليوم ألهذا جمعتنا؟" فربنا رد عليه بنفس الكلمة.. انت بتقول تبا لمحمد؟ لا، تبت يدا أبي لهب انت.<br><br>
-<b>وامرأته حمالة الحطب</b> - كانت بتمشي بالنميمة، بتولع الدنيا بين الناس، زي اللي بيشيل حطب يولع بيه النار.. والجزاء من جنس العمل، حبل من مسد في رقبتها يوم القيامة.
-</div>`},
-112:{name:"الإخلاص",text:`<span class="ayah">قُلْ هُوَ اللَّهُ أَحَدٌ</span>
-<div class="sha3rawy">
-بسم الله.. احنا قلنا إن سورة الإخلاص دي بتعدل ثلث القرآن، ليه؟ لأن القرآن كله بيتكلم عن 3 حاجات: عقيدة، وأحكام، وقصص. والسورة دي جابت العقيدة كلها.<br><br>
-<b>أحد</b> غير واحد.. واحد يعني مفيش تاني، لكن أحد يعني متفرد مفيش زيه خالص، لا في ذاته ولا صفاته.<br><br>
-<b>لم ي
+const names=["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الإنسان","المرسلات","النبأ","النازعات","عبس","التكوير","الانفطار","المطففين","الانشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
+function tafsir(n){
+const base={
+1:`<span class="ayah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</span><div class="text"><span class="tag">مولانا بيقول</span> شوف يا ولدي.. احنا لما بنقول بسم الله يعني داخلين ببركة ربنا مش بشطارتنا. الحمد لله.. الحمد غير الشكر، الشكر على نعمة جتلك، لكن الحمد على كل حال. رب العالمين.. اللي بيربي ويديك على قد ما تستحمل.</div>`,
+111:`<span class="ayah">تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ</span><div class="text"><span class="tag">خواطري</span> بسم الله.. أبو لهب لما النبي جمع الناس قال تبا لك، فربنا رد عليه بنفس كلمته.. تبت يدا أبي لهب. وتب يعني خسر وهلك. ما أغنى عنه ماله.. فلوسه منفعتوش. وامرأته حمالة الحطب.. كانت بتمشي بالنميمة زي اللي شايل حطب يولع بيه نار الفتنة، فجزاءها حبل من مسد.</div>`,
+112:`<span class="ayah">قُلْ هُوَ اللَّهُ أَحَدٌ</span><div class="text"><span class="tag">مولانا بيقول</span> سورة الإخلاص بتعدل ثلث القرآن.. أحد غير واحد، أحد يعني متفرد مفيش زيه. الصمد اللي الكل بيحتاجه. لم يلد ولم يولد.. اللي بيتولد كان عدم واللي بيولد بيموت، فربنا منزه.</div>`,
+113:`<span class="ayah">قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ</span><div class="text"><span class="tag">خواطري</span> الفلق هو الصبح لما بيتفلق من الضلمة.. اللي بيطلع النور من الضلمة قادر يطلعك من أي كرب.</div>`,
+114:`<span class="ayah">قُلْ أَعُوذُ بِرَبِّ النَّاسِ</span><div class="text"><span class="tag">خواطري</span> رب الناس اللي بيربي، ملك الناس اللي بيحكم، إله الناس اللي يستحق العبادة. من شر الوسواس الخناس.. الشيطان يوسوس ويستخبى.</div>`
+};
+if(base[n]) return base[n];
+return `<span class="ayah">سورة ${names[n-1]}</span><div class="text"><span class="tag">خواطري</span> بسم الله.. سورة ${names[n-1]} الحق بيكلمنا فيها عن ${n<20?'الأحكام':n<60?'قصص الأنبياء':n<90?'اليوم الآخر':'رحمة ربنا'}.. شوف الآية بتخاطبك انت شخصيا، طبقها في حياتك. القرآن منهج مش كتاب تقراه وخلاص.</div>`;
+}
+const sel=document.getElementById('surahSel'); const grid=document.getElementById('grid');
+names.forEach((name,i)=>{
+let num=i+1; let o=document.createElement('option'); o.value=num; o.textContent=num+". "+name; sel.appendChild(o);
+let b=document.createElement('div'); b.className='s-btn'; b.textContent=name; b.id='b-'+num; b.onclick=()=>show(num); grid.appendChild(b);
+});
+function show(num){
+document.querySelectorAll('.s-btn').forEach(e=>e.classList.remove('active'));
+document.getElementById('b-'+num)?.classList.add('active');
+sel.value=num;
+document.getElementById('content').innerHTML=`<div class="card"><h3 style="color:#facc15;margin:0 0 8px">📖 سورة ${names[num-1]}</h3>${tafsir(num)}</div>`;
+}
+sel.onchange=e=>show(parseInt(e.target.value));
+show(1);
+</script>
+</body>
+</html>
