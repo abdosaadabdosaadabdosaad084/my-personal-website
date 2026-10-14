@@ -3,115 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>المصحف الشريف - تلاوة وتفسير بدون إنترنت</title>
-<meta name="description" content="المصحف الشريف - اقرأ واسمع القرآن الكريم مع التلاوة والتفسير والترجمة الإنجليزية، يعمل حتى بدون إنترنت بعد التثبيت.">
-<meta property="og:title" content="المصحف الشريف">
-<meta property="og:description" content="اقرأ واسمع القرآن حتى بدون إنترنت">
-<meta property="og:image" content="icon.png">
-<meta name="theme-color" content="#0f172a">
+<title>المصحف الشريف</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" href="icon.png">
-<link rel="apple-touch-icon" href="icon.png">
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#0f172a;color:#fff;font-family:system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;text-align:center;padding:20px;min-height:100vh}
-.logo{width:110px;height:110px;border-radius:22px;margin:20px auto;display:block;object-fit:cover}
-h1{color:#22c55e;margin:10px 0;font-size:28px}
-p{color:#cbd5e1;font-size:16px}
-.btn{display:block;background:#1e293b;color:#fff;padding:18px;border-radius:14px;margin:12px 0;text-decoration:none;font-size:18px;font-weight:bold;transition:0.2s}
-.btn:active{transform:scale(0.98)}
-.btn.main{background:#22c55e;color:#000}
-.install-box{
-  position:fixed; bottom:20px; left:15px; right:15px;
-  background:#ffffff; color:#000; border-radius:20px;
-  padding:16px; display:none; align-items:center; gap:12px;
-  box-shadow:0 10px 30px rgba(0,0,0,.5); z-index:9999;
-  animation:slideUp .4s ease;
-}
-.install-box img{width:50px;height:50px;border-radius:12px;flex-shrink:0}
-.install-box .text{flex:1;text-align:right}
-.install-box .text b{display:block;font-size:16px}
-.install-box .text span{font-size:13px;color:#64748b}
-.install-box .btns{display:flex;gap:8px;flex-shrink:0}
-.install-box button{border:none;padding:10px 16px;border-radius:10px;font-weight:bold;cursor:pointer;font-family:inherit}
-.install-box .install{background:#22c55e;color:#000}
-.install-box .close{background:#e2e8f0;color:#000}
-@keyframes slideUp{from{transform:translateY(100px);opacity:0}to{transform:translateY(0);opacity:1}}
+body{margin:0;background:#0f172a;color:#fff;font-family:Tahoma,system-ui;padding:16px;min-height:100vh}
+.header{text-align:center;padding:30px 0 20px}
+.header h1{font-size:32px;color:#22c55e;margin:0}
+.header p{color:#94a3b8;margin-top:8px}
+.grid{display:grid;grid-template-columns:1fr;gap:12px;max-width:500px;margin:20px auto}
+.btn{display:block;background:#1e293b;color:#fff;text-decoration:none;padding:18px;border-radius:14px;text-align:center;font-size:18px;border:1px solid #334155;transition:.2s}
+.btn:hover{border-color:#22c55e;transform:translateY(-2px)}
+.btn.primary{background:#22c55e;color:#000;font-weight:bold}
+.btn.gold{background:#facc15;color:#000;font-weight:bold}
+.footer{text-align:center;padding:40px 20px;color:#64748b;font-size:13px;line-height:1.8}
 </style>
 </head>
 <body>
-
-<img src="icon.png" class="logo" alt="شعار المصحف الشريف" width="110" height="110">
+<div class="header">
 <h1>📖 المصحف الشريف</h1>
-<p>اقرأ واسمع القرآن حتى بدون إنترنت</p>
+<p>تلاوة - تفسير - تجويد</p>
+</div>
 
-<a href="quran-ar.html" class="btn main">🇸🇦 القرآن العربي مع التلاوة</a>
-<a href="quran-en.html" class="btn">🇺🇸 القرآن الإنجليزي</a>
-<a href="tafsir.html" class="btn">📖 التفسير</a>
+<div class="grid">
+<a href="quran-ar.html" class="btn primary">🇸🇦 القرآن الكريم - تلاوة</a>
+<a href="tajweed.html" class="btn gold">✨ أحكام التجويد - دليل شامل</a>
+<a href="tafsir.html" class="btn">📖 تفسير القرآن</a>
+</div>
 
-<!-- خانة تثبيت التطبيق -->
-<div id="installBox" class="install-box">
-  <img src="icon.png" alt="icon">
-  <div class="text">
-    <b>المصحف الشريف</b>
-    <span>ثبّت التطبيق ليعمل بدون إنترنت</span>
-  </div>
-  <div class="btns">
-    <button class="close" id="closeInstall">لاحقاً</button>
-    <button class="install" id="doInstall">تثبيت</button>
-  </div>
+<div style="max-width:500px;margin:30px auto;background:#1e293b;padding:16px;border-radius:14px;border:1px solid #33415520">
+<h3 style="margin:0 0 10px;color:#facc15">🆕 الجديد</h3>
+<p style="margin:0;color:#cbd5e1;line-height:1.7;font-size:14px">
+- تم إصلاح تظليل الآيات لكل الشيوخ<br>
+- إضافة صفحة التجويد الميسر<br>
+- يعمل بدون إنترنت بعد التحميل
+</p>
+</div>
+
+<div class="footer">
+لا تنسونا من صالح دعائكم 🤲<br>
+تم بحمد الله
 </div>
 
 <script>
-let deferredPrompt;
-const installBox = document.getElementById('installBox');
-const doInstallBtn = document.getElementById('doInstall');
-const closeInstallBtn = document.getElementById('closeInstall');
-
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
-}
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  installBox.style.display = 'flex';
-});
-
-// لو كروم ما سمحش، اظهر الخانة بعد 3 ثواني بردو
-setTimeout(() => {
-  if(installBox.style.display !== 'flex'){
-    if(!deferredPrompt){
-      document.querySelector('#installBox .text b').innerText = 'ثبّت المصحف';
-      document.querySelector('#installBox .text span').innerText = 'دوس ⋮ فوق واختار تثبيت التطبيق';
-      doInstallBtn.innerText = 'فهمت';
-    }
-    installBox.style.display = 'flex';
-  }
-}, 3000);
-
-async function promptInstall(){
-  if(deferredPrompt){
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-  }
-  installBox.style.display = 'none';
-}
-
-doInstallBtn.addEventListener('click', promptInstall);
-closeInstallBtn.addEventListener('click', () => {
-  installBox.style.display = 'none';
-});
-// تشغيل ملف الكاش عشان يشتغل بدون نت
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js');
-}
-window.addEventListener('appinstalled', () => {
-  installBox.style.display = 'none';
-  deferredPrompt = null;
-});
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js')}
 </script>
-
 </body>
 </html>
