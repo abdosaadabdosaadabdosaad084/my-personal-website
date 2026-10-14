@@ -1,130 +1,38 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>القرآن الكريم</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#0b1220;color:#fff;font-family:Tahoma;padding-bottom:180px}
-.top{padding:12px;display:flex;flex-direction:column;gap:10px;background:#0b1220;position:sticky;top:0;z-index:30;border-bottom:1px solid #1e293b}
-.row{display:flex;gap:8px;flex-wrap:wrap}
-.btn{padding:10px 16px;border-radius:14px;border:none;font-size:14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
-.btn-green{background:#22c55e;color:#000;font-weight:800}
-.btn-dark{background:#1e293b;color:#fff;border:1px solid #334155}
-.btn-yellow{background:#facc15;color:#000;font-weight:800}
-.btn-orange{background:#f59e0b;color:#000;font-weight:800}
-.title{text-align:center;font-size:26px;font-weight:800;margin:18px 0}
-.card{max-width:800px;margin:12px auto;background:#1e293b;border-radius:20px;padding:12px}
-.inner{background:#111a2e;border-radius:14px;padding:18px}
-.quran{font-size:30px;text-align:center;line-height:2.8;font-family:'Amiri',serif}
-.word{padding:3px 6px;border-radius:8px;display:inline-block;transition:.12s;cursor:pointer}
-.word.active{background:#facc15;color:#000;font-weight:800;box-shadow:0 0 0 2px #facc15}
-.waqf,.no{user-select:none;pointer-events:none}
-.waqf{color:#22c55e} .no{color:#facc15;font-size:18px}
-.player{position:fixed;bottom:0;left:0;right:0;background:#1e293b;border-top:1px solid #334155;padding:12px;z-index:40}
-.player audio{width:100%;margin-top:8px}
-.actions{max-width:800px;margin:10px auto;display:flex;gap:8px;padding:0 12px}
+body{margin:0;background:#0b1220;color:#fff;font-family:Tahoma;padding:12px;padding-bottom:120px}
+.top{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+select,.btn{padding:10px;border-radius:10px;background:#1e293b;color:#fff;border:1px solid #334155}
+.quran{background:#fff;color:#000;padding:20px;border-radius:14px;font-size:28px;line-height:2.5;text-align:center;font-family:'Amiri',serif;max-width:800px;margin:0 auto}
+.player{position:fixed;bottom:0;left:0;right:0;background:#1e293b;padding:12px;border-top:1px solid #334155}
+audio{width:100%}
+a{color:#22c55e;text-decoration:none}
 </style>
 </head>
 <body>
-
 <div class="top">
-  <div class="row">
-    <a class="btn btn-green" href="quran-ar.html">📖 قرآن</a>
-    <a class="btn btn-dark" href="tafsir-muyassar.html">تفسير الميسر</a>
-    <a class="btn btn-dark" href="index.html">🏠 الرئيسية</a>
-  </div>
-  <div class="row">
-    <a class="btn btn-dark" href="quran-en.html">English</a>
-  </div>
-  <div class="row" style="justify-content:flex-end">
-    <a class="btn btn-yellow" href="index.html">← رجوع</a>
-  </div>
-  <div class="row">
-    <select id="reciter" class="btn btn-dark" style="flex:1">
-      <option value="6" selected>الحصري - تظليل كلمة بكلمة</option>
-      <option value="1">عبدالباسط</option>
-      <option value="7">العجمي</option>
-      <option value="hatem">حاتم فريد الواعر - الأصلي</option>
-    </select>
-    <label class="btn btn-dark" style="background:#14532d"><input type="checkbox" id="autoNext" checked> تلقائي ⏭️</label>
-  </div>
-  <div class="row">
-    <select id="surahSel" class="btn btn-dark" style="flex:1"></select>
-    <button class="btn btn-dark" onclick="prevSurah()">السورة الحالية</button>
-    <button class="btn btn-orange" onclick="nextSurah()">التالية ⏭️</button>
-  </div>
+<a href="index.html" class="btn">🏠 الرئيسية</a>
+<select id="surah"></select>
 </div>
-
-<div id="pageTitle" class="title">سورة الفاتحة</div>
-
-<div class="actions">
-  <button class="btn btn-dark" onclick="downloadSurah()">⬇️ تحميل السورة كاملة</button>
-  <button class="btn btn-dark" onclick="downloadAyah()">⬇️ تحميل الآية فقط</button>
-</div>
-
-<div id="container"></div>
-
-<div class="player">
-  <div style="display:flex;justify-content:space-between;font-size:13px">
-    <span id="now" style="color:#22c55e;font-weight:bold">سورة الفاتحة</span>
-    <span id="badge" style="background:#22c55e;color:#000;padding:3px 12px;border-radius:20px;font-weight:bold">تلقائي: شغال</span>
-  </div>
-  <audio id="audio" controls></audio>
-</div>
-
+<div id="text" class="quran">اختر سورة...</div>
+<div class="player"><audio id="audio" controls></audio></div>
 <script>
 const names=["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الإنسان","المرسلات","النبأ","النازعات","عبس","التكوير","الانفطار","المطففين","الانشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
-const audio=document.getElementById('audio'); let curS=1,curA=1,timings=[];
-const sel=document.getElementById('surahSel');
+const sel=document.getElementById('surah');
 names.forEach((n,i)=>{let o=document.createElement('option');o.value=i+1;o.textContent=(i+1)+". "+n;sel.appendChild(o);});
-async function loadSurah(num){
- curS=num; sel.value=num; curA=1;
- document.getElementById('pageTitle').textContent="سورة "+names[num-1];
- document.getElementById('now').textContent=names[num-1];
- let rec=document.getElementById('reciter').value, audioUrl;
- if(rec==='hatem'){audioUrl=`https://server11.mp3quran.net/hatem/${String(num).padStart(3,'0')}.mp3`;timings=[];}
- else{
-   try{let r=await fetch(`https://api.quran.com/api/v4/chapter_recitations/${rec}/${num}?segments=true`);let j=await r.json();audioUrl=j.audio_file.audio_url;timings=[];(j.audio_file.timestamp||[]).forEach(v=>{(v.segments||[]).forEach(s=>{timings.push({verse:v.verse_key,start:s[0],end:s[1],pos:s[2]});});});}catch(e){audioUrl=`https://download.quranicaudio.com/quran/mahmoud_khalil_al_husary/${num}.mp3`;}
- }
- try{
-   let wr=await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${num}?words=true&per_page=500&word_fields=text_uthmani`);
-   let d=await wr.json(); let cont=document.getElementById('container'); cont.innerHTML='';
-   d.verses.forEach(v=>{
-     let card=document.createElement('div'); card.className='card';
-     let inner=document.createElement('div'); inner.className='inner';
-     let q=document.createElement('div'); q.className='quran'; let html='';
-     v.words.forEach(w=>{
-       let t=w.text_uthmani; if(!t) return;
-       if(w.char_type_name==='end'){html+=`<span class="no"> ﴿${v.verse_number}﴾ </span>`;return;}
-       if(/^[ۚۛۜۗۖۙۘۥۮۯ]$/.test(t)){html+=`<span class="waqf">${t}</span>`;return;}
-       html+=`<span class="word" data-key="${w.location}" data-ayah="${v.verse_number}">${t}</span> `;
-     });
-     q.innerHTML=html; inner.appendChild(q); card.appendChild(inner); cont.appendChild(card);
-   });
- }catch(e){}
- audio.src=audioUrl; audio.play().catch(()=>{});
+async function load(num){
+ let r=await fetch(`https://api.alquran.cloud/v1/surah/${num}/quran-uthmani`);
+ let j=await r.json();
+ document.getElementById('text').innerHTML=j.data.ayahs.map(a=>a.text+` ﴿${a.numberInSurah}﴾`).join(' ');
+ document.getElementById('audio').src=`https://server11.mp3quran.net/hatem/${String(num).padStart(3,'0')}.mp3`;
+ document.getElementById('audio').play().catch(()=>{});
 }
-audio.addEventListener('timeupdate',()=>{
- if(!audio.duration) return;
- if(!timings.length){
-   let ws=document.querySelectorAll('.word'); let idx=Math.floor((audio.currentTime/audio.duration)*ws.length);
-   ws.forEach(w=>w.classList.remove('active')); if(ws[idx]){ws[idx].classList.add('active');curA=parseInt(ws[idx].dataset.ayah);}
-   return;
- }
- let ms=audio.currentTime*1000; let cur=timings.find(t=>ms>=t.start&&ms<t.end);
- if(cur){document.querySelectorAll('.word').forEach(w=>w.classList.remove('active')); let el=document.querySelector(`.word[data-key="${cur.verse}:${cur.pos}"]`)||document.querySelector(`.word[data-key="${cur.verse}"]`); if(el){el.classList.add('active');curA=parseInt(el.dataset.ayah); el.scrollIntoView({behavior:'smooth',block:'center'});}}
-});
-audio.addEventListener('ended',()=>{if(document.getElementById('autoNext').checked&&curS<114)loadSurah(curS+1);});
-function nextSurah(){if(curS<114)loadSurah(curS+1);}
-function prevSurah(){if(curS>1)loadSurah(curS-1);}
-function downloadSurah(){let a=document.createElement('a');a.href=audio.src;a.download=`${names[curS-1]}.mp3`;a.click();}
-function downloadAyah(){let u=`https://everyayah.com/data/Husary_64kbps/${String(curS).padStart(3,'0')}${String(curA).padStart(3,'0')}.mp3`;let a=document.createElement('a');a.href=u;a.download=`${curS}_${curA}.mp3`;a.click();}
-document.getElementById('reciter').onchange=()=>loadSurah(curS);
-sel.onchange=e=>loadSurah(parseInt(e.target.value));
-document.getElementById('autoNext').onchange=e=>{document.getElementById('badge').textContent=e.target.checked?'تلقائي: شغال':'تلقائي: متوقف';};
-loadSurah(1);
+sel.onchange=e=>load(e.target.value);
+load(1);
 </script>
 </body>
 </html>
