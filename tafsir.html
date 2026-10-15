@@ -1,52 +1,275 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تفسير الميسر</title>
-<style>
-body{background:#0f172a;color:#fff;font-family:Tahoma;margin:0;padding:12px}
-.top{display:flex;gap:6px;position:sticky;top:0;background:#0f172a;z-index:20;padding:10px 0;flex-wrap:wrap}
-.top a{background:#1e293b;padding:10px 14px;border-radius:10px;color:#fff;text-decoration:none;font-size:13px}
-.top a.active{background:#22c55e;color:#000;font-weight:bold}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.card{background:#1e293b;padding:15px;border-radius:12px;text-align:center;cursor:pointer;border:0;width:100%;color:#fff}
-#reader{display:none}
-.box{background:#1e293b;margin-bottom:12px;border-radius:14px;padding:14px;border-right:4px solid #22c55e}
-.quran{font-size:22px;line-height:2}
-.tafsir{margin-top:10px;color:#cbd5e1;font-size:16px;line-height:1.9;background:#0f172a;padding:10px;border-radius:8px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>التفسير الميسر للقرآن الكريم</title>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0b1222;
+      --card-bg: #0f172a;
+      --panel-bg: #1e293b;
+      --border-color: #334155;
+      --accent-green: #22c55e;
+      --accent-gold: #facc15;
+      --accent-blue: #38bdf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Tajawal', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation Bar */
+    .top-nav {
+      background-color: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      padding: 10px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      overflow-x: auto;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .top-nav a {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      padding: 8px 14px;
+      border-radius: 10px;
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .top-nav a.active, .top-nav a:hover {
+      background: var(--accent-green);
+      color: #000;
+      border-color: var(--accent-green);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px 16px;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* Search Bar */
+    .search-box {
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      padding: 12px 16px;
+      border-radius: 12px;
+      color: var(--text-main);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-green);
+    }
+
+    /* Surah Grid */
+    .surah-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .surah-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      padding: 16px;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      color: var(--text-main);
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .surah-card:hover {
+      border-color: var(--accent-green);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(34, 197, 94, 0.15);
+    }
+
+    .surah-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .surah-num {
+      font-size: 12px;
+      color: var(--accent-gold);
+      background: rgba(250, 204, 21, 0.1);
+      padding: 2px 8px;
+      border-radius: 12px;
+      border: 1px solid rgba(250, 204, 21, 0.2);
+    }
+
+    /* Tafsir Reader View */
+    #reader {
+      display: none;
+    }
+
+    .reader-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: 16px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn-back {
+      background: var(--accent-gold);
+      color: #000;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn-back:hover {
+      opacity: 0.9;
+    }
+
+    .font-ctrl {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+
+    .font-btn {
+      background: var(--border-color);
+      color: var(--accent-gold);
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .ayah-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      margin-bottom: 16px;
+      border-radius: 14px;
+      padding: 20px;
+      border-right: 4px solid var(--accent-green);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .quran-text {
+      font-family: 'Amiri Quran', serif;
+      font-size: 24px;
+      line-height: 2.2;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+
+    .ayah-num {
+      color: var(--accent-green);
+      font-size: 0.85em;
+      margin-right: 6px;
+    }
+
+    .tafsir-text {
+      color: #cbd5e1;
+      font-size: 16px;
+      line-height: 1.9;
+      background: var(--panel-bg);
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .loading-status {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
-<div class="top">
-<a href="index.html">🏠 الرئيسية</a>
-<a href="quran-ar.html">🇸🇦 قرآن</a>
-<a class="active">📖 تفسير الميسر</a>
-<a href="quran-en.html">English</a>
-</div>
-<div class="grid" id="list"></div>
-<div id="reader">
-<button onclick="closeReader()" style="background:#ffeb3b;border:0;padding:10px 18px;border-radius:8px;font-weight:bold">⬅ رجوع</button>
-<h2 id="sname"></h2>
-<div id="content"></div>
-</div>
-<script>
-const surahs=[["الفاتحة",1],["البقرة",2],["آل عمران",3],["النساء",4],["المائدة",5],["الأنعام",6],["الأعراف",7],["الأنفال",8],["التوبة",9],["يونس",10],["هود",11],["يوسف",12],["الرعد",13],["إبراهيم",14],["الحجر",15],["النحل",16],["الإسراء",17],["الكهف",18],["مريم",19],["طه",20],["الأنبياء",21],["الحج",22],["المؤمنون",23],["النور",24],["الفرقان",25],["الشعراء",26],["النمل",27],["القصص",28],["العنكبوت",29],["الروم",30],["لقمان",31],["السجدة",32],["الأحزاب",33],["سبأ",34],["فاطر",35],["يس",36],["الصافات",37],["ص",38],["الزمر",39],["غافر",40],["فصلت",41],["الشورى",42],["الزخرف",43],["الدخان",44],["الجاثية",45],["الأحقاف",46],["محمد",47],["الفتح",48],["الحجرات",49],["ق",50],["الذاريات",51],["الطور",52],["النجم",53],["القمر",54],["الرحمن",55],["الواقعة",56],["الحديد",57],["المجادلة",58],["الحشر",59],["الممتحنة",60],["الصف",61],["الجمعة",62],["المنافقون",63],["التغابن",64],["الطلاق",65],["التحريم",66],["الملك",67],["القلم",68],["الحاقة",69],["المعارج",70],["نوح",71],["الجن",72],["المزمل",73],["المدثر",74],["القيامة",75],["الإنسان",76],["المرسلات",77],["النبأ",78],["النازعات",79],["عبس",80],["التكوير",81],["الانفطار",82],["المطففين",83],["الانشقاق",84],["البروج",85],["الطارق",86],["الأعلى",87],["الغاشية",88],["الفجر",89],["البلد",90],["الشمس",91],["الليل",92],["الضحى",93],["الشرح",94],["التين",95],["العلق",96],["القدر",97],["البينة",98],["الزلزلة",99],["العاديات",100],["القارعة",101],["التكاثر",102],["العصر",103],["الهمزة",104],["الفيل",105],["قريش",106],["الماعون",107],["الكوثر",108],["الكافرون",109],["النصر",110],["المسد",111],["الإخلاص",112],["الفلق",113],["الناس",114]];
-const list=document.getElementById('list');
-surahs.forEach(s=>{const b=document.createElement('button');b.className='card';b.innerHTML=`${s[0]}<br><small>${s[1]}</small>`;b.onclick=()=>openTafsir(s[0],s[1]);list.appendChild(b);});
-function closeReader(){document.getElementById('reader').style.display='none';list.style.display='grid';window.scrollTo({top:0,behavior:'smooth'});}
-async function openTafsir(name,id){
-  document.getElementById('sname').innerText='تفسير سورة '+name;
-  list.style.display='none';
-  document.getElementById('reader').style.display='block';
-  document.getElementById('content').innerHTML='جاري تحميل التفسير...';
-  window.scrollTo({top:0,behavior:'smooth'});
-  const [qRes,tRes]=await Promise.all([fetch(`https://api.alquran.cloud/v1/surah/${id}/ar.alafasy`),fetch(`https://api.alquran.cloud/v1/surah/${id}/ar.muyassar`)]);
-  const q=await qRes.json();const t=await tRes.json();
-  let html='';q.data.ayahs.forEach((a,i)=>{html+=`<div class="box"><div class="quran">${a.text} ﴿${a.numberInSurah}﴾</div><div class="tafsir">${t.data.ayahs[i].text}</div></div>`;});
-  document.getElementById('content').innerHTML=html;
-}
-</script>
-</body>
-</html>
-.
+
+  <!-- Navigation Bar -->
+  <div class="top-nav">
+    <a href="index.html">🏠 الرئيسية</a>
+    <a href="quran-ar.html">🇸🇦 المصحف</a>
+    <a class="active">📖 التفسير الميسر</a>
+    <a href="tajweed.html">📘 التجويد</a>
+  </div>
+
+  <div class="container">
+    <!-- Search Bar -->
+    <div class="search-box" id="searchContainer">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 ابحث عن اسم السورة أو رقمها..." oninput="filterSurahs()">
+    </div>
+
+    <!-- Surahs Grid List -->
+    <div class="surah-grid" id="surahGrid"></div>
+
+    <!-- Reader Section -->
+    <div id="reader">
+      <div class="reader-header">
+        <button class="btn-back" onclick="closeReader()">⬅ رجوع للقائمة</button>
+        <h2 id="surahTitle" style="color: var(--accent-green); font-size: 20px;"></h2>
+        <div class="font-ctrl">
+          <button class="font-btn" onclick="changeFontSize(-2)">-</button>
+          <span id="fSizeVal" style="font-size: 13px; font-weight: bold;">24</span>
+          <button class="font-btn" onclick="changeFontSize(2)">+</button>
+        </div>
+      </div>
+      <div id="tafsirContent"></div>
+    </div>
+  </div>
+
+  <script>
+    const surahs = [
+      ["الفاتحة",1],["البقرة",2],["آل عمران",3],["النساء",4],["المائدة",5],["الأنعام",6],["الأعراف",7],["الأنفال",8],["التوبة",9],["يونس",10],["هود",11],["يوسف",12],["الرعد",13],["إبراهيم",14],["الحجر",15],["النحل",16],["الإسراء",17],["الكهف",18],["مريم",19],["طه",20],["الأنبياء",21],["الحج",22],["المؤمنون",23],["النور",24],["الفرقان",25],["الشعراء",26],["النمل",27],["القصص",28],["العنكبوت",29],["الروم",30],["لقمان",31],["السجدة",32],["الأحزاب",33],["سبأ",34],["فاطر",35],["يس",36],["الصافات",37],["ص",38],["الزمر",39],["غافر",40],["فصلت",41],["الشورى",42],["الزخرف",43],["الدخان",44],["الجاثية",45],["الأحقاف",46],["محمد",47],["الفتح",48],["الحجرات",49],["ق",50],["الذاريات",51],["الطور",52],["النجم",53],["القمر",54],["الرحمن",55],["الواقعة",56],["الحديد",57],["المجادلة",58],["الحشر",59],["الممتحنة",60],["الصف",61],["الجمعة",62],["المنافقون",63],["التغابن",64],["الطلاق",65],["التحريم",66],["الملك",67],["القلم",68],["الحاقة",69],["المعارج",70],["نوح",71],["الجن",72],["المزمل",73],["المدثر",74],["القيامة",75],["الإنسان",76],["المرسلات",77],["النبأ",78],["النازعات",79],["عبس",80],["التكوير",81],["الانفطار",82],["المطففين",83],["الانشقاق",84],["البروج",85],["الطارق",86],["الأعلى",87],["الغاشية",88],["الفجر",89],["البلد",90],["الشمس",91],["الليل",92],["الضحى",93],["الشرح",94],["التين",95],["العلق",96],["القدر",97],["البينة",98],["الزلزلة",99],["العاديات",100],["القارعة",101],["التكاثر",102],["العصر",103],["الهمزة",104],["الفيل",105],["قريش",106],["الماعون",107],["الكوثر",108],["الكافرون",109],["النصر",110],["المسد",111],["الإخلاص",112],["الفلق",113],["الناس",114]
+    ];
+
+    let
