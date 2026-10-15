@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تطبيق القرآن الكريم الشامل</title>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <title>التطبيق القرآني الشامل</title>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-color: #0b1222;
@@ -26,48 +26,72 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+    }
+
+    .top-nav {
+      background-color: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      padding: 10px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      gap: 8px;
       align-items: center;
-      justify-content: center;
-      padding: 20px;
+      overflow-x: auto;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
 
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
+    .top-nav button {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      padding: 8px 14px;
+      border-radius: 10px;
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Tajawal', sans-serif;
     }
 
-    .header h1 {
-      font-size: 28px;
-      color: var(--accent-gold);
-      margin-bottom: 8px;
+    .top-nav button.active, .top-nav button:hover {
+      background: var(--accent-green);
+      color: #000;
+      border-color: var(--accent-green);
     }
 
-    .header p {
-      color: var(--text-muted);
-      font-size: 15px;
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px 16px;
+      width: 100%;
+      flex: 1;
     }
+
+    .section-view { display: none; }
+    .section-view.active-section { display: block; }
 
     .grid-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 16px;
-      width: 100%;
-      max-width: 800px;
+      margin-top: 20px;
     }
 
     .nav-card {
       background: var(--panel-bg);
       border: 1px solid var(--border-color);
       border-radius: 16px;
-      padding: 24px;
+      padding: 20px;
       text-align: center;
-      text-decoration: none;
-      color: var(--text-main);
+      cursor: pointer;
       transition: all 0.3s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .nav-card:hover {
@@ -76,54 +100,298 @@
       box-shadow: 0 8px 20px rgba(34, 197, 94, 0.2);
     }
 
-    .nav-icon {
-      font-size: 36px;
+    .nav-icon { font-size: 32px; }
+    .nav-title { font-size: 17px; font-weight: 700; color: var(--accent-green); }
+    .nav-desc { font-size: 12px; color: var(--text-muted); }
+
+    .search-input {
+      width: 100%;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      padding: 12px 16px;
+      border-radius: 12px;
+      color: var(--text-main);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 15px;
+      outline: none;
+      margin-bottom: 20px;
     }
 
-    .nav-title {
-      font-size: 18px;
+    .surah-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .surah-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      padding: 14px;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .surah-card:hover { border-color: var(--accent-green); }
+
+    .reader-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .quran-text {
+      font-family: 'Amiri Quran', serif;
+      font-size: 24px;
+      line-height: 2.2;
+      margin-bottom: 10px;
+    }
+
+    .btn-back {
+      background: var(--accent-gold);
+      color: #000;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 8px;
       font-weight: 700;
-      color: var(--accent-green);
+      cursor: pointer;
+      margin-bottom: 16px;
     }
 
-    .nav-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
+    audio { width: 100%; margin-bottom: 16px; }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h1>📖 المصحف الشريف والتطبيق القرآني</h1>
-    <p>اختر القسم الذي تريد الانتقال إليه</p>
+  <!-- Top Bar -->
+  <div class="top-nav">
+    <button id="btn-home" class="active" onclick="showSection('home')">🏠 الرئيسية</button>
+    <button id="btn-quran" onclick="showSection('quran')">🇸🇦 القرآن الكريم</button>
+    <button id="btn-tafsir" onclick="showSection('tafsir')">📖 التفسير الميسر</button>
+    <button id="btn-tajweed" onclick="showSection('tajweed')">📘 أحكام التجويد</button>
+    <button id="btn-english" onclick="showSection('english')">🇬🇧 English</button>
   </div>
 
-  <div class="grid-container">
-    <a href="quran-ar.html" class="nav-card">
-      <span class="nav-icon">🇸🇦</span>
-      <span class="nav-title">القرآن الكريم (بالعربية)</span>
-      <span class="nav-desc">استماع وتلاوة متزامنة بالصوت والكتابة</span>
-    </a>
+  <div class="container">
 
-    <a href="tafsir.html" class="nav-card">
-      <span class="nav-icon">📖</span>
-      <span class="nav-title">التفسير الميسر</span>
-      <span class="nav-desc">تفسير آيات القرآن الكريم بشكل ميسر ومباشر</span>
-    </a>
+    <!-- HOME -->
+    <div id="sec-home" class="section-view active-section">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h1 style="color: var(--accent-gold); font-size: 24px;">📖 التطبيق القرآني الشامل</h1>
+        <p style="color: var(--text-muted); font-size: 14px;">اختر القسم المطلوب للتصفح والمتابعة</p>
+      </div>
 
-    <a href="tajweed.html" class="nav-card">
-      <span class="nav-icon">📘</span>
-      <span class="nav-title">أحكام التجويد</span>
-      <span class="nav-desc">دليل شامل ومبسط لأحكام التلاوة والتجويد</span>
-    </a>
+      <div class="grid-container">
+        <div class="nav-card" onclick="showSection('quran')">
+          <span class="nav-icon">🇸🇦</span>
+          <span class="nav-title">القرآن الكريم</span>
+          <span class="nav-desc">قراءة واستماع للسور بالصوت والكتابة</span>
+        </div>
 
-    <a href="quran-en.html" class="nav-card">
-      <span class="nav-icon">🇬🇧</span>
-      <span class="nav-title">English Translation</span>
-      <span class="nav-desc">English translation with audio recitation</span>
-    </a>
+        <div class="nav-card" onclick="showSection('tafsir')">
+          <span class="nav-icon">📖</span>
+          <span class="nav-title">التفسير الميسر</span>
+          <span class="nav-desc">تفسير الآيات بأسلوب واضح ومبسط</span>
+        </div>
+
+        <div class="nav-card" onclick="showSection('tajweed')">
+          <span class="nav-icon">📘</span>
+          <span class="nav-title">أحكام التجويد</span>
+          <span class="nav-desc">شرح وتوضيح أحكام وقواعد التلاوة</span>
+        </div>
+
+        <div class="nav-card" onclick="showSection('english')">
+          <span class="nav-icon">🇬🇧</span>
+          <span class="nav-title">English Translation</span>
+          <span class="nav-desc">English translation and audio recitation</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- QURAN ARABIC -->
+    <div id="sec-quran" class="section-view">
+      <h2 style="margin-bottom: 16px; color: var(--accent-green); font-size: 20px;">🇸🇦 القرآن الكريم</h2>
+      <div id="quran-list-view">
+        <input type="text" class="search-input" placeholder="🔍 ابحث عن اسم السورة..." oninput="filterSurahs(this.value, 'quran-grid')">
+        <div class="surah-grid" id="quran-grid"></div>
+      </div>
+      <div id="quran-reader-view" style="display: none;">
+        <button class="btn-back" onclick="closeReader('quran')">⬅ رجوع للسور</button>
+        <h3 id="quran-surah-title" style="margin-bottom: 12px; color: var(--accent-gold);"></h3>
+        <audio id="quran-audio" controls></audio>
+        <div id="quran-content"></div>
+      </div>
+    </div>
+
+    <!-- TAFSIR -->
+    <div id="sec-tafsir" class="section-view">
+      <h2 style="margin-bottom: 16px; color: var(--accent-green); font-size: 20px;">📖 التفسير الميسر</h2>
+      <div id="tafsir-list-view">
+        <input type="text" class="search-input" placeholder="🔍 ابحث عن اسم السورة..." oninput="filterSurahs(this.value, 'tafsir-grid')">
+        <div class="surah-grid" id="tafsir-grid"></div>
+      </div>
+      <div id="tafsir-reader-view" style="display: none;">
+        <button class="btn-back" onclick="closeReader('tafsir')">⬅ رجوع للسور</button>
+        <h3 id="tafsir-surah-title" style="margin-bottom: 12px; color: var(--accent-gold);"></h3>
+        <div id="tafsir-content"></div>
+      </div>
+    </div>
+
+    <!-- TAJWEED -->
+    <div id="sec-tajweed" class="section-view">
+      <h2 style="margin-bottom: 16px; color: var(--accent-blue); font-size: 20px;">📘 أحكام التجويد الميسرة</h2>
+      <div id="tajweed-content"></div>
+    </div>
+
+    <!-- ENGLISH -->
+    <div id="sec-english" class="section-view">
+      <h2 style="margin-bottom: 16px; color: var(--accent-green); font-size: 20px;">🇬🇧 Quran English Translation</h2>
+      <div id="english-list-view">
+        <input type="text" class="search-input" placeholder="🔍 Search Surah..." oninput="filterSurahs(this.value, 'english-grid')">
+        <div class="surah-grid" id="english-grid"></div>
+      </div>
+      <div id="english-reader-view" style="display: none;">
+        <button class="btn-back" onclick="closeReader('english')">⬅ Back to List</button>
+        <h3 id="english-surah-title" style="margin-bottom: 12px; color: var(--accent-gold);"></h3>
+        <audio id="english-audio" controls></audio>
+        <div id="english-content"></div>
+      </div>
+    </div>
+
   </div>
 
+  <script>
+    const surahsList = [
+      ["الفاتحة",1],["البقرة",2],["آل عمران",3],["النساء",4],["المائدة",5],["الأنعام",6],["الأعراف",7],["الأنفال",8],["التوبة",9],["يونس",10],["هود",11],["يوسف",12],["الرعد",13],["إبراهيم",14],["الحجر",15],["النحل",16],["الإسراء",17],["الكهف",18],["مريم",19],["طه",20],["الأنبياء",21],["الحج",22],["المؤمنون",23],["النور",24],["الفرقان",25],["الشعراء",26],["النمل",27],["القصص",28],["العنكبوت",29],["الروم",30],["لقمان",31],["السجدة",32],["الأحزاب",33],["سبأ",34],["فاطر",35],["يس",36],["الصافات",37],["ص",38],["الزمر",39],["غافر",40],["فصلت",41],["الشورى",42],["الزخرف",43],["الدخان",44],["الجاثية",45],["الأحقاف",46],["محمد",47],["الفتح",48],["الحجرات",49],["ق",50],["الذاريات",51],["الطور",52],["النجم",53],["القمر",54],["الرحمن",55],["الواقعة",56],["الحديد",57],["المجادلة",58],["الحشر",59],["الممتحنة",60],["الصف",61],["الجمعة",62],["المنافقون",63],["التغابن",64],["الطلاق",65],["التحريم",66],["الملك",67],["القلم",68],["الحاقة",69],["المعارج",70],["نوح",71],["الجن",72],["المزمل",73],["المدثر",74],["القيامة",75],["الإنسان",76],["المرسلات",77],["النبأ",78],["النازعات",79],["عبس",80],["التكوير",81],["الانفطار",82],["المطففين",83],["الانشقاق",84],["البروج",85],["الطارق",86],["الأعلى",87],["الغاشية",88],["الفجر",89],["البلد",90],["الشمس",91],["الليل",92],["الضحى",93],["الشرح",94],["التين",95],["العلق",96],["القدر",97],["البينة",98],["الزلزلة",99],["العاديات",100],["القارعة",101],["التكاثر",102],["العصر",103],["الهمزة",104],["الفيل",105],["قريش",106],["الماعون",107],["الكوثر",108],["الكافرون",109],["النصر",110],["المسد",111],["الإخلاص",112],["الفلق",113],["الناس",114]
+    ];
+
+    function showSection(secId) {
+      document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active-section'));
+      document.querySelectorAll('.top-nav button').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(`sec-${secId}`).classList.add('active-section');
+      document.getElementById(`btn-${secId}`).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderGrids() {
+      ['quran-grid', 'tafsir-grid', 'english-grid'].forEach(gridId => {
+        const grid = document.getElementById(gridId);
+        if(!grid) return;
+        grid.innerHTML = '';
+        surahsList.forEach(s => {
+          const card = document.createElement('div');
+          card.className = 'surah-card';
+          card.innerHTML = `<span style="font-weight: bold; font-size: 15px;">${s[0]}</span><span style="font-size: 12px; color: var(--accent-gold);">سورة ${s[1]}</span>`;
+          card.onclick = () => loadSurahContent(s[1], s[0], gridId.split('-')[0]);
+          grid.appendChild(card);
+        });
+      });
+    }
+
+    function filterSurahs(query, gridId) {
+      const q = query.trim().toLowerCase();
+      const grid = document.getElementById(gridId);
+      if(!grid) return;
+      grid.innerHTML = '';
+      const filtered = surahsList.filter(s => s[0].includes(q) || s[1].toString() === q);
+      filtered.forEach(s => {
+        const card = document.createElement('div');
+        card.className = 'surah-card';
+        card.innerHTML = `<span style="font-weight: bold; font-size: 15px;">${s[0]}</span><span style="font-size: 12px; color: var(--accent-gold);">سورة ${s[1]}</span>`;
+        card.onclick = () => loadSurahContent(s[1], s[0], gridId.split('-')[0]);
+        grid.appendChild(card);
+      });
+    }
+
+    async function fetchWithFallback(url) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("HTTP error");
+        return await response.json();
+      } catch (err) {
+        return null;
+      }
+    }
+
+    async function loadSurahContent(id, name, mode) {
+      document.getElementById(`${mode}-list-view`).style.display = 'none';
+      document.getElementById(`${mode}-reader-view`).style.display = 'block';
+      document.getElementById(`${mode}-surah-title`).innerText = `سورة ${name}`;
+      const contentEl = document.getElementById(`${mode}-content`);
+      contentEl.innerHTML = '<div style="text-align:center; padding: 30px; color: var(--text-muted);">⏳ جاري تحميل النص...</div>';
+
+      if (mode === 'quran') {
+        const data = await fetchWithFallback(`https://api.alquran.cloud/v1/surah/${id}/quran-uthmani`);
+        if (data && data.data && data.data.ayahs) {
+          const audioEl = document.getElementById('quran-audio');
+          audioEl.src = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${data.data.ayahs[0].number}.mp3`;
+          let html = '';
+          data.data.ayahs.forEach(a => {
+            html += `<div class="reader-box"><div class="quran-text">${a.text} <span style="color:var(--accent-green);">﴿${a.numberInSurah}﴾</span></div></div>`;
+          });
+          contentEl.innerHTML = html;
+        } else {
+          contentEl.innerHTML = `<div class="reader-box"><div class="quran-text">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div><p style="color:var(--text-muted); margin-top:10px;">تعذر الاتصال المباشر بالخادم. يرجى التحقق من الاتصال بالإنترنت.</p></div>`;
+        }
+      } else if (mode === 'tafsir') {
+        const qData = await fetchWithFallback(`https://api.alquran.cloud/v1/surah/${id}/quran-uthmani`);
+        const tData = await fetchWithFallback(`https://api.alquran.cloud/v1/surah/${id}/ar.muyassar`);
+
+        if (qData && qData.data && tData && tData.data) {
+          let html = '';
+          qData.data.ayahs.forEach((a, i) => {
+            const tafsirText = tData.data.ayahs[i] ? tData.data.ayahs[i].text : 'التفسير متاح أثناء الاتصال بالشبكة.';
+            html += `<div class="reader-box"><div class="quran-text">${a.text} ﴿${a.numberInSurah}﴾</div><div style="color:#cbd5e1; padding:12px; background:var(--panel-bg); border-radius:8px; margin-top:8px;">${tafsirText}</div></div>`;
+          });
+          contentEl.innerHTML = html;
+        } else {
+          contentEl.innerHTML = `<div class="reader-box"><p style="color:var(--text-muted);">تأكد من الاتصال بالإنترنت لتحميل التفسير الميسر كاملًا.</p></div>`;
+        }
+      } else if (mode === 'english') {
+        const arData = await fetchWithFallback(`https://api.alquran.cloud/v1/surah/${id}/quran-uthmani`);
+        const enData = await fetchWithFallback(`https://api.alquran.cloud/v1/surah/${id}/en.sahih`);
+
+        if (arData && arData.data && enData && enData.data) {
+          let html = '';
+          arData.data.ayahs.forEach((a, i) => {
+            html += `<div class="reader-box"><div class="quran-text" style="direction:rtl;">${a.text} ﴿${a.numberInSurah}﴾</div><div style="color:#cbd5e1; margin-top:8px;">${enData.data.ayahs[i].text}</div></div>`;
+          });
+          contentEl.innerHTML = html;
+        } else {
+          contentEl.innerHTML = `<div class="reader-box"><p style="color:var(--text-muted);">Please verify your internet connection to load English translation.</p></div>`;
+        }
+      }
+    }
+
+    function closeReader(mode) {
+      document.getElementById(`${mode}-reader-view`).style.display = 'none';
+      document.getElementById(`${mode}-list-view`).style.display = 'block';
+    }
+
+    function renderTajweed() {
+      const tajweedData = [
+        { title: "النون الساكنة والتنوين", text: "أربعة أحكام: الإظهار الحلقي (ء هـ ع ح غ خ)، الإدغام (ينمو / ل ر)، الإقلاب (ب)، الإخفاء الحقيقي (باقي الحروف)." },
+        { title: "الميم الساكنة", text: "ثلاثة أحكام: الإخفاء الشفوي (عند الباء)، إدغام المثلين الصغير (عند الميم)، الإظهار الشفوي (باقي الحروف)." },
+        { title: "أحكام المدود", text: "المد الطبيعي (حركتان)، المد المتصل (4-5 حركات)، المد المنفصل (2-4-5 حركات)، المد اللازم (6 حركات)." },
+        { title: "القلقلة", text: "حروفها مجمعة في (قطب جد)، وتكون صغرى في وسط الكلمة، وكبرى عند الوقف عليها." }
+      ];
+      let html = '';
+      tajweedData.forEach(t => {
+        html += `<div class="reader-box"><h3 style="color:var(--accent-gold); margin-bottom:8px;">${t.title}</h3><p style="color:var(--text-muted); line-height:1.7;">${t.text}</p></div>`;
+      });
+      document.getElementById('tajweed-content').innerHTML = html;
+    }
+
+    // Initialize UI
+    renderGrids();
+    renderTajweed();
+  </script>
 </body>
 </html>
