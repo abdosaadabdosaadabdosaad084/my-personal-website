@@ -51,6 +51,7 @@ audio{width:100%;margin:10px 0}
 <option value="ar.shaatree">أبو بكر الشاطري</option>
 <option value="ar.muhammadayyoub">محمد أيوب</option>
 <option value="ar.muhammadjibreel">محمد جبريل</option>
+<option value="ar.hatemfarid">حاتم فريد الواعر</option>
 </select>
 <div class="font-ctrl">
 <button onclick="changeFont(-2)">-</button>
@@ -82,12 +83,14 @@ function restartCurrent(){qariNow=document.getElementById('qari').value;playAyah
 function downloadSurah(){
  if(qariNow==='ar.tablawi'){
    window.open(`https://server12.mp3quran.net/tblawi/${String(currentSurahId).padStart(3,'0')}.mp3`,'_blank');
+ }else if(qariNow==='ar.hatemfarid'){
+   window.open(`https://server11.mp3quran.net/hatem/${String(currentSurahId).padStart(3,'0')}.mp3`,'_blank');
  }else{
    window.open(`https://cdn.islamic.network/quran/audio-surah/128/${qariNow}/${currentSurahId}.mp3`,'_blank');
  }
 }
 function downloadAyah(n){
- if(qariNow==='ar.tablawi') return;
+ if(qariNow==='ar.tablawi' || qariNow==='ar.hatemfarid') return;
  window.open(`https://cdn.islamic.network/quran/audio/128/${qariNow}/${n}.mp3`,'_blank');
 }
 async function openSurah(name,id){
@@ -113,7 +116,6 @@ async function openSurah(name,id){
 }
 const WAQF_LIST=['ۘ','ۗ','ۚ','ۙ','ۖ','ۛ','ۜ','۝','۞','۟','۠','ۡ','ۢ','ۣ','ۤ','ۥ','ۦ','ۧ','ۨ','۩','ؗ','ؘ','ؙ','ؚ','ۓ','ـ','؞'];
 const WAQF_WORDS=['صلى','قلى','صه','قل','ج','لا','صل','قلي','ص','مـ','ه','ـ','قلى','صلى','م','لا','ج','صه','ق','صل'];
-const HIZB_MARKS=['۞','۩'];
 function isWaqfMark(txt){
  let w=txt.trim().replace(/[﴿﴾۝٠-٩0-9{}]/g,'').trim();
  if(!w) return true;
@@ -145,9 +147,10 @@ function playAyahByIndex(idx){
  if(!el){playAyahByIndex(idx+1);return;}
  el.classList.add('active');el.scrollIntoView({behavior:'smooth',block:'center'});
  const audio=document.getElementById('audio');
- if(qariNow==='ar.tablawi'){
+ if(qariNow==='ar.tablawi' || qariNow==='ar.hatemfarid'){
    if(idx===0){
-     audio.src=`https://server12.mp3quran.net/tblawi/${String(currentSurahId).padStart(3,'0')}.mp3`;
+     let server = qariNow==='ar.tablawi'? 'https://server12.mp3quran.net/tblawi/' : 'https://server11.mp3quran.net/hatem/';
+     audio.src=server+String(currentSurahId).padStart(3,'0')+'.mp3';
      audio.play().catch(()=>{});
      audio.onloadedmetadata=()=>{
        const allWords=Array.from(document.querySelectorAll('.word'));
@@ -167,7 +170,6 @@ function playAyahByIndex(idx){
          document.querySelectorAll('.word.active-word').forEach(x=>x.classList.remove('active-word'));
          if(w<highlightWords.length){
            highlightWords[w].classList.add('active-word');
-           highlightWords[w].scrollIntoView({behavior:'smooth',block:'center'});
            w++;
          }else{clearInterval(wordTimer);}
        },per);
