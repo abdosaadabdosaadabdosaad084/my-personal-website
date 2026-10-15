@@ -1,42 +1,248 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>أحكام التجويد</title>
-<link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0}body{background:#0b1222;color:#fff;font-family:'Tajawal'}
-.header{background:linear-gradient(135deg,#0f172a,#1e3a5f);padding:22px;text-align:center;border-bottom:2px solid #38bdf8}
-.header h1{color:#38bdf8;font-size:26px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
-.item{background:#1e293b;border:1px solid #334155;padding:16px;border-radius:14px;cursor:pointer}
-.detail{background:#0f172a;border:1px solid #1e293b;margin:12px;border-radius:16px;padding:18px}
-.rule{color:#22c55e;font-weight:bold;font-size:20px;margin:10px 0}
-.ex{font-family:'Amiri Quran';font-size:24px;background:#1e293b;padding:12px;border-radius:10px;text-align:center;margin:8px 0;border-right:4px solid #facc15}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>دليل أحكام التجويد الشامل</title>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0b1222;
+      --card-bg: #0f172a;
+      --panel-bg: #1e293b;
+      --border-color: #334155;
+      --accent-blue: #38bdf8;
+      --accent-gold: #facc15;
+      --accent-green: #22c55e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Tajawal', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header Design */
+    .header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+      padding: 24px 16px;
+      text-align: center;
+      border-bottom: 2px solid var(--accent-blue);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .header h1 {
+      color: var(--accent-blue);
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* Search Container */
+    .search-container {
+      max-width: 900px;
+      margin: 16px auto 8px auto;
+      padding: 0 16px;
+      width: 100%;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      padding: 12px 16px;
+      border-radius: 12px;
+      color: var(--text-main);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-blue);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 16px;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* Category Cards Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      padding: 16px 20px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card:hover {
+      border-color: var(--accent-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(56, 189, 248, 0.15);
+    }
+
+    .card.active {
+      border-color: var(--accent-gold);
+      background: #1e3a5f;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .card-badge {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-blue);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* Details Panel */
+    .detail-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .panel-header {
+      color: var(--accent-blue);
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Rules Item Styling */
+    .rule-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-right: 4px solid var(--accent-gold);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .rule-name {
+      color: var(--accent-green);
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .rule-letters {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .rule-example {
+      font-family: 'Amiri Quran', serif;
+      font-size: 22px;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 10px 16px;
+      border-radius: 8px;
+      text-align: center;
+      color: var(--accent-gold);
+      line-height: 1.8;
+    }
+  </style>
 </head>
 <body>
-<div class="header"><h1>📘 أحكام التجويد - من الألف إلى الياء</h1></div>
-<div class="grid">
-<div class="item" onclick="show(0)"><h3>النون الساكنة والتنوين</h3><p>5 أحكام</p></div>
-<div class="item" onclick="show(1)"><h3>الميم الساكنة</h3><p>3 أحكام</p></div>
-<div class="item" onclick="show(2)"><h3>المدود</h3><p>9 أنواع</p></div>
-<div class="item" onclick="show(3)"><h3>القلقلة</h3><p>قطب جد</p></div>
-<div class="item" onclick="show(4)"><h3>التفخيم والترقيق</h3><p>الراء واللام</p></div>
-<div class="item" onclick="show(5)"><h3>المخارج والصفات</h3><p>17 مخرج</p></div>
-</div>
-<div id="box" class="detail"></div>
-<script>
-const data=[
-{title:"النون الساكنة والتنوين",list:["الإظهار: ء هـ ع ح غ خ - مثال: مِنْ هَادٍ","الإدغام بغنة: ي ن م و - مِنْ نِعْمَةٍ","الإدغام بغير غنة: ل ر - مِنْ لَدُنْهُ","الإقلاب: ب - مِنْ بَعْدِ تقلب ميما","الإخفاء: باقي الحروف - كُنْتُمْ"]},
-{title:"الميم الساكنة",list:["الإخفاء الشفوي: ب - هُمْ بِهِ","إدغام المثلين: م - لَكُمْ مَا","الإظهار الشفوي: باقي الحروف - لَعَلَّكُمْ تَتَّقُونَ"]},
-{title:"المدود",list:["الطبيعي حركتان: قَالَ","البدل: آمَنُوا","المتصل 4-5: جَاءَ","المنفصل 2-4-5: إِنَّا أَنْزَلْنَاهُ","اللازم 6 حركات: الْحَاقَّةُ","العارض للسكون: الْعَالَمِينَ","اللين: خَوْفٍ"]},
-{title:"القلقلة - قطب جد",list:["قلقلة صغرى وسط الكلمة: يَقْطَعُونَ","قلقلة كبرى آخر الكلمة: الْفَلَقْ","الغنة: إِنَّ - ثُمَّ"]},
-{title:"التفخيم والترقيق",list:["الراء مفخمة إذا مفتوحة أو مضمومة: رَمَضَانَ","الراء مرققة إذا مكسورة: رِزْقًا","لام لفظ الجلالة مفخمة بعد فتح أو ضم: عَبْدُ اللَّهِ","مرققة بعد كسر: بِسْمِ اللَّهِ"]},
-{title:"مخارج الحروف 17",list:["الجوف: حروف المد ا و ي","الحلق: 6 حروف ء هـ ع ح غ خ","اللسان: 10 مخارج","الشفتان: الواو والباء والميم","الخيشوم: الغنة"]}
-];
-function show(i){let d=data[i];let h=`<h2 style="color:#38bdf8">${d.title}</h2>`;d.list.forEach(e=>{h+=`<div class="ex">${e}</div>`});document.getElementById('box').innerHTML=h;window.scrollTo(0,300);}
-show(0);
-</script>
-</body>
-</html>
+
+  <!-- Header -->
+  <div class="header">
+    <h1>📘 موسوعة أحكام التجويد الميسرة</h1>
+    <p>دليل مرجعي شامل لقواعد وركائز تلاوة القرآن الكريم</p>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-container">
+    <input type="text" id="searchInput" class="search-input" placeholder="🔍 ابحث عن حكم أو مثال (مثل: الإظهار، القلقلة، مد...)" oninput="filterRules()">
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="grid" id="cardsGrid"></div>
+    <div class="detail-panel" id="detailPanel"></div>
+  </div>
+
+  <script>
+    const tajweedData = [
+      {
+        title: "النون الساكنة والتنوين",
+        badge: "4 أحكام",
+        rules: [
+          { name: "1. الإظهار الحلقي", letters: "حروفه: ء ، هـ ، ع ، ح ، غ ، خ", example: "مِنْ هَادٍ - أَنْعَمْتَ - كُفُوًا أَحَدٌ" },
+          { name: "2. الإدغام بغنة", letters: "حروفه يجمعها رمز: ( يَنْمُو )", example: "مَنْ يَقُولُ - مِنْ نِعْمَةٍ - مَالاً لُبَدًا" },
+          { name: "3. الإدغام بغير غنة", letters: "حروفه: ل ، ر", example: "مِنْ لَدُنْهُ - مِنْ رَبِّهِمْ" },
+          { name: "4. الإقلاب", letters: "حرفه: ب (تقلب النون أو التنوين ميماً مخفاة بغنة)", example: "مِنْ بَعْدِ - سَمِيعٌ بَصِيرٌ" },
+          { name: "5. الإخفاء الحقيقي", letters: "باقي الحروف (15 حرفاً)", example: "كُنْتُمْ - أَنْصَاراً - مَنْ صَلَحَ" }
+        ]
+      },
+      {
+        title: "الميم الساكنة",
+        badge: "3 أحكام",
+        rules: [
+          { name: "1. الإخفاء الشفوي", letters: "حرفه: ب (مع إظهار الغنة)", example: "تَرْمِيهِمْ بِحِجَارَةٍ - هُمْ بِهِ" },
+          { name: "2. إدغام المثلين الصغير", letters: "حرفه: م (إدغام الميم بالماثل مع الغنة)", example: "لَكُمْ مَا كَسَبْتُمْ - فِي قُلُوبِهِمْ مَرَضٌ" },
+          { name: "3. الإظهار الشفوي", letters: "باقي حروف الهجاء (مع الحذر عند الفاء والواو)", example: "لَعَلَّكُمْ تَتَّقُونَ - أَلَمْ تَرَ" }
+        ]
+      },
+      {
+        title: "أنواع المدود",
+        badge: "أحكام المد",
+        rules: [
+          { name: "1. المد الطبيعي (الأصلي)", letters: "مقداره: حركتان", example: "قَالَ - يَقُولُ - قِيلَ" },
+          { name: "2. مد البدل", letters: "مقداره: حركتان (تقدم الهمز على المد)", example: "آمَنُوا - أُوتُوا - إِيمَانًا" },
+          { name: "3. المد الواجب المتصل", letters: "مقداره: 4 أو 5 حركات (اجتماع الشرط والسبب بكلمة)", example: "جَاءَ - السَّمَاءِ - سُوءَ" },
+          { name: "4. المد الجائز المنفصل", letters: "مقداره: 2 أو 4 أو 5 حركات", example: "إِنَّا أَنْزَلْنَاهُ - قُوا أَنْفُسَكُمْ" },
+          { name: "5. المد اللازم", letters: "مقداره: 6 حركات لزوماً", example: "الْحَاقَّةُ - الصَّاخَّةُ - آلآنَ" },
+          { name: "6. المد العارض للسكون", letters: "مقداره: 2 أو 4 أو 6 حركات عند الوقف", example: "الْعَالَمِينَ - النَّاسِ - الْمُفْلِحُونَ" },
+          { name: "7. مد اللين", letters: "مقداره: 2 أو 4 أو 6 حركات عند الوقف على واو/ياء ساكنة مفتوح ما قبلها", example: "خَوْفٍ - بَيْتٍ" }
+        ]
+      },
+      {
+        title: "القلقلة وأحكامها",
+        badge: "قطب جد",
+        rules: [
+          { name: "حروف القلقلة", letters: "مجمعة في كلمة: ( قَطْبُ جَدٍّ )", example: "ق - ط - ب - ج - د" },
+          { name: "1. قلقلة صغرى", letters: "عندما يكون حرف القلقلة ساكناً وسط الكلمة أو الكلام", example: "يَقْطَعُونَ - إِبْرَاهِيمُ - يَدْخُلُونَ" },
+          { name: "2
