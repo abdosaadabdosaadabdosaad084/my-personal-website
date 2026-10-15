@@ -171,7 +171,7 @@
 
     .reader-box.active-ayah-box {
       border-color: var(--accent-gold) !important;
-      background: rgba(250, 204, 21, 0.06);
+      background: rgba(250, 204, 21, 0.08);
       box-shadow: 0 0 12px rgba(250, 204, 21, 0.2);
     }
 
@@ -214,7 +214,7 @@
     .ayah-actions {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       margin-top: 6px;
       border-top: 1px solid var(--border-color);
       padding-top: 6px;
@@ -224,7 +224,7 @@
       background: var(--panel-bg);
       border: 1px solid var(--border-color);
       color: var(--accent-blue);
-      padding: 4px 10px;
+      padding: 5px 12px;
       border-radius: 6px;
       font-size: 12px;
       text-decoration: none;
@@ -233,6 +233,12 @@
       gap: 4px;
       cursor: pointer;
       font-weight: bold;
+      transition: all 0.2s;
+    }
+
+    .btn-download:hover {
+      background: var(--border-color);
+      color: var(--accent-gold);
     }
 
     .btn-back {
@@ -247,39 +253,47 @@
       margin-bottom: 10px;
     }
 
-    audio { width: 100%; height: 36px; margin-bottom: 10px; }
+    audio { width: 100%; height: 38px; margin-bottom: 10px; }
 
     .tajweed-section-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 10px;
-      border-right: 4px solid var(--accent-gold);
+      padding: 16px;
+      margin-bottom: 14px;
+      border-right: 5px solid var(--accent-gold);
     }
 
     .tajweed-h2 {
-      font-size: 17px;
+      font-size: 18px;
       color: var(--accent-gold);
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       font-weight: 800;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 6px;
     }
 
     .tajweed-rule {
-      margin-bottom: 8px;
-      line-height: 1.7;
+      margin-bottom: 12px;
+      line-height: 1.8;
       font-size: 14px;
+      color: #e2e8f0;
+    }
+
+    .tajweed-rule b {
+      color: var(--accent-green);
     }
 
     .tajweed-ex {
       font-family: 'Amiri Quran', serif;
-      font-size: 19px;
-      color: var(--accent-green);
+      font-size: 18px;
+      color: var(--accent-blue);
       background: var(--panel-bg);
       padding: 4px 10px;
       border-radius: 6px;
       display: inline-block;
       margin-top: 4px;
+      border: 1px solid var(--border-color);
     }
 
     .signature-badge {
@@ -322,7 +336,7 @@
         <div class="nav-card" id="card-quran">
           <span class="nav-icon">🇸🇦</span>
           <span class="nav-title">القرآن الكريم</span>
-          <span class="nav-desc">تلاوة تلقائية مستمرة وتحديد الآية والترجمة باللمس</span>
+          <span class="nav-desc">تلاوة تلقائية متصلة، تنقل بين السور، وتحميل الأجزاء</span>
         </div>
 
         <div class="nav-card" id="card-tafsir">
@@ -334,7 +348,7 @@
         <div class="nav-card" id="card-tajweed">
           <span class="nav-icon">📘</span>
           <span class="nav-title">أحكام التجويد الشاملة</span>
-          <span class="nav-desc">دليل كامل ومبسط لقواعد التلاوة</span>
+          <span class="nav-desc">دليل كامل ومفصل لقواعد التلاوة والتجويد</span>
         </div>
 
         <div class="nav-card" id="card-english">
@@ -405,7 +419,7 @@
 
     <div id="sec-tajweed" class="section-view">
       <button class="btn-back btn-go-home">🏠 الرئيسية</button>
-      <h2 style="margin-bottom: 12px; color: var(--accent-blue); font-size: 18px;">📘 موسوعة أحكام التجويد الاحترافية</h2>
+      <h2 style="margin-bottom: 12px; color: var(--accent-blue); font-size: 18px;">📘 موسوعة أحكام التجويد الشاملة</h2>
       <div id="tajweed-content"></div>
     </div>
 
@@ -570,10 +584,12 @@
               return '<span class="word-span" onclick="showWordTranslation(event, \'' + w.replace(/'/g, "\\'") + '\')">' + w + '</span>';
             }).join(' ');
 
-            html += '<div class="reader-box" id="ayah-box-' + k + '">' +
+            var ayahAudioUrl = getEveryAyahUrl(currentQariPath, id, a.numberInSurah);
+
+            html += '<div class="reader-box" id="ayah-box-' + k + '" onclick="playAyahAudio(' + k + ')">' +
                       '<div class="quran-text">' + wordsHtml + ' ﴿' + a.numberInSurah + '﴾</div>' +
                       '<div class="ayah-actions">' +
-                        '<button class="btn-download" onclick="playAyahAudio(' + k + ')">▶ تشغيل الآية</button>' +
+                        '<a class="btn-download" href="' + ayahAudioUrl + '" download target="_blank" onclick="event.stopPropagation();">تحميل الآية ⬇️</a>' +
                       '</div>' +
                     '</div>';
           }
@@ -620,22 +636,46 @@
       tajweedContent.innerHTML = 
         '<div class="tajweed-section-card">' +
           '<h2 class="tajweed-h2">1. أحكام النون الساكنة والتنوين</h2>' +
-          '<div class="tajweed-rule"><b>الإظهار الحلقي:</b> إخراج الحرف من مخرجه بدون غنة عند حروف (أ، هـ، ع، ح، غ، خ). <br><span class="tajweed-ex">مثال: مَنْ آمَنَ</span></div>' +
-          '<div class="tajweed-rule"><b>الإدغام:</b> إدماج النون في الحرف التالي (يرملون). بغنة (ينمو) وبغير غنة (ر، ل). <br><span class="tajweed-ex">مثال: مَن يَقُولُ</span></div>' +
-          '<div class="tajweed-rule"><b>الإقلاب:</b> قلب النون أو التنوين ميماً مخفاة بغنة عند حرف الباء. <br><span class="tajweed-ex">مثال: مِن بَعْدِ</span></div>' +
-          '<div class="tajweed-rule"><b>الإخفاء الحقيقي:</b> النطق بالحرف بين الإظهار والإدغام عند بقية الحروف 15. <br><span class="tajweed-ex">مثال: عَن صَلَاتِهِمْ</span></div>' +
+          '<div class="tajweed-rule"><b>التعريف:</b> النون الساكنة هي نون خالية من الحركة تثبت لفظاً وخطاً ووصلاً ووققاً. والتنوين نون زائدة تلحق آخر الأسماء لفظاً وتفارقه خطاً ووققاً. ولهما 4 أحكام أساسية:</div>' +
+          '<div class="tajweed-rule"><b>أ) الإظهار الحلقي:</b> إخراج النون الساكنة أو التنوين من مخرجها دون غنة ظاهرة عند لقائها بأحد حروف الحلق الستة: (أ، هـ، ع، ح، غ، خ). <br><span class="tajweed-ex">أمثلة: مَنْ آمَنَ | يَنْهَوْنَ | مِنْ غِلٍّ</span></div>' +
+          '<div class="tajweed-rule"><b>ب) الإدغام:</b> إدخال حرف ساكن بحرف متحرك بحيث يصيران حرفاً واحداً مشدداً. حروفه مجموعة في كلمة (يَرْمَلُون) وينقسم إلى: <br>' +
+          '• <i>إدغام بغنة:</i> مع حروف (يَنْمُو). <span class="tajweed-ex">مثال: مَن يَقُولُ | خَيْرًا يَرَهُ</span><br>' +
+          '• <i>إدغام بغير غنة:</i> مع حرفي (الراء واللام). <span class="tajweed-ex">مثال: مِن رَّبِّهِمْ | هُدًى لِّلْمُتَّقِينَ</span></div>' +
+          '<div class="tajweed-rule"><b>ج) الإقلاب:</b> قلب النون الساكنة أو التنوين ميماً مخفاة بغنة عند التقائها بحرف الباء. <br><span class="tajweed-ex">مثال: مِن بَعْدِ | أَنبِئْهُم | سَمِيعٌ بَصِيرٌ</span></div>' +
+          '<div class="tajweed-rule"><b>د) الإخفاء الحقيقي:</b> النطق بالنون أو التنوين بصفة بين الإظهار والإدغام عارياً عن التشديد مع بقاء الغنة عند الحروف الـ 15 المتبقية. <br><span class="tajweed-ex">مثال: عَن صَلَاتِهِمْ | كَأْسًا دِهَاقًا | يَنطِقُونَ</span></div>' +
         '</div>' +
+
         '<div class="tajweed-section-card">' +
           '<h2 class="tajweed-h2">2. أحكام الميم الساكنة</h2>' +
-          '<div class="tajweed-rule"><b>الإخفاء الشفوي:</b> عند حرف الباء بغنة. <br><span class="tajweed-ex">مثال: تَرْمِيهِم بِحِجَارَةٍ</span></div>' +
-          '<div class="tajweed-rule"><b>الإدغام الشفوي (المثلين):</b> عند ميم مثلها بغنة. <br><span class="tajweed-ex">مثال: لَهُم مَّا يَشَاءُونَ</span></div>' +
-          '<div class="tajweed-rule"><b>الإظهار الشفوي:</b> عند باقي الحروف. <br><span class="tajweed-ex">مثال: أَنعَمتَ عَلَيهِم</span></div>' +
+          '<div class="tajweed-rule"><b>التعريف:</b> الميم الخالية من الحركة والتي تقع قبل حروف الهجاء عدا حروف المد. لها 3 أحكام:</div>' +
+          '<div class="tajweed-rule"><b>أ) الإخفاء الشفوي:</b> عند وقوع حرف الباء بعد الميم الساكنة مع مصاحبة الغنة. <br><span class="tajweed-ex">مثال: تَرْمِيهِم بِحِجَارَةٍ | يَعْتَصِم بِاللَّهِ</span></div>' +
+          '<div class="tajweed-rule"><b>ب) إدغام المتماثلين الصغير:</b> عند وقوع ميم متحركة بعد الميم الساكنة وتدغم الميم بالثانية مع الغنة. <br><span class="tajweed-ex">مثال: لَهُم مَّا يَشَاءُونَ | كَم مِّن فِئَةٍ</span></div>' +
+          '<div class="tajweed-rule"><b>ج) الإظهار الشفوي:</b> بيان الميم الساكنة عند بقية الحروف الـ 26، ويكون أشد إظهاراً عند الفاء والواو لعدم إخفائها. <br><span class="tajweed-ex">مثال: أَنعَمتَ عَلَيهِمْ | هُمْ فِيهَا</span></div>' +
         '</div>' +
+
         '<div class="tajweed-section-card">' +
-          '<h2 class="tajweed-h2">3. أحكام المدود</h2>' +
-          '<div class="tajweed-rule"><b>المد الطبيعي:</b> يمد بمقدار حركتين. <br><span class="tajweed-ex">مثال: قَالَ ، قِيلَ ، يَقُولُ</span></div>' +
-          '<div class="tajweed-rule"><b>المد المتصل:</b> حرف المد والهمزة في كلمة واحدة (يمد 4 أو 5 حركات). <br><span class="tajweed-ex">مثال: جَاءَ ، السَّمَاءِ</span></div>' +
-          '<div class="tajweed-rule"><b>المد المنفصل:</b> حرف المد في كلمة والهمزة في بداية الكلمة التالية. <br><span class="tajweed-ex">مثال: فِي أَنفُسِكُمْ</span></div>' +
+          '<h2 class="tajweed-h2">3. أحكام الميم والنون المشددتين (الغنة)</h2>' +
+          '<div class="tajweed-rule"><b>الحكم:</b> يجب إظهار الغنة بمقدار حركتين في النون والميم المشددتين سواءً كانتا في وسط الكلمة أو في آخرها، ويسمى كل منهما "حرف غنة مشدد". <br><span class="tajweed-ex">مثال: إِنَّ | ثُمَّ | ٱلنَّاسِ | ٱلْجِنَّةِ</span></div>' +
+        '</div>' +
+
+        '<div class="tajweed-section-card">' +
+          '<h2 class="tajweed-h2">4. أحكام المدود وأنواعها</h2>' +
+          '<div class="tajweed-rule"><b>حروف المد:</b> الألف الساكنة المفتوح ما قبلها، الواو الساكنة المضموم ما قبلها، الياء الساكنة المكسور ما قبلها (مجمعة في: نُوحِيهَا).</div>' +
+          '<div class="tajweed-rule"><b>أ) المد الأصلي (الطبيعي):</b> لا يتوقف على سبب كهمز أو سكون، ويمد بمقدار حركتين. <br><span class="tajweed-ex">مثال: قَالَ | قِيلَ | يَقُولُ</span></div>' +
+          '<div class="tajweed-rule"><b>ب) المد الفرعي (بسبب الهمز):</b><br>' +
+          '• <i>المد المتصل:</i> أن يجتمع حرف المد والهمزة في كلمة واحدة، وحكمه وجوب المد (4 أو 5 حركات). <span class="tajweed-ex">مثال: جَاءَ | السَّمَاءِ</span><br>' +
+          '• <i>المد المنفصل:</i> أن يأتي حرف المد في نهاية كلمة والهمزة في بداية الكلمة التالية (4 أو 5 حركات). <span class="tajweed-ex">مثال: فِي أَنفُسِكُمْ | قُو أَنفُسَكُمْ</span></div>' +
+          '<div class="tajweed-rule"><b>ج) المد الفرعي (بسبب السكون):</b><br>' +
+          '• <i>المد العارض للسكون:</i> أن يأتي بعد حرف المد سكون عارض لأجل الوقوف (يمد 2 أو 4 أو 6 حركات). <span class="tajweed-ex">مثال: الْعَالَمِينَ | الرَّحِيمِ</span><br>' +
+          '• <i>المد اللازم:</i> أن يأتي بعد حرف المد سكون أصلي أو تشديد ثابتاً وصلاً ووققاً (يمد 6 حركات لزوماً). <span class="tajweed-ex">مثال: الصَّاخَّةُ | الضَّالِّينَ | أَلَمَّ</span></div>' +
+        '</div>' +
+
+        '<div class="tajweed-section-card">' +
+          '<h2 class="tajweed-h2">5. أحكام القلقلة</h2>' +
+          '<div class="tajweed-rule"><b>التعريف:</b> اضطراب الصوت عند النطق بالحرف الساكن حتى يسمع له نبرة قوية. حروفها جمعت في: (قُطْبُ جَدٍ).</div>' +
+          '<div class="tajweed-rule"><b>مراتب القلقلة:</b><br>' +
+          '• <i>قلقلة كبرى:</i> عند الوقوف على الحرف المقلقل في آخر الكلمة المشدد أو المخفف. <span class="tajweed-ex">مثال: الْفَلَقِ | وَتَبَّ | الْحَقُّ</span><br>' +
+          '• <i>قلقلة صغرى:</i> إذا كان الحرف المقلقل ساكناً في وسط الكلمة أو الكلام وصلاً. <span class="tajweed-ex">مثال: يَقْتُلُونَ | يَجْعَلُونَ | قَدْ أَفْلَحَ</span></div>' +
         '</div>';
     }
 
@@ -702,11 +742,17 @@
         }
       });
 
-      // Audio auto play next ayah
+      // Continuous Playback: Next Ayah or Next Surah
       var quranAudio = document.getElementById('quran-audio');
       quranAudio.addEventListener('ended', function() {
         if (activeAyahIndex + 1 < currentAyahsData.length) {
           playAyahAudio(activeAyahIndex + 1);
+        } else {
+          // الانتقال التلقائي للسورة التالية عند انتهاء السورة الكلية
+          if (currentSurahId < 114) {
+            var nextSurah = surahsList[currentSurahId]; // Index matching next surah
+            loadSurahContent(nextSurah[1], nextSurah[0], 'quran');
+          }
         }
       });
     });
