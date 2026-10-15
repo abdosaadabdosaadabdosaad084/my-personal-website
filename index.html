@@ -2,44 +2,47 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>المصحف الشريف</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+<title>المصحف</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@700;800&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#0b1222;color:#fff;font-family:'Tajawal';min-height:100vh;padding:16px}
-.header{text-align:center;padding:30px 10px}
-.header h1{color:#22c55e;font-size:28px;font-weight:800}
-.header p{color:#94a3b8;margin-top:8px;font-size:14px}
-.btn{display:block;width:100%;padding:18px;border-radius:16px;text-align:center;font-weight:800;font-size:18px;text-decoration:none;margin:14px 0;border:2px solid transparent;cursor:pointer}
-.btn-green{background:#22c55e;color:#000}
-.btn-yellow{background:#facc15;color:#000}
-.btn-dark{background:#0f172a;color:#fff;border-color:#22c55e}
-.newBox{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:16px;margin-top:20px}
-.newBox h3{color:#facc15;font-size:16px;display:flex;justify-content:space-between;align-items:center}
-.newBox ul{list-style:none;margin-top:10px}
-.newBox li{color:#cbd5e1;font-size:13px;line-height:1.9;padding:4px 0}
-.tag{background:#38bdf8;color:#fff;font-size:10px;padding:2px 6px;border-radius:6px}
+*{box-sizing:border-box;margin:0;padding:0}body{background:#0b1222;color:#fff;font-family:'Tajawal';padding:16px}
+h1{text-align:center;color:#22c55e;margin:16px 0}
+.card{background:#0f172a;border:1px solid #1e293b;border-radius:14px;padding:12px;margin:10px 0}
+label{color:#94a3b8;font-size:13px}
+select{width:100%;background:#1e293b;color:#fff;border:1px solid #334155;padding:12px;border-radius:10px;font-weight:bold;margin-top:6px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.grid a{background:#1e293b;border:1px solid #334155;color:#fff;padding:12px;border-radius:10px;text-align:center;text-decoration:none;font-size:13px;font-weight:bold}
+.grid a:hover{border-color:#22c55e}
 </style>
 </head>
 <body>
-<div class="header">
 <h1>📖 المصحف الشريف</h1>
-<p>تلاوة - تفسير - تجويد</p>
+<div class="card">
+<label>🎙️ اختر القارئ أولا:</label>
+<select id="qariSelect">
+<option value="ar.alafasy">العفاسي</option>
+<option value="ar.husary">الحصري</option>
+<option value="ar.minshawi">المنشاوي</option>
+<option value="ar.mahermuaiqly">المعيقلي</option>
+<option value="ar.tablawi">الطبلاوي</option>
+<option value="ar.hatemfarid">حاتم فريد</option>
+</select>
 </div>
-
-<a href="quran-ar.html" class="btn btn-green">🇸🇦 القرآن الكريم - تلاوة</a>
-
-<a href="tajweed.html" class="btn btn-yellow">✨ أحكام التجويد - دليل شامل</a>
-
-<a href="tafsir.html" class="btn btn-dark">📖 التفسير الميسر</a>
-
-<div class="newBox">
-<h3>الجديد <span class="tag">NEW</span></h3>
-<ul>
-<li>- تم إصلاح تظليل الآيات لكل الشيوخ (عبدالباسط - الحصري - الطبلاوي)</li>
-<li>- إضافة صفحة التجويد الميسر</li>
-</ul>
-</div>
-
+<div class="card"><div id="surahGrid" class="grid"></div></div>
+<script>
+const surahs=["الفاتحة","البقرة","آل عمران","النساء","المائدة","الأنعام","الأعراف","الأنفال","التوبة","يونس","هود","يوسف","الرعد","إبراهيم","الحجر","النحل","الإسراء","الكهف","مريم","طه","الأنبياء","الحج","المؤمنون","النور","الفرقان","الشعراء","النمل","القصص","العنكبوت","الروم","لقمان","السجدة","الأحزاب","سبأ","فاطر","يس","الصافات","ص","الزمر","غافر","فصلت","الشورى","الزخرف","الدخان","الجاثية","الأحقاف","محمد","الفتح","الحجرات","ق","الذاريات","الطور","النجم","القمر","الرحمن","الواقعة","الحديد","المجادلة","الحشر","الممتحنة","الصف","الجمعة","المنافقون","التغابن","الطلاق","التحريم","الملك","القلم","الحاقة","المعارج","نوح","الجن","المزمل","المدثر","القيامة","الإنسان","المرسلات","النبأ","النازعات","عبس","التكوير","الانفطار","المطففين","الانشقاق","البروج","الطارق","الأعلى","الغاشية","الفجر","البلد","الشمس","الليل","الضحى","الشرح","التين","العلق","القدر","البينة","الزلزلة","العاديات","القارعة","التكاثر","العصر","الهمزة","الفيل","قريش","الماعون","الكوثر","الكافرون","النصر","المسد","الإخلاص","الفلق","الناس"];
+const qariSel=document.getElementById('qariSelect'),grid=document.getElementById('surahGrid');
+let saved=localStorage.getItem('qari'); if(saved) qariSel.value=saved;
+qariSel.onchange=()=>localStorage.setItem('qari',qariSel.value);
+function render(){
+ grid.innerHTML='';
+ surahs.forEach((name,i)=>{
+  let a=document.createElement('a'); a.textContent=`${i+1}. ${name}`;
+  a.href=`quran-ar.html?surah=${i+1}`;
+  grid.appendChild(a);
+ });
+}
+render();
+</script>
 </body>
 </html>
