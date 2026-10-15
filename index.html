@@ -9,6 +9,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="القرآن الشامل">
 
+  <!-- ربط ملف الـ Manifest بملف HTML صراحة -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icon.png" type="image/png">
+
   <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -365,13 +369,13 @@
 
     <div id="sec-home" class="section-view active-section">
       
-      <!-- شريط تثبيت التطبيق اليدوي المضمون -->
+      <!-- شريط تثبيت التطبيق -->
       <div id="pwa-install-container" class="install-pwa-box">
         <div>
           <div style="font-size: 14px; font-weight: bold; color: var(--accent-gold);">📲 تثبيت التطبيق على هاتفك</div>
-          <div style="font-size: 11px; color: var(--text-muted);">اضغط لتثبيت التطبيق للوصول السريع بدون إنترنت</div>
+          <div style="font-size: 11px; color: var(--text-muted);">اضغط لتثبيت التطبيق مباشرة على هاتفك</div>
         </div>
-        <button id="pwa-install-btn" class="install-btn">طريقة التثبيت</button>
+        <button id="pwa-install-btn" class="install-btn">تثبيت الآن 📲</button>
       </div>
 
       <div style="text-align: center; margin-bottom: 12px;">
@@ -512,9 +516,38 @@
 
   </div>
   <script>
-    // تعليمات التثبيت اليدوي الذكية
+    // تسجيل Service Worker لتمكين تثبيت التطبيق PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('./sw.js').then(function(reg) {
+          console.log('ServiceWorker registered:', reg);
+        }).catch(function(err) {
+          console.log('ServiceWorker error:', err);
+        });
+      });
+    }
+
+    // التقاط حدث التثبيت التلقائي من المتصفح
+    var deferredPrompt;
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      deferredPrompt = e;
+      var btn = document.getElementById('pwa-install-btn');
+      if (btn) btn.innerText = "تثبيت الآن 📲";
+    });
+
     document.getElementById('pwa-install-btn').addEventListener('click', function() {
-      alert("لثبيت التطبيق على هاتفك:\n1. افتح قائمة المتصفح (النقاط الثلاثة أعلى اليمين أو اليسار).\n2. اختر (إضافة إلى الشاشة الرئيسية) أو (Install app).\n3. اضغط إضافة وسيظهر التطبيق كأيقونة مستقلة على هاتفك!");
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function(choiceResult) {
+          if (choiceResult.outcome === 'accepted') {
+            document.getElementById('pwa-install-container').style.display = 'none';
+          }
+          deferredPrompt = null;
+        });
+      } else {
+        alert("للتثبيت:\n1. اضغط على قائمة المتصفح (⋮ الأعلى).\n2. اختر (الإضافة إلى الشاشة الرئيسية) أو (تثبيت التطبيق).");
+      }
     });
 
     var surahsList = [
