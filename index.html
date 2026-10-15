@@ -42,7 +42,6 @@
     .section-view { display: none; }
     .section-view.active-section { display: block !important; }
 
-    /* Home Layout - Compact Cards */
     .grid-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -62,17 +61,18 @@
       flex-direction: column;
       align-items: center;
       gap: 6px;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .nav-card:hover {
-      transform: translateY(-2px);
+    .nav-card:active {
+      transform: scale(0.98);
       border-color: var(--accent-green);
-      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
     }
 
-    .nav-icon { font-size: 26px; }
-    .nav-title { font-size: 15px; font-weight: 700; color: var(--accent-green); }
-    .nav-desc { font-size: 11px; color: var(--text-muted); }
+    .nav-icon { font-size: 26px; pointer-events: none; }
+    .nav-title { font-size: 15px; font-weight: 700; color: var(--accent-green); pointer-events: none; }
+    .nav-desc { font-size: 11px; color: var(--text-muted); pointer-events: none; }
 
     .qari-select-box {
       width: 100%;
@@ -89,7 +89,6 @@
       cursor: pointer;
     }
 
-    /* Controls Bar */
     .toolbar {
       background: var(--panel-bg);
       border: 1px solid var(--border-color);
@@ -103,11 +102,7 @@
       justify-content: space-between;
     }
 
-    .tool-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .tool-group { display: flex; align-items: center; gap: 6px; }
 
     .btn-tool {
       background: var(--border-color);
@@ -131,7 +126,6 @@
 
     .color-dot.active { border-color: #fff; }
 
-    /* Compact Surah Grid */
     .surah-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
@@ -151,22 +145,20 @@
       gap: 4px;
     }
 
-    .surah-card:hover { border-color: var(--accent-green); }
+    .surah-card:active { border-color: var(--accent-green); }
 
-    /* Bismillah Dedicated Header */
     .bismillah-header {
       font-family: 'Amiri Quran', serif;
-      font-size: 26px;
+      font-size: 24px;
       color: var(--accent-gold);
       text-align: center;
-      margin: 10px 0 16px 0;
-      padding: 8px;
+      margin: 10px 0;
+      padding: 6px;
       background: var(--card-bg);
       border-radius: 10px;
       border: 1px solid var(--border-color);
     }
 
-    /* Reader Boxes */
     .reader-box {
       background: var(--card-bg);
       border: 1.5px solid var(--border-color);
@@ -174,7 +166,6 @@
       padding: 14px;
       margin-bottom: 10px;
       transition: all 0.2s ease;
-      position: relative;
     }
 
     .reader-box.active-ayah-box {
@@ -298,25 +289,25 @@
       </div>
 
       <div class="grid-container">
-        <div class="nav-card" onclick="showSection('quran')">
+        <div class="nav-card" id="card-quran">
           <span class="nav-icon">🇸🇦</span>
           <span class="nav-title">القرآن الكريم</span>
           <span class="nav-desc">تلاوة تلقائية مستمرة وتحديد الآية والتحميل</span>
         </div>
 
-        <div class="nav-card" onclick="showSection('tafsir')">
+        <div class="nav-card" id="card-tafsir">
           <span class="nav-icon">📖</span>
           <span class="nav-title">التفسير الميسر</span>
           <span class="nav-desc">تفسير آيات القرآن الكريم بشكل ميسر ومباشر</span>
         </div>
 
-        <div class="nav-card" onclick="showSection('tajweed')">
+        <div class="nav-card" id="card-tajweed">
           <span class="nav-icon">📘</span>
           <span class="nav-title">أحكام التجويد الشاملة</span>
           <span class="nav-desc">دليل كامل ومبسط لقواعد التلاوة</span>
         </div>
 
-        <div class="nav-card" onclick="showSection('english')">
+        <div class="nav-card" id="card-english">
           <span class="nav-icon">🇬🇧</span>
           <span class="nav-title">English Translation</span>
           <span class="nav-desc">English translation with audio controls</span>
@@ -324,30 +315,30 @@
       </div>
     </div>
 
-    <!-- QURAN ARABIC SECTION -->
+    <!-- QURAN SECTION -->
     <div id="sec-quran" class="section-view">
-      <button class="btn-back" onclick="showSection('home')">🏠 الرئيسية</button>
+      <button class="btn-back btn-go-home">🏠 الرئيسية</button>
       <h2 style="margin-bottom: 10px; color: var(--accent-green); font-size: 18px;">🇸🇦 القرآن الكريم</h2>
       
       <div class="toolbar">
         <div class="tool-group">
           <span style="font-size: 12px; color: var(--text-muted);">حجم الخط:</span>
-          <button class="btn-tool" onclick="changeFontSize(-2)">-</button>
+          <button class="btn-tool" id="btn-font-sub">-</button>
           <span id="font-size-val" style="font-size: 13px; font-weight: bold; color: var(--accent-gold);">24</span>
-          <button class="btn-tool" onclick="changeFontSize(2)">+</button>
+          <button class="btn-tool" id="btn-font-add">+</button>
         </div>
         <div class="tool-group">
           <span style="font-size: 12px; color: var(--text-muted);">لون النص:</span>
-          <div class="color-dot active" style="background: #ffffff;" onclick="changeFontColor('#ffffff', this)"></div>
-          <div class="color-dot" style="background: #facc15;" onclick="changeFontColor('#facc15', this)"></div>
-          <div class="color-dot" style="background: #22c55e;" onclick="changeFontColor('#22c55e', this)"></div>
-          <div class="color-dot" style="background: #38bdf8;" onclick="changeFontColor('#38bdf8', this)"></div>
+          <div class="color-dot active" style="background: #ffffff;" data-color="#ffffff"></div>
+          <div class="color-dot" style="background: #facc15;" data-color="#facc15"></div>
+          <div class="color-dot" style="background: #22c55e;" data-color="#22c55e"></div>
+          <div class="color-dot" style="background: #38bdf8;" data-color="#38bdf8"></div>
         </div>
       </div>
 
       <div id="quran-list-view">
         <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">🎙️ اختر القارئ المفضّل:</label>
-        <select class="qari-select-box" id="qariSelect" onchange="changeQari(this.value)">
+        <select class="qari-select-box" id="qariSelect">
           <option value="afasy" selected>مشاري بن راشد العفاسي (مرتل)</option>
           <option value="minshawi">محمد صديق المنشاوي (مرتل)</option>
           <option value="husary">محمود خليل الحصري (مرتل)</option>
@@ -360,7 +351,7 @@
 
       <div id="quran-reader-view" style="display: none;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <button class="btn-back" onclick="closeReader('quran')">⬅ رجوع للسور</button>
+          <button class="btn-back btn-close-reader" data-mode="quran">⬅ رجوع للسور</button>
           <a id="download-surah-btn" class="btn-download" target="_blank" download>تحميل السورة كاملة ⬇️</a>
         </div>
         <h3 id="quran-surah-title" style="margin-bottom: 8px; color: var(--accent-gold); font-size: 18px; text-align: center;"></h3>
@@ -372,13 +363,13 @@
 
     <!-- TAFSIR SECTION -->
     <div id="sec-tafsir" class="section-view">
-      <button class="btn-back" onclick="showSection('home')">🏠 الرئيسية</button>
+      <button class="btn-back btn-go-home">🏠 الرئيسية</button>
       <h2 style="margin-bottom: 10px; color: var(--accent-green); font-size: 18px;">📖 التفسير الميسر</h2>
       <div id="tafsir-list-view">
         <div class="surah-grid" id="tafsir-grid"></div>
       </div>
       <div id="tafsir-reader-view" style="display: none;">
-        <button class="btn-back" onclick="closeReader('tafsir')">⬅ رجوع للسور</button>
+        <button class="btn-back btn-close-reader" data-mode="tafsir">⬅ رجوع للسور</button>
         <h3 id="tafsir-surah-title" style="margin-bottom: 8px; color: var(--accent-gold); font-size: 18px; text-align: center;"></h3>
         <div id="tafsir-content"></div>
       </div>
@@ -386,20 +377,20 @@
 
     <!-- TAJWEED SECTION -->
     <div id="sec-tajweed" class="section-view">
-      <button class="btn-back" onclick="showSection('home')">🏠 الرئيسية</button>
+      <button class="btn-back btn-go-home">🏠 الرئيسية</button>
       <h2 style="margin-bottom: 12px; color: var(--accent-blue); font-size: 18px;">📘 موسوعة أحكام التجويد الاحترافية</h2>
       <div id="tajweed-content"></div>
     </div>
 
     <!-- ENGLISH SECTION -->
     <div id="sec-english" class="section-view">
-      <button class="btn-back" onclick="showSection('home')">🏠 Home</button>
+      <button class="btn-back btn-go-home">🏠 Home</button>
       <h2 style="margin-bottom: 12px; color: var(--accent-green); font-size: 18px;">🇬🇧 Quran English Translation</h2>
       <div id="english-list-view">
         <div class="surah-grid" id="english-grid"></div>
       </div>
       <div id="english-reader-view" style="display: none;">
-        <button class="btn-back" onclick="closeReader('english')">⬅ Back to Surahs</button>
+        <button class="btn-back btn-close-reader" data-mode="english">⬅ Back to Surahs</button>
         <h3 id="english-surah-title" style="margin-bottom: 8px; color: var(--accent-gold); font-size: 18px; text-align: center;"></h3>
         <audio id="english-audio" controls autoplay></audio>
         <div id="english-content"></div>
@@ -433,20 +424,6 @@
       hatem: "https://server11.mp3quran.net/hatem/"
     };
 
-    function changeQari(val) { currentQariKey = val; }
-
-    function changeFontSize(delta) {
-      currentFontSize = Math.min(Math.max(currentFontSize + delta, 16), 40);
-      document.getElementById('font-size-val').innerText = currentFontSize;
-      document.documentElement.style.setProperty('--quran-font-size', currentFontSize + 'px');
-    }
-
-    function changeFontColor(color, el) {
-      document.querySelectorAll('.color-dot').forEach(function(d) { d.classList.remove('active'); });
-      if (el) el.classList.add('active');
-      document.documentElement.style.setProperty('--quran-font-color', color);
-    }
-
     function showSection(secId) {
       var views = document.querySelectorAll('.section-view');
       for (var i = 0; i < views.length; i++) { views[i].classList.remove('active-section'); }
@@ -469,7 +446,9 @@
             card.className = 'surah-card';
             card.innerHTML = '<span style="font-weight: bold; font-size: 13px;">' + s[0] + '</span><span style="font-size: 10px; color: var(--accent-gold);">' + s[1] + '</span>';
             var mode = gridId.split('-')[0];
-            card.onclick = function() { loadSurahContent(s[1], s[0], mode); };
+            card.addEventListener('click', function() {
+              loadSurahContent(s[1], s[0], mode);
+            });
             grid.appendChild(card);
           })(surahsList[j]);
         }
@@ -495,11 +474,7 @@
       
       var bismillahView = document.getElementById('bismillah-view');
       if (bismillahView) {
-        if (id === 1 || id === 9) {
-          bismillahView.style.display = 'none';
-        } else {
-          bismillahView.style.display = 'block';
-        }
+        bismillahView.style.display = (id === 1 || id === 9) ? 'none' : 'block';
       }
 
       var contentEl = document.getElementById(mode + '-content');
@@ -529,7 +504,7 @@
               qariAudioBases[currentQariKey] + String(id).padStart(3, '0') + '.mp3' :
               qariAudioBases[currentQariKey] + a.number + '.mp3';
 
-            html += '<div class="reader-box" id="qbox-' + k + '" onclick="playSpecificAyah(' + k + ')">' +
+            html += '<div class="reader-box" id="qbox-' + k + '" data-idx="' + k + '">' +
               '<div class="quran-text">' + ayahText + ' <span style="color:var(--accent-green);">﴿' + a.numberInSurah + '﴾</span></div>' +
               '<div class="ayah-actions">' +
                 '<span style="font-size:11px; color:var(--text-muted);">الآية (' + a.numberInSurah + ')</span>' +
@@ -538,6 +513,15 @@
             '</div>';
           }
           contentEl.innerHTML = html;
+
+          var boxes = contentEl.querySelectorAll('.reader-box');
+          for (var b = 0; b < boxes.length; b++) {
+            boxes[b].addEventListener('click', function() {
+              var idx = parseInt(this.getAttribute('data-idx'));
+              playSpecificAyah(idx);
+            });
+          }
+
           playSpecificAyah(0);
         }
       } else if (mode === 'tafsir') {
@@ -603,7 +587,7 @@
             }
             var audioUrl = audioAyahs[n] ? audioAyahs[n].audio : '#';
 
-            htmlEn += '<div class="reader-box" id="enbox-' + n + '" onclick="window.playEnAyah(' + n + ')">' +
+            htmlEn += '<div class="reader-box" id="enbox-' + n + '" data-n="' + n + '">' +
               '<div class="quran-text" style="direction:rtl;">' + arText + ' ﴿' + arData.data.ayahs[n].numberInSurah + '﴾</div>' +
               '<div style="color:#cbd5e1; margin-top:6px; font-size:14px;">' + enData.data.ayahs[n].text + '</div>' +
               '<div class="ayah-actions">' +
@@ -613,8 +597,16 @@
             '</div>';
           }
 
-          window.playEnAyah = playEnAyah;
           contentEl.innerHTML = htmlEn;
+
+          var eBoxes = contentEl.querySelectorAll('.reader-box');
+          for (var eb = 0; eb < eBoxes.length; eb++) {
+            eBoxes[eb].addEventListener('click', function() {
+              var nIdx = parseInt(this.getAttribute('data-n'));
+              playEnAyah(nIdx);
+            });
+          }
+
           playEnAyah(0);
         }
       }
@@ -693,4 +685,96 @@
           rules: [
             "القلقلة هي اضطراب الصوت عند النطق بحرف ساكن من حروف (قَطْبُ جَدٍّ):<br>",
             "• <b>قلقلة صغرى:</b> عندما يكون الحرف ساكناً في وسط الكلمة. <span class=\"tajweed-ex\">مثال: يَقْطَعُونَ - إِبْرَاهِيمُ</span>",
-            "
+            "• <b>قلقلة كبرى:</b> عندما يكون الحرف في آخر الكلمة موقوفاً عليه. <span class=\"tajweed-ex\">مثال: الْفَلَقِ - الْحَرِيقِ</span>"
+          ]
+        },
+        {
+          title: "6. موسوعة أحكام المدود (أنواع المد الـ 9)",
+          rules: [
+            "1️⃣ <b>المد الطبيعي (الأصلي):</b> يمد حركتان. <span class=\"tajweed-ex\">مثل: قَالَ - يَقُولُ</span>",
+            "2️⃣ <b>مد البدل:</b> تقدم الهمز على حرف المد (حركتان). <span class=\"tajweed-ex\">مثل: آمَنُوا</span>",
+            "3️⃣ <b>المد الواجب المتصل:</b> حرف المد والهمز بكلمة واحدة (4 أو 5 حركات). <span class=\"tajweed-ex\">مثل: جَاءَ</span>",
+            "4️⃣ <b>المد الجائز المنفصل:</b> حرف المد بكلمة والهمز بالكلمة التالية (2 أو 4 أو 5 حركات). <span class=\"tajweed-ex\">مثل: إِنَّا أَنْزَلْنَاهُ</span>",
+            "5️⃣ <b>المد اللازم:</b> حرف مد بعده حرف ساكن سكوناً أصلياً (6 حركات لزوماً). <span class=\"tajweed-ex\">مثل: الْحَاقَّةُ</span>",
+            "6️⃣ <b>المد العارض للسكون:</b> عند الوقف على آخر الكلمة (2 أو 4 أو 6 حركات). <span class=\"tajweed-ex\">مثل: الْعَالَمِينَ</span>"
+          ]
+        },
+        {
+          title: "7. التفخيم والترقيق (الراء واللام)",
+          rules: [
+            "• <b>تفخيم وترقيق الراء:</b> تفخم الراء إذا كانت مفتوحة أو مضمومة (رَمَضَانَ)، وترقق إذا كانت مكسورة (رِزْقًا).",
+            "• <b>لام لفظ الجلالة (الله):</b> تفخم بعد الفتح والضم (عَبْدُ اللَّهِ)، وترقق بعد الكسر (بِسْمِ اللَّهِ)."
+          ]
+        },
+        {
+          title: "8. مخارج الحروف الـ 17 الرئيسية",
+          rules: [
+            "1️⃣ <b>الجوف:</b> المخرج لـ حروف المد الثلاثة.<br>2️⃣ <b>الحلق:</b> فيه 3 مخارج لـ 6 حروف (ء هـ ع ح غ خ).<br>3️⃣ <b>اللسان:</b> فيه 10 مخارج لـ 18 حرفاً.<br>4️⃣ <b>الشفتان:</b> مخرجان لـ (ف ، و ، ب ، م).<br>5️⃣ <b>الخيشوم:</b> مخرج صوت الغنة."
+          ]
+        }
+      ];
+
+      var html = '';
+      for (var p = 0; p < tajweedFullData.length; p++) {
+        var sec = tajweedFullData[p];
+        html += '<div class="tajweed-section-card"><div class="tajweed-h2">' + sec.title + '</div>';
+        for (var r = 0; r < sec.rules.length; r++) {
+          html += '<div class="tajweed-rule">' + sec.rules[r] + '</div>';
+        }
+        html += '</div>';
+      }
+      document.getElementById('tajweed-content').innerHTML = html;
+    }
+
+    // Event Listeners Setup
+    document.addEventListener("DOMContentLoaded", function() {
+      document.getElementById('card-quran').addEventListener('click', function() { showSection('quran'); });
+      document.getElementById('card-tafsir').addEventListener('click', function() { showSection('tafsir'); });
+      document.getElementById('card-tajweed').addEventListener('click', function() { showSection('tajweed'); });
+      document.getElementById('card-english').addEventListener('click', function() { showSection('english'); });
+
+      var homeBtns = document.querySelectorAll('.btn-go-home');
+      for (var h = 0; h < homeBtns.length; h++) {
+        homeBtns[h].addEventListener('click', function() { showSection('home'); });
+      }
+
+      var closeBtns = document.querySelectorAll('.btn-close-reader');
+      for (var c = 0; c < closeBtns.length; c++) {
+        closeBtns[c].addEventListener('click', function() {
+          var mode = this.getAttribute('data-mode');
+          closeReader(mode);
+        });
+      }
+
+      document.getElementById('qariSelect').addEventListener('change', function() {
+        currentQariKey = this.value;
+      });
+
+      document.getElementById('btn-font-sub').addEventListener('click', function() {
+        currentFontSize = Math.max(currentFontSize - 2, 16);
+        document.getElementById('font-size-val').innerText = currentFontSize;
+        document.documentElement.style.setProperty('--quran-font-size', currentFontSize + 'px');
+      });
+
+      document.getElementById('btn-font-add').addEventListener('click', function() {
+        currentFontSize = Math.min(currentFontSize + 2, 40);
+        document.getElementById('font-size-val').innerText = currentFontSize;
+        document.documentElement.style.setProperty('--quran-font-size', currentFontSize + 'px');
+      });
+
+      var dots = document.querySelectorAll('.color-dot');
+      for (var d = 0; d < dots.length; d++) {
+        dots[d].addEventListener('click', function() {
+          for (var x = 0; x < dots.length; x++) { dots[x].classList.remove('active'); }
+          this.classList.add('active');
+          var col = this.getAttribute('data-color');
+          document.documentElement.style.setProperty('--quran-font-color', col);
+        });
+      }
+
+      renderGrids();
+      renderTajweed();
+    });
+  </script>
+</body>
+</html>
