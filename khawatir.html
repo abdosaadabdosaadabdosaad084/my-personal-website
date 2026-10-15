@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>خواطر الشعراوي</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0b1222;color:#fff;font-family:'Tajawal';min-height:100vh}
+.header{background:linear-gradient(135deg,#0f172a,#14532d);padding:20px;text-align:center;border-bottom:2px solid #22c55e}
+.header h1{color:#22c55e;font-size:26px}
+.top{display:flex;gap:10px;padding:12px;background:#0f172a;position:sticky;top:0;z-index:10}
+.top select{flex:1;background:#1e293b;color:#fff;border:1px solid #334155;padding:12px;border-radius:12px;font-weight:bold}
+.card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:18px;margin:12px}
+.ayahText{font-family:'Amiri Quran';font-size:26px;line-height:2.2;text-align:center;color:#e2e8f0;margin:12px 0}
+.khatera{line-height:2.2;font-size:18px;color:#cbd5e1;white-space:pre-line}
+.badge{display:inline-block;background:#22c55e;color:#000;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:bold;margin:4px}
+</style>
+</head>
+<body>
+<div class="header"><h1>خواطر الشعراوي - كما في التلفزيون</h1></div>
+<div class="top"><select id="surahSel"></select><select id="ayahSel"></select></div>
+<div id="content"></div>
+<script>
+const surahs=[["الفاتحة",1,7],["البقرة",2,286],["آل عمران",3,200],["النساء",4,176],["يونس",10,109]];
+const surahSel=document.getElementById('surahSel'), ayahSel=document.getElementById('ayahSel'), content=document.getElementById('content');
+surahs.forEach(s=>{let o=document.createElement('option');o.value=s[1];o.textContent=s[0];surahSel.appendChild(o);});
+surahSel.onchange=()=>{let c=surahs.find(s=>s[1]==surahSel.value)[2];ayahSel.innerHTML='';for(let i=1;i<=c;i++){let o=document.createElement('option');o.value=i;o.textContent=`الآية ${i}`;ayahSel.appendChild(o);}load();};
+ayahSel.onchange=()=>load();
+async function load(){
+ let sid=surahSel.value, aid=ayahSel.value;
+ let res=await fetch(`https://api.alquran.cloud/v1/ayah/${sid}:${aid}/quran-uthmani`);
+ let data=await res.json();
+ content.innerHTML=`<div class="card"><span class="badge">سورة ${surahs.find(s=>s[1]==sid)[0]}</span><span class="badge" style="background:#facc15">الآية ${aid}</span><div class="ayahText">${data.data.text}</div><h3 style="color:#facc15">💭 خاطرة الشعراوي:</h3><div class="khatera">يقول الإمام الشعراوي رحمه الله في هذه الآية: الحق سبحانه وتعالى يريد أن يلفتنا إلى أن... (هنا تضع النص الكامل من خواطر الشعراوي المطبوعة).\n\nهذا الملف جاهز، فقط استبدل هذا النص بالنص الحقيقي لكل آية، وسيظهر تلقائيا.</div><audio controls style="width:100%;margin-top:12px"><source src="https://server12.mp3quran.net/sha3rawi/${String(sid).padStart(3,'0')}.mp3"></audio></div>`;
+}
+surahSel.onchange();
+</script>
+</body>
+</html>
