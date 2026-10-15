@@ -1,14 +1,19 @@
 {
-  "name": "المصحف الشريف",
-  "short_name": "المصحف",
-  "start_url": "./",
-  "scope": "./",
+  "name": "التطبيق القرآني الشامل",
+  "short_name": "القرآن الشامل",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#22c55e",
+  "background_color": "#0b1222",
+  "theme_color": "#0b1222",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "./icon.png",
+      "src": "https://cdn-icons-png.flaticon.com/512/2904/2904839.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2904/2904839.png",
       "sizes": "512x512",
       "type": "image/png"
     }
