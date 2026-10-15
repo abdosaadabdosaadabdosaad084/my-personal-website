@@ -1,57 +1,77 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Quran Translation - English</title>
-<style>
-:root{--bg:#0f172a;--card:#1e293b;--text:#e2e8f0;--border:#334155}
-body{margin:0;background:var(--bg);color:var(--text);font-family:sans-serif}
-.header{position:sticky;top:0;z-index:99;background:var(--card);padding:12px;border-bottom:1px solid var(--border)}
-.top{max-width:950px;margin:auto;display:flex;gap:8px;align-items:center}
-button,audio{border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);padding:9px 12px}
-button{cursor:pointer;font-weight:bold}.container{max-width:900px;margin:auto;padding:16px}
-.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
-.surah{background:var(--card);border:1px solid var(--border);padding:12px;border-radius:12px;text-align:center;cursor:pointer}
-#reader{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;display:none}
-.ayah{display:block;padding:14px;border-bottom:1px solid var(--border);line-height:1.8}
-.ayah.active{background:#22c55e22}.word.lit{background:#facc15;color:#000;border-radius:4px}
-</style></head>
-<body>
-<div class="header"><div class="top">
-<button onclick="showList()">📚 Surahs</button>
-<button onclick="location.href='index.html'" style="background:#22c55e;color:#000">🇸🇦 Arabic Only</button>
-<audio id="audio" controls></audio>
-</div></div>
-<div class="container"><div id="list" class="list"></div><div id="reader"></div></div>
-<script>
-const listEl=document.getElementById('list'), readerEl=document.getElementById('reader'), audio=document.getElementById('audio');
-let ayahs=[], audios=[], cur=-1, curWords=[], wordInterval=null;
-async function init(){const r=await fetch('https://api.alquran.cloud/v1/surah'); const j=await r.json(); renderList(j.data);}
-function renderList(data){listEl.innerHTML=''; data.forEach(s=>{const d=document.createElement('div'); d.className='surah'; d.innerHTML=`${s.englishName}<br><small>${s.number}</small>`; d.onclick=()=>loadSurah(s.number); listEl.appendChild(d);});}
-function showList(){readerEl.style.display='none'; listEl.style.display='grid'; audio.pause();}
-function clearLit(){if(wordInterval) clearInterval(wordInterval); document.querySelectorAll('.word.lit').forEach(w=>w.classList.remove('lit'));}
-async function loadSurah(num){
- listEl.style.display='none'; readerEl.style.display='block'; readerEl.innerHTML='Loading...';
- const en=await fetch(`https://api.alquran.cloud/v1/surah/${num}/en.sahih`).then(r=>r.json());
- const arAudio=await fetch(`https://api.alquran.cloud/v1/surah/${num}/ar.alafasy`).then(r=>r.json());
- ayahs=en.data.ayahs; audios=arAudio.data.ayahs; drawAyahs(); playAyah(0);
-}
-function drawAyahs(){
- let html=''; ayahs.forEach((a,i)=>{
-  let words=a.text.split(' ').map((w,wi)=>`<span class="word" id="w-${i}-${wi}">${w}</span>`).join(' ');
-  html+=`<span class="ayah" id="a-${i}" onclick="playAyah(${i})">${words} <small>(${a.numberInSurah})</small></span>`;
- }); readerEl.innerHTML=html;
-}
-function playAyah(i){if(i>=ayahs.length) return; cur=i; clearLit();
- document.querySelectorAll('.ayah').forEach(e=>e.classList.remove('active'));
- const el=document.getElementById(`a-${i}`); el.classList.add('active'); el.scrollIntoView({behavior:'smooth',block:'center'});
- curWords=el.querySelectorAll('.word'); audio.src=audios[i].audio; audio.play();
- audio.onloadedmetadata=()=>{
-  let wordTime=audio.duration / curWords.length; let idx=0;
-  wordInterval=setInterval(()=>{ document.querySelectorAll('.word.lit').forEach(w=>w.classList.remove('lit')); if(idx<curWords.length){curWords[idx].classList.add('lit'); idx++;} else clearInterval(wordInterval); }, wordTime*1000);
- };
-}
-audio.onended=()=>{clearLit(); if(cur+1<ayahs.length) playAyah(cur+1);}
-init();
-</script>
-</body>
-</html>
-.
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quran English Translation & Audio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0b1222;
+      --card-bg: #0f172a;
+      --panel-bg: #1e293b;
+      --border-color: #334155;
+      --accent-green: #22c55e;
+      --accent-gold: #facc15;
+      --accent-blue: #38bdf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation Bar */
+    .top-nav {
+      background-color: var(--card-bg);
+      border-bottom: 1px solid var(--border-color);
+      padding: 10px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      overflow-x: auto;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .top-nav a {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      padding: 8px 14px;
+      border-radius: 10px;
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .top-nav a.active, .top-nav a:hover {
+      background: var(--accent-green);
+      color: #000;
+      border-color: var(--accent-green);
+    }
+
+    /* Audio Player Bar */
+    .audio-container {
+      background: var(--card-bg);
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    audio {
+      width: 100%;
+      max-width: 800px
