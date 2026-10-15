@@ -2,126 +2,263 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>القرآن الكريم - آية بآية</title>
-<link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+<title>القرآن الكريم - تلاوة</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#0b1222;color:#fff;font-family:'Tajawal',system-ui;min-height:100vh}
-.top{position:sticky;top:0;z-index:20;background:#0f172aee;backdrop-filter:blur(12px);padding:12px;border-bottom:1px solid #1e293b;display:flex;flex-direction:column;gap:10px}
-.sel{background:#1e293b;border:1px solid #334155;padding:10px 14px;border-radius:14px;display:flex;gap:8px;align-items:center;width:95%;max-width:500px;margin:0 auto}
-.sel select{background:transparent;color:#fff;border:0;width:100%;font-size:15px;outline:none}
-.sel select option{background:#1e293b}
-#reader{display:flex;flex-direction:column;min-height:calc(100vh - 140px);padding:12px}
-.reader-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between;align-items:center;background:#1e293b;border:1px solid #334155;padding:10px 12px;border-radius:12px;margin-bottom:12px}
-.ayah-box{background:#1e293b;border:2px solid #facc15;border-radius:24px;padding:28px 20px;max-width:850px;width:100%;min-height:200px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 0 0 1px #facc1520, 0 20px 50px -20px #facc1540}
-.words-line{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 14px;line-height:2.9;font-family:'Amiri Quran', serif;text-align:center;font-size:28px}
-.word{padding:3px 8px;border-radius:8px;transition:all 0.3s ease;color:#cbd5e1}
-.word.active-word{color:#facc15;background:linear-gradient(180deg,#facc1530, #facc1508);text-shadow:0 0 20px #facc15aa, 0 0 40px #facc1540;transform:scale(1.22);font-weight:bold}
-.ayah-num{color:#22c55e;margin-top:16px;font-size:15px}
-.nav{display:flex;gap:12px;justify-content:center;margin:18px 0}
-.nav button{background:#1e293b;border:1px solid #334155;color:#fff;padding:14px 26px;border-radius:14px;cursor:pointer;font-weight:bold;min-width:110px}
-.surah-ctrl{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
-.surah-ctrl button{background:#1e293b;border:1px solid #334155;color:#fff;padding:10px 18px;border-radius:12px;cursor:pointer}
-.status{color:#94a3b8;font-size:12px;text-align:center;margin:6px 0}
+*{box-sizing:border-box}
+body{background:#0f172a;color:#fff;font-family:Tahoma,system-ui;margin:0;padding:10px}
+.top{display:flex;gap:6px;position:sticky;top:0;background:#0f172aee;backdrop-filter:blur(8px);z-index:30;padding:10px 0;overflow-x:auto;border-bottom:1px solid #1e293b;align-items:center;flex-wrap:wrap}
+.top a{background:#1e293b;padding:9px 14px;border-radius:10px;color:#fff;text-decoration:none;font-size:13px;white-space:nowrap}
+.top a.active{background:#22c55e;color:#000;font-weight:bold}
+.qari-main,.surah-main{background:#1e293b;border:1px solid #334155;padding:8px 10px;border-radius:10px;display:flex;gap:6px;align-items:center}
+.qari-main select,.surah-main select{background:#0f172a;color:#fff;border:1px solid #334155;padding:8px;border-radius:8px;font-size:12px;min-width:110px}
+.surah-main select{min-width:150px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.card{background:#1e293b;padding:14px;border-radius:12px;text-align:center;color:#fff;border:1px solid #334155;cursor:pointer}
+#reader{display:none;position:fixed;inset:0;background:#0f172a;z-index:100;overflow-y:auto;padding:12px}
+.qari-bar{background:#1e293b;padding:12px;border-radius:12px;margin:10px 0;display:flex;gap:8px;align-items:center;position:sticky;top:6px;z-index:20;border:1px solid #334155;flex-wrap:wrap;justify-content:space-between}
+.qari-bar select{background:#0f172a;color:#fff;border:1px solid #334155;padding:10px;border-radius:8px;flex:1}
+.basmala-out{text-align:center;font-size:28px;color:#facc15;padding:16px;background:#1e293b;border-radius:14px;margin:12px 0;border:1px solid #facc1530}
+.ayah{display:none;padding:28px 20px;background:#1e293b;margin:20px auto;border-radius:18px;font-size:30px;line-height:2.8;position:relative;border:2px solid #facc15;max-width:800px;text-align:center;min-height:200px;align-items:center;justify-content:center}
+.ayah.active{display:flex;flex-wrap:wrap}
+.word{padding:4px 8px;border-radius:10px;display:inline-block;margin:3px 4px;line-height:1.9;transition:all 0.2s}
+.word.active-word{background:#facc15;color:#000;font-weight:bold;box-shadow:0 0 0 3px #facc15;transform:scale(1.15)}
+audio{width:100%;margin:10px 0}
+.dl-ayah{position:absolute;top:8px;left:8px;background:#0f172a;border:1px solid #334155;color:#facc15;border-radius:6px;padding:3px 8px;font-size:12px;cursor:pointer}
+.dl-surah{background:#22c55e;color:#000;border:0;padding:9px 16px;border-radius:8px;font-weight:bold;cursor:pointer}
+.font-ctrl{display:flex;gap:6px;align-items:center;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:4px 8px}
+.font-ctrl button{background:#1e293b;border:1px solid #334155;color:#facc15;width:32px;height:32px;border-radius:6px;font-weight:bold;cursor:pointer}
+.nav-ayah{display:flex;gap:10px;justify-content:center;margin:15px 0}
+.nav-ayah button{background:#1e293b;border:1px solid #334155;color:#fff;padding:10px 18px;border-radius:10px;cursor:pointer}
+.nav-ayah button.active-nav{background:#facc15;color:#000;font-weight:bold}
+.ayah-counter{text-align:center;color:#94a3b8;font-size:14px;margin:8px 0}
 </style>
 </head>
 <body>
 <div class="top">
-<div class="sel"><span>📖</span><select id="surahSelect"></select></div>
-<div class="sel"><span>🎙️</span><select id="qariSelect">
-<option value="ar.alafasy">مشاري العفاسي</option>
+<a href="index.html">🏠 الرئيسية</a>
+<a class="active">🇸🇦 قرآن</a>
+<div class="surah-main">
+<label>📖</label>
+<select id="surahSelect" onchange="openFromSelect()">
+<option value="1">الفاتحة</option>
+</select>
+</div>
+<div class="qari-main">
+<label>🎙️</label>
+<select id="qariMain" onchange="syncQari('main')">
+<option value="ar.alafasy">العفاسي</option>
 <option value="ar.husary">الحصري</option>
 <option value="ar.minshawi">المنشاوي</option>
-<option value="ar.abdulbasitmurattal">عبدالباسط</option>
-<option value="ar.mahermuaiqly">ماهر المعيقلي</option>
+<option value="ar.abdulbasitmurattal">عبدالباسط - مرتل</option>
+<option value="ar.tablawi">الطبلاوي</option>
+<option value="ar.mahermuaiqly">المعيقلي</option>
 <option value="ar.shaatree">الشاطري</option>
-<option value="ar.tablawi">الطبلاوي (سورة كاملة)</option>
-<option value="ar.hatemfarid">حاتم فريد (سورة كاملة)</option>
-</select></div>
+<option value="ar.muhammadayyoub">محمد أيوب</option>
+<option value="ar.muhammadjibreel">محمد جبريل</option>
+<option value="ar.hatemfarid">حاتم فريد</option>
+</select>
 </div>
+</div>
+
+<div class="grid" id="list"></div>
+
 <div id="reader">
-<div class="reader-bar">
-<div><span id="sname" style="font-weight:bold">اختر سورة</span> <span id="counter" style="color:#94a3b8;font-size:12px"></span></div>
-<div style="display:flex;gap:6px">
-<button onclick="downloadSurah()" style="background:#22c55e;color:#000;border:0;padding:9px 14px;border-radius:10px;font-weight:bold">📥 السورة</button>
-<button onclick="downloadAyah()" style="background:#facc15;color:#000;border:0;padding:9px 14px;border-radius:10px;font-weight:bold">📥 الآية</button>
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+<button onclick="closeReader()" style="background:#facc15;border:0;padding:10px 20px;border-radius:10px;font-weight:bold;cursor:pointer;color:#000">⬅ رجوع</button>
+<span id="sname" style="font-weight:bold"></span>
+<span id="ayahCounter" class="ayah-counter"></span>
+<button class="dl-surah" onclick="downloadSurah()">📥 تحميل السورة</button>
+</div>
+<div class="qari-bar">
+<select id="qari" onchange="syncQari('reader')">
+<option value="ar.alafasy">مشاري العفاسي</option>
+<option value="ar.husary">الحصري - مرتل</option>
+<option value="ar.husarymujawwad">الحصري - مجود</option>
+<option value="ar.minshawi">المنشاوي - مرتل</option>
+<option value="ar.minshawimujawwad">المنشاوي - مجود</option>
+<option value="ar.abdulbasitmurattal">عبدالباسط - مرتل</option>
+<option value="ar.abdulsamad">عبدالباسط - مجود</option>
+<option value="ar.tablawi">الطبلاوي</option>
+<option value="ar.mahermuaiqly">ماهر المعيقلي</option>
+<option value="ar.shaatree">أبو بكر الشاطري</option>
+<option value="ar.muhammadayyoub">محمد أيوب</option>
+<option value="ar.muhammadjibreel">محمد جبريل</option>
+<option value="ar.hatemfarid">حاتم فريد الواعر</option>
+</select>
+<div class="font-ctrl">
+<button onclick="changeFont(-2)">-</button>
+<span id="fontSizeLabel">30</span>
+<button onclick="changeFont(2)">+</button>
 </div>
 </div>
-<audio id="audioVisible" controls style="width:100%;border-radius:12px"></audio>
-<div class="status" id="status">اضغط على الآية للإيقاف / التشغيل</div>
-<div style="flex:1;display:flex;align-items:center;justify-content:center;padding:20px 10px">
-<div class="ayah-box" id="ayahBox" onclick="togglePlay()">
-<div class="words-line" id="words"></div>
-<div class="ayah-num" id="ayahNum"></div>
+<audio id="audio" controls></audio>
+<div id="content"></div>
+<div class="nav-ayah">
+<button onclick="prevAyah()">⬅ السابق</button>
+<button onclick="nextAyah()">التالي ➡</button>
 </div>
 </div>
-<div class="nav">
-<button onclick="prevAyah()">⬅ السابقة</button>
-<button onclick="nextAyah()">التالية ➡</button>
-</div>
-<div class="surah-ctrl">
-<button onclick="prevSurah()">⏮ السورة السابقة</button>
-<button onclick="nextSurah()">السورة التالية ⏭</button>
-</div>
-</div>
+
 <script>
 const surahs=[["الفاتحة",1],["البقرة",2],["آل عمران",3],["النساء",4],["المائدة",5],["الأنعام",6],["الأعراف",7],["الأنفال",8],["التوبة",9],["يونس",10],["هود",11],["يوسف",12],["الرعد",13],["إبراهيم",14],["الحجر",15],["النحل",16],["الإسراء",17],["الكهف",18],["مريم",19],["طه",20],["الأنبياء",21],["الحج",22],["المؤمنون",23],["النور",24],["الفرقان",25],["الشعراء",26],["النمل",27],["القصص",28],["العنكبوت",29],["الروم",30],["لقمان",31],["السجدة",32],["الأحزاب",33],["سبأ",34],["فاطر",35],["يس",36],["الصافات",37],["ص",38],["الزمر",39],["غافر",40],["فصلت",41],["الشورى",42],["الزخرف",43],["الدخان",44],["الجاثية",45],["الأحقاف",46],["محمد",47],["الفتح",48],["الحجرات",49],["ق",50],["الذاريات",51],["الطور",52],["النجم",53],["القمر",54],["الرحمن",55],["الواقعة",56],["الحديد",57],["المجادلة",58],["الحشر",59],["الممتحنة",60],["الصف",61],["الجمعة",62],["المنافقون",63],["التغابن",64],["الطلاق",65],["التحريم",66],["الملك",67],["القلم",68],["الحاقة",69],["المعارج",70],["نوح",71],["الجن",72],["المزمل",73],["المدثر",74],["القيامة",75],["الإنسان",76],["المرسلات",77],["النبأ",78],["النازعات",79],["عبس",80],["التكوير",81],["الانفطار",82],["المطففين",83],["الانشقاق",84],["البروج",85],["الطارق",86],["الأعلى",87],["الغاشية",88],["الفجر",89],["البلد",90],["الشمس",91],["الليل",92],["الضحى",93],["الشرح",94],["التين",95],["العلق",96],["القدر",97],["البينة",98],["الزلزلة",99],["العاديات",100],["القارعة",101],["التكاثر",102],["العصر",103],["الهمزة",104],["الفيل",105],["قريش",106],["الماعون",107],["الكوثر",108],["الكافرون",109],["النصر",110],["المسد",111],["الإخلاص",112],["الفلق",113],["الناس",114]];
+let ayahsData=[],currentIdx=0,wordTimer=null,qariNow="ar.alafasy",currentSurahId=1,currentFontSize=30;
 
-let ayahsData=[], currentIdx=-2, qariNow="ar.alafasy", currentSurahId=1, isFullSurah=false, isPlaying=false, wordTimer=null, sequence=[];
-const surahSelect=document.getElementById('surahSelect'), qariSelect=document.getElementById('qariSelect'), audio=document.getElementById('audioVisible'), wordsEl=document.getElementById('words'), ayahNumEl=document.getElementById('ayahNum'), counterEl=document.getElementById('counter'), snameEl=document.getElementById('sname'), statusEl=document.getElementById('status');
+// تعبئة اختيار السورة فوق بدل خانة الفاتحة
+const surahSelect=document.getElementById('surahSelect');
+surahs.forEach(s=>{
+  if(s[1]!==1){
+    let opt=document.createElement('option');
+    opt.value=s[1];
+    opt.text=s[0];
+    surahSelect.appendChild(opt);
+  }
+});
+const list=document.getElementById('list');
+surahs.forEach(s=>{
+  const b=document.createElement('button');
+  b.className='card';
+  b.innerHTML=`${s[0]}<br><small style="color:#94a3b8">${s[1]}</small>`;
+  b.onclick=()=>openSurah(s[0],s[1]);
+  list.appendChild(b);
+});
 
-surahs.forEach(s=>{const o=document.createElement('option');o.value=s[1];o.textContent=s[0];surahSelect.appendChild(o);});
-
-function initQari(){
-  qariNow=qariSelect.value;
-  isFullSurah=(qariNow==='ar.tablawi'||qariNow==='ar.hatemfarid');
-  localStorage.setItem('qariNow',qariNow);
-  if(ayahsData.length){openSurah(currentSurahId);}
+function openFromSelect(){
+  let id=parseInt(surahSelect.value);
+  let name=surahs.find(s=>s[1]===id)[0];
+  openSurah(name,id);
 }
-qariSelect.onchange=initQari;
-surahSelect.onchange=()=>openSurah(parseInt(surahSelect.value));
-
+function syncQari(from){
+ if(from==='main'){qariNow=document.getElementById('qariMain').value;document.getElementById('qari').value=qariNow;}
+ else{qariNow=document.getElementById('qari').value;document.getElementById('qariMain').value=qariNow;}
+ localStorage.setItem('qariNow',qariNow);
+ if(document.getElementById('reader').style.display==='block'){restartCurrent();}
+}
 let savedQari=localStorage.getItem('qariNow');
-if(savedQari){qariSelect.value=savedQari;qariNow=savedQari;isFullSurah=(qariNow==='ar.tablawi'||qariNow==='ar.hatemfarid');}
+if(savedQari){qariNow=savedQari;document.getElementById('qariMain').value=qariNow;document.getElementById('qari').value=qariNow;}
+function changeFont(delta){
+ currentFontSize+=delta;
+ if(currentFontSize<18) currentFontSize=18;
+ if(currentFontSize>52) currentFontSize=52;
+ document.getElementById('fontSizeLabel').innerText=currentFontSize;
+ document.querySelectorAll('.ayah').forEach(el=>el.style.fontSize=currentFontSize+'px');
+ document.querySelectorAll('.basmala-out').forEach(el=>el.style.fontSize=currentFontSize+'px');
+ localStorage.setItem('quranFontSize',currentFontSize);
+}
+let saved=localStorage.getItem('quranFontSize');
+if(saved){currentFontSize=parseInt(saved);document.getElementById('fontSizeLabel').innerText=currentFontSize;}
+function closeReader(){document.getElementById('reader').style.display='none';document.getElementById('audio').pause();clearInterval(wordTimer);}
+function restartCurrent(){playAyahByIndex(currentIdx);}
+function downloadSurah(){
+ if(qariNow==='ar.tablawi'){window.open(`https://server12.mp3quran.net/tblawi/${String(currentSurahId).padStart(3,'0')}.mp3`,'_blank');}
+ else if(qariNow==='ar.hatemfarid'){window.open(`https://server11.mp3quran.net/hatem/${String(currentSurahId).padStart(3,'0')}.mp3`,'_blank');}
+ else{window.open(`https://cdn.islamic.network/quran/audio-surah/128/${qariNow}/${currentSurahId}.mp3`,'_blank');}
+}
+function downloadAyah(n){if(qariNow==='ar.tablawi'||qariNow==='ar.hatemfarid')return;window.open(`https://cdn.islamic.network/quran/audio/128/${qariNow}/${n}.mp3`,'_blank');}
+function prevAyah(){if(currentIdx>0)playAyahByIndex(currentIdx-1);}
+function nextAyah(){if(currentIdx<ayahsData.length-1)playAyahByIndex(currentIdx+1);else playNextSurah();}
 
-async function openSurah(id){
-  currentSurahId=id;
-  surahSelect.value=id;
-  const name=surahs.find(s=>s[1]==id)[0];
-  snameEl.textContent=name;
-  statusEl.textContent='جاري التحميل...';
-  localStorage.setItem('lastSurah',id);
-  audio.pause();
-  clearInterval(wordTimer);
-  try{
-    const res=await fetch(`https://api.alquran.cloud/v1/surah/${id}/quran-uthmani`);
-    const data=await res.json();
-    ayahsData=data.data.ayahs;
+async function openSurah(name,id){
+ currentSurahId=id;
+ document.getElementById('sname').innerText=name;
+ surahSelect.value=id;
+ document.getElementById('reader').style.display='block';
+ document.body.style.overflow='hidden';
+ document.getElementById('content').innerHTML='<div style="text-align:center;padding:20px;color:#94a3b8">جاري التحميل... ⏳</div>';
+ document.getElementById('reader').scrollTop=0;
+ const res=await fetch(`https://api.alquran.cloud/v1/surah/${id}/quran-uthmani`);
+ const data=await res.json();ayahsData=data.data.ayahs;
+ let html='';
+ if(id!==1 && id!==9){html+=`<div class="basmala-out" style="font-size:${currentFontSize}px">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>`;}
+ data.data.ayahs.forEach((a,i)=>{
+   let txt=a.text.trim();
+   if(qariNow!=='ar.hatemfarid'){
+     if(i===0 && id!==1 && id!==9){txt=txt.replace(/^بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\s*/,'');const p=txt.split(' ');if(p[0].includes('بِسْمِ')) txt=p.slice(4).join(' ');}
+   }
+   if(!txt) return;
+   const words=txt.split(' ').filter(w=>w).map(w=>`<span class="word">${w}</span>`).join(' ');
+   html+=`<div class="ayah" id="ayah-${i}" style="font-size:${currentFontSize}px"><button class="dl-ayah" onclick="downloadAyah(${a.number})">⬇️ ${a.numberInSurah}</button>${words} <span style="color:#22c55e">﴿${a.numberInSurah}﴾</span></div>`;
+ });
+ document.getElementById('content').innerHTML=html;
+ if(qariNow==='ar.hatemfarid'){setTimeout(()=>playAyahByIndex(0),1400);}else{playAyahByIndex(0);}
+}
+const WAQF_LIST=['ۘ','ۗ','ۚ','ۙ','ۖ','ۛ','ۜ','۝','۞','۟','۠','ۡ','ۢ','ۣ','ۤ','ۥ','ۦ','ۧ','ۨ','۩','ؗ','ؘ','ؙ','ؚ','ۓ','ـ','؞'];
+const WAQF_WORDS=['صلى','قلى','صه','قل','ج','لا','صل','قلي','ص','مـ','ه','ـ','قلى','صلى','م','لا','ج','صه','ق','صل'];
+function isWaqfMark(txt){let w=txt.trim().replace(/[﴿﴾۝٠-٩0-9{}]/g,'').trim();if(!w)return true;if(WAQF_LIST.includes(w))return true;if(WAQF_WORDS.includes(w))return true;if(/^[\u06D6-\u06ED\u08D4-\u08E1]+$/.test(w))return true;if(w.length<=3 && /^[صقلجمهلا]+[ىي]?$/.test(w))return true;return false;}
+function isHizbMark(txt){return txt.includes('۞')||txt.includes('۩');}
+function playNextSurah(){if(currentSurahId<114){let nextId=currentSurahId+1;let nextName=surahs.find(s=>s[1]===nextId)[0];openSurah(nextName,nextId);}else{closeReader();}}
 
-    // بناء التسلسل: أعوذ + بسملة + آيات
-    sequence=[];
-    if(id!==9) sequence.push({type:'isti', text:'أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ'});
-    if(id!==1 && id!==9) sequence.push({type:'bas', text:'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ'});
-    ayahsData.forEach((a,i)=>{
-      let txt=a.text.trim();
-      if(i===0 && id!==1 && id!==9){txt=txt.replace(/^بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ\s*/,'');}
-      sequence.push({type:'ayah', text:txt, num:a.number, numInSurah:a.numberInSurah, idx:i});
-    });
+function playAyahByIndex(idx){
+ if(idx>=ayahsData.length){playNextSurah();return;}
+ currentIdx=idx;
+ document.querySelectorAll('.word.active-word').forEach(x=>x.classList.remove('active-word'));
+ document.querySelectorAll('.ayah').forEach(el=>el.classList.remove('active'));
+ const el=document.getElementById(`ayah-${idx}`);
+ if(!el){playAyahByIndex(idx+1);return;}
+ el.classList.add('active');
+ document.getElementById('ayahCounter').innerText=`الآية ${idx+1} / ${ayahsData.length}`;
+ const audio=document.getElementById('audio');
 
-    if(isFullSurah){
-      let server=qariNow==='ar.tablawi'?'https://server12.mp3quran.net/tblawi/':'https://server11.mp3quran.net/hatem/';
-      audio.src=server+String(id).padStart(3,'0')+'.mp3';
-      audio.onerror=()=>{
-        if(qariNow==='ar.tablawi'){
-          audio.src=`https://server14.mp3quran.net/tblawi/${String(id).padStart(3,'0')}.mp3`;
-          audio.load();audio.play().catch(()=>{});
-        }
-      };
-      loadFromSequence(0);
-    }else{
-      loadFromSequence(0);
-    }
-  }catch(e){statusEl.textContent='فشل التحميل - حاول مرة أخرى';}
+ if(qariNow==='ar.tablawi' || qariNow==='ar.hatemfarid'){
+   if(idx===0){
+     let server = qariNow==='ar.tablawi'? 'https://server12.mp3quran.net/tblawi/' : 'https://server11.mp3quran.net/hatem/';
+     audio.src=server+String(currentSurahId).padStart(3,'0')+'.mp3';
+     // للطبلاوي وحاتم: بنشغل آية بآية من خلال تتبع الوقت
+     audio.play().catch(()=>{
+       if(qariNow==='ar.tablawi'){audio.src=`https://server14.mp3quran.net/tblawi/${String(currentSurahId).padStart(3,'0')}.mp3`;audio.play();}
+     });
+     // نظام آية واحدة فقط
+     audio.ontimeupdate=()=>{
+       // نحسب تقدم السورة ونقلب الآية تلقائيا لو خلص وقتها؟ هنسيب التحكم يدوي وتلقائي
+     };
+     audio.onended=()=>{playNextSurah();};
+     // تظليل كلمات الآية الحالية فقط بسرعة متزامنة
+     audio.onloadedmetadata=()=>{
+       highlightWordsForTablawi();
+     };
+   }else{
+     // لو المستخدم داس التالي وهو على الطبلاوي - ننقل للآية اللي بعدها بصريا فقط
+     highlightWordsForTablawi();
+   }
+   return;
+ }
+
+ audio.src=`https://cdn.islamic.network/quran/audio/128/${qariNow}/${ayahsData[idx].number}.mp3`;
+ audio.play().catch(()=>{});
+ audio.onloadedmetadata=()=>{
+   const allWords=Array.from(el.querySelectorAll('.word'));
+   const highlightWords=allWords.filter(span=>{
+     const t=span.innerText.trim();
+     if(isWaqfMark(t))return false;if(isHizbMark(t))return false;if(/^[﴿﴾۝٠-٩0-9{}۞۩]+$/.test(t))return false;return true;
+   });
+   if(highlightWords.length===0)return;
+   const dur=audio.duration||highlightWords.length*0.7;
+   let per=(dur*1000)/highlightWords.length;
+   if(per<380)per=380;if(per>1100)per=1100;
+   clearInterval(wordTimer);let w=0;
+   wordTimer=setInterval(()=>{
+     document.querySelectorAll('.word.active-word').forEach(x=>x.classList.remove('active-word'));
+     if(w<highlightWords.length){highlightWords[w].classList.add('active-word');w++;}else{clearInterval(wordTimer);}
+   },per);
+ };
+ audio.onended=()=>{clearInterval(wordTimer);document.querySelectorAll('.word.active-word').forEach(x=>x.classList.remove('active-word'));playAyahByIndex(idx+1);};
+ audio.onerror=()=>{setTimeout(()=>playAyahByIndex(idx+1),700);};
 }
 
-function loadFromSequence(seqIdx
+function highlightWordsForTablawi(){
+ const el=document.getElementById(`ayah-${currentIdx}`);
+ if(!el)return;
+ const allWords=Array.from(el.querySelectorAll('.word'));
+ const highlightWords=allWords.filter(span=>{
+   const t=span.innerText.trim();
+   if(isWaqfMark(t))return false;if(isHizbMark(t))return false;if(/^[﴿﴾۝٠-٩0-9{}۞۩]+$/.test(t))return false;return true;
+ });
+ clearInterval(wordTimer);let w=0;
+ let per=650;
+ wordTimer=setInterval(()=>{
+   document.querySelectorAll('.word.active-word').forEach(x=>x.classList.remove('active-word'));
+   if(w<highlightWords.length){highlightWords[w].classList.add('active-word');w++;}else{clearInterval(wordTimer);}
+ },per);
+}
+</script>
+</body>
+</html>
