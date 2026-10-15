@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>التطبيق القرآني الشامل</title>
-  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Tajawal:wght@400;500;700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-color: #0b1222;
@@ -26,40 +26,7 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-    }
-
-    .top-nav {
-      background-color: var(--card-bg);
-      border-bottom: 1px solid var(--border-color);
-      padding: 10px 16px;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      overflow-x: auto;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    }
-
-    .top-nav button {
-      background: var(--panel-bg);
-      border: 1px solid var(--border-color);
-      padding: 8px 14px;
-      border-radius: 10px;
-      color: var(--text-main);
-      font-size: 13px;
-      font-weight: 700;
-      white-space: nowrap;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'Tajawal', sans-serif;
-    }
-
-    .top-nav button.active, .top-nav button:hover {
-      background: var(--accent-green);
-      color: #000;
-      border-color: var(--accent-green);
+      padding-bottom: 20px;
     }
 
     .container {
@@ -73,25 +40,26 @@
     .section-view { display: none; }
     .section-view.active-section { display: block !important; }
 
+    /* Home Cards */
     .grid-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 16px;
-      margin-top: 20px;
+      margin-top: 15px;
     }
 
     .nav-card {
       background: var(--panel-bg);
       border: 1px solid var(--border-color);
       border-radius: 16px;
-      padding: 20px;
+      padding: 24px;
       text-align: center;
       cursor: pointer;
       transition: all 0.3s ease;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .nav-card:hover {
@@ -100,8 +68,8 @@
       box-shadow: 0 8px 20px rgba(34, 197, 94, 0.2);
     }
 
-    .nav-icon { font-size: 32px; }
-    .nav-title { font-size: 17px; font-weight: 700; color: var(--accent-green); }
+    .nav-icon { font-size: 36px; }
+    .nav-title { font-size: 18px; font-weight: 700; color: var(--accent-green); }
     .nav-desc { font-size: 12px; color: var(--text-muted); }
 
     .qari-select-box {
@@ -151,28 +119,29 @@
       border-radius: 14px;
       padding: 20px;
       margin-bottom: 16px;
-      transition: all 0.3s ease;
-    }
-
-    /* الخط الأبيض تحت النص أثناء القراءة فقط */
-    .reader-box.reading-active {
-      border-bottom: 4px solid #ffffff !important;
-      background: rgba(255, 255, 255, 0.05);
-      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
-    }
-
-    .reading-active .quran-text {
-      border-bottom: 2px solid #ffffff;
-      padding-bottom: 8px;
-      display: inline-block;
-      width: 100%;
     }
 
     .quran-text {
       font-family: 'Amiri Quran', serif;
-      font-size: 24px;
-      line-height: 2.2;
+      font-size: 26px;
+      line-height: 2.3;
       margin-bottom: 10px;
+    }
+
+    /* WORD HIGHLIGHT (الكلمة فقط تضئ) */
+    .word-span {
+      display: inline-block;
+      padding: 0 4px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .word-span.lit-word {
+      background-color: var(--accent-gold) !important;
+      color: #000000 !important;
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(250, 204, 21, 0.8);
+      border-radius: 4px;
     }
 
     .btn-back {
@@ -210,78 +179,83 @@
       line-height: 1.8;
     }
 
-    .tajweed-example {
-      font-family: 'Amiri Quran', serif;
-      font-size: 20px;
-      color: var(--accent-green);
-      background: var(--panel-bg);
-      padding: 8px 12px;
-      border-radius: 8px;
-      margin-top: 8px;
-      display: inline-block;
+    /* Islamic Golden Footer Badge */
+    .signature-badge {
+      margin: 30px auto 10px auto;
+      max-width: 600px;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 2px solid var(--accent-gold);
+      border-radius: 16px;
+      padding: 16px 20px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(250, 204, 21, 0.15);
+      position: relative;
     }
 
-    .shaarawy-badge {
-      background: rgba(56, 189, 248, 0.15);
-      color: var(--accent-blue);
-      padding: 4px 10px;
-      border-radius: 6px;
+    .signature-badge::before {
+      content: "﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾";
+      font-family: 'Amiri Quran', serif;
+      display: block;
+      color: var(--accent-gold);
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .signature-title {
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .signature-sub {
+      color: var(--accent-green);
       font-size: 13px;
+      margin-top: 4px;
       font-weight: bold;
-      margin-bottom: 8px;
-      display: inline-block;
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Navigation -->
-  <div class="top-nav">
-    <button id="btn-home" class="active" onclick="showSection('home')">🏠 الرئيسية</button>
-    <button id="btn-quran" onclick="showSection('quran')">🇸🇦 القرآن الكريم</button>
-    <button id="btn-tafsir" onclick="showSection('tafsir')">📖 التفسير والخواطر</button>
-    <button id="btn-tajweed" onclick="showSection('tajweed')">📘 أحكام التجويد</button>
-    <button id="btn-english" onclick="showSection('english')">🇬🇧 English</button>
-  </div>
-
   <div class="container">
 
-    <!-- HOME SECTION -->
+    <!-- HOME SECTION VIEW -->
     <div id="sec-home" class="section-view active-section">
       <div style="text-align: center; margin-bottom: 20px;">
-        <h1 style="color: var(--accent-gold); font-size: 24px;">📖 التطبيق القرآني الشامل</h1>
-        <p style="color: var(--text-muted); font-size: 14px;">اختر القسم الذي تريد تصفحه</p>
+        <h1 style="color: var(--accent-gold); font-size: 26px;">📖 التطبيق القرآني الشامل</h1>
+        <p style="color: var(--text-muted); font-size: 14px;">اختر القسم الذي تريد تصفحه من الواجهة مباشرة</p>
       </div>
 
       <div class="grid-container">
         <div class="nav-card" onclick="showSection('quran')">
           <span class="nav-icon">🇸🇦</span>
           <span class="nav-title">القرآن الكريم</span>
-          <span class="nav-desc">تلاوة واستماع مع خط أبيض تحت النص أثناء القراءة</span>
+          <span class="nav-desc">تلاوة واستماع متزامن مع إضاءة الكلمة المقروءة فقط</span>
         </div>
 
         <div class="nav-card" onclick="showSection('tafsir')">
           <span class="nav-icon">📖</span>
-          <span class="nav-title">تفسير الشعراوي والميسر</span>
-          <span class="nav-desc">خواطر فضيلة الشيخ الشعراوي بالعامية البسيطة</span>
+          <span class="nav-title">التفسير الميسر</span>
+          <span class="nav-desc">تفسير آيات القرآن الكريم بشكل ميسر ومباشر</span>
         </div>
 
         <div class="nav-card" onclick="showSection('tajweed')">
           <span class="nav-icon">📘</span>
-          <span class="nav-title">أحكام التجويد الشاملة</span>
-          <span class="nav-desc">دليل كامل من الألف إلى الياء للكبار والأطفال</span>
+          <span class="nav-title">أحكام التجويد</span>
+          <span class="nav-desc">دليل كامل ومبسط لقواعد التلاوة من الألف إلى الياء</span>
         </div>
 
         <div class="nav-card" onclick="showSection('english')">
           <span class="nav-icon">🇬🇧</span>
           <span class="nav-title">English Translation</span>
-          <span class="nav-desc">English translation with audio recitation</span>
+          <span class="nav-desc">English translation with synchronized word-audio highlight</span>
         </div>
       </div>
     </div>
 
-    <!-- QURAN SECTION -->
+    <!-- QURAN ARABIC SECTION -->
     <div id="sec-quran" class="section-view">
+      <button class="btn-back" onclick="showSection('home')">🏠 الرئيسية</button>
       <h2 style="margin-bottom: 12px; color: var(--accent-green); font-size: 20px;">🇸🇦 القرآن الكريم</h2>
       <div id="quran-list-view">
         <label style="font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 6px;">🎙️ اختر القارئ المفضّل:</label>
@@ -298,14 +272,15 @@
       <div id="quran-reader-view" style="display: none;">
         <button class="btn-back" onclick="closeReader('quran')">⬅ رجوع للسور</button>
         <h3 id="quran-surah-title" style="margin-bottom: 12px; color: var(--accent-gold);"></h3>
-        <audio id="quran-audio" controls onplay="setReadingUnderline(true)" onpause="setReadingUnderline(false)" onended="setReadingUnderline(false)"></audio>
+        <audio id="quran-audio" controls></audio>
         <div id="quran-content"></div>
       </div>
     </div>
 
     <!-- TAFSIR SECTION -->
     <div id="sec-tafsir" class="section-view">
-      <h2 style="margin-bottom: 12px; color: var(--accent-green); font-size: 20px;">📖 التفسير وخواطر الشيخ الشعراوي</h2>
+      <button class="btn-back" onclick="showSection('home')">🏠 الرئيسية</button>
+      <h2 style="margin-bottom: 12px; color: var(--accent-green); font-size: 20px;">📖 التفسير الميسر</h2>
       <div id="tafsir-list-view">
         <div class="surah-grid" id="tafsir-grid"></div>
       </div>
@@ -318,22 +293,30 @@
 
     <!-- TAJWEED SECTION -->
     <div id="sec-tajweed" class="section-view">
-      <h2 style="margin-bottom: 16px; color: var(--accent-blue); font-size: 20px;">📘 موسوعة أحكام التجويد الشاملة (من الألف إلى الياء)</h2>
+      <button class="btn-back" onclick="showSection('home')">🏠 الرئيسية</button>
+      <h2 style="margin-bottom: 16px; color: var(--accent-blue); font-size: 20px;">📘 موسوعة أحكام التجويد الشاملة</h2>
       <div id="tajweed-content"></div>
     </div>
 
     <!-- ENGLISH SECTION -->
     <div id="sec-english" class="section-view">
+      <button class="btn-back" onclick="showSection('home')">🏠 Home</button>
       <h2 style="margin-bottom: 16px; color: var(--accent-green); font-size: 20px;">🇬🇧 Quran English Translation</h2>
       <div id="english-list-view">
         <div class="surah-grid" id="english-grid"></div>
       </div>
       <div id="english-reader-view" style="display: none;">
-        <button class="btn-back" onclick="closeReader('english')">⬅ Back to List</button>
+        <button class="btn-back" onclick="closeReader('english')">⬅ Back to Surahs</button>
         <h3 id="english-surah-title" style="margin-bottom: 12px; color: var(--accent-gold);"></h3>
         <audio id="english-audio" controls></audio>
         <div id="english-content"></div>
       </div>
+    </div>
+
+    <!-- GOLDEN ISLAMIC FOOTER SIGNATURE -->
+    <div class="signature-badge">
+      <div class="signature-title">صدقة جارية عن كل مسلم ومسلمة</div>
+      <div class="signature-sub">إعداد وتصميم: عبدالله محمد عبدالسيد سعد</div>
     </div>
 
   </div>
@@ -344,6 +327,7 @@
     ];
 
     var currentQariKey = "afasy";
+    var wordTimer = null;
 
     var qariAudioBases = {
       afasy: "https://cdn.islamic.network/quran/audio/128/ar.alafasy/",
@@ -359,24 +343,15 @@
     }
 
     function showSection(secId) {
+      clearInterval(wordTimer);
       var views = document.querySelectorAll('.section-view');
       for (var i = 0; i < views.length; i++) {
         views[i].classList.remove('active-section');
       }
 
-      var btns = document.querySelectorAll('.top-nav button');
-      for (var j = 0; j < btns.length; j++) {
-        btns[j].classList.remove('active');
-      }
-
       var targetSec = document.getElementById('sec-' + secId);
       if (targetSec) {
         targetSec.classList.add('active-section');
-      }
-
-      var targetBtn = document.getElementById('btn-' + secId);
-      if (targetBtn) {
-        targetBtn.classList.add('active');
       }
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -405,15 +380,38 @@
       }
     }
 
-    function setReadingUnderline(isPlaying) {
-      var boxes = document.querySelectorAll('#quran-content .reader-box');
-      for (var i = 0; i < boxes.length; i++) {
-        if (isPlaying) {
-          boxes[i].classList.add('reading-active');
-        } else {
-          boxes[i].classList.remove('reading-active');
+    function setupWordHighlight(audioEl, boxContainer) {
+      clearInterval(wordTimer);
+      var words = boxContainer.querySelectorAll('.word-span');
+      if (!words || words.length === 0) return;
+
+      audioEl.onplay = function() {
+        clearInterval(wordTimer);
+        var duration = audioEl.duration || 3;
+        var intervalTime = (duration * 1000) / words.length;
+        if (intervalTime < 200) intervalTime = 200;
+
+        var idx = 0;
+        wordTimer = setInterval(function() {
+          for (var k = 0; k < words.length; k++) {
+            words[k].classList.remove('lit-word');
+          }
+          if (idx < words.length) {
+            words[idx].classList.add('lit-word');
+            idx++;
+          } else {
+            clearInterval(wordTimer);
+          }
+        }, intervalTime);
+      };
+
+      audioEl.onpause = function() { clearInterval(wordTimer); };
+      audioEl.onended = function() {
+        clearInterval(wordTimer);
+        for (var k = 0; k < words.length; k++) {
+          words[k].classList.remove('lit-word');
         }
-      }
+      };
     }
 
     async function fetchWithFallback(url) {
@@ -427,12 +425,13 @@
     }
 
     async function loadSurahContent(id, name, mode) {
+      clearInterval(wordTimer);
       document.getElementById(mode + '-list-view').style.display = 'none';
       document.getElementById(mode + '-reader-view').style.display = 'block';
-      document.getElementById(mode + '-surah-title').innerText = 'سورة ' + name;
+      document.getElementById(mode + '-surah-title').innerText = (mode === 'english' ? 'Surah ' : 'سورة ') + name;
       
       var contentEl = document.getElementById(mode + '-content');
-      contentEl.innerHTML = '<div style="text-align:center; padding: 30px; color: var(--text-muted);">⏳ جاري تحميل النص...</div>';
+      contentEl.innerHTML = '<div style="text-align:center; padding: 30px; color: var(--text-muted);">⏳ Loading...</div>';
 
       if (mode === 'quran') {
         var data = await fetchWithFallback('https://api.alquran.cloud/v1/surah/' + id + '/quran-uthmani');
@@ -448,11 +447,12 @@
           var html = '';
           for (var k = 0; k < data.data.ayahs.length; k++) {
             var a = data.data.ayahs[k];
-            html += '<div class="reader-box"><div class="quran-text">' + a.text + ' <span style="color:var(--accent-green);">﴿' + a.numberInSurah + '﴾</span></div></div>';
+            var tokens = a.text.split(' ');
+            var wrappedWords = tokens.map(function(w) { return '<span class="word-span">' + w + '</span>'; }).join(' ');
+            html += '<div class="reader-box" id="qbox-' + k + '"><div class="quran-text">' + wrappedWords + ' <span style="color:var(--accent-green);">﴿' + a.numberInSurah + '﴾</span></div></div>';
           }
           contentEl.innerHTML = html;
-        } else {
-          contentEl.innerHTML = '<div class="reader-box"><div class="quran-text">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div><p style="color:var(--text-muted); margin-top:10px;">تعذر الاتصال المباشر بالخادم. يرجى التحقق من الاتصال بالإنترنت.</p></div>';
+          setupWordHighlight(audioEl, contentEl);
         }
       } else if (mode === 'tafsir') {
         var qData = await fetchWithFallback('https://api.alquran.cloud/v1/surah/' + id + '/quran-uthmani');
@@ -463,44 +463,77 @@
           for (var m = 0; m < qData.data.ayahs.length; m++) {
             var ay = qData.data.ayahs[m];
             var tafsirText = (tData && tData.data && tData.data.ayahs[m]) ? tData.data.ayahs[m].text : 'التفسير الميسر متاح للآية.';
-            var shaarawyThought = 'شوف ربنا سبحانه وتعالى لما بيكلمنا في الآية دي.. بيوصلنا معنى إيماني عميق وبسيط جداً.. يقولك لما تسمع الآية دي افهم إن ربنا عاوز يريح قلبك ويرشدك للخير والهدوء النفسي، لأن ربنا ربك وهو الأرحم بيك من أي حد تاني.';
 
             htmlTafsir += '<div class="reader-box">' +
               '<div class="quran-text">' + ay.text + ' ﴿' + ay.numberInSurah + '﴾</div>' +
               '<div style="color:#cbd5e1; padding:12px; background:var(--panel-bg); border-radius:8px; margin-top:8px;">' +
                 '<strong style="color:var(--accent-green); display:block; margin-bottom:4px;">📖 التفسير الميسر:</strong>' + tafsirText +
               '</div>' +
-              '<div style="color:#f8fafc; padding:12px; background:#1e3a5f; border-radius:8px; margin-top:10px; border-right:3px solid var(--accent-blue);">' +
-                '<span class="shaarawy-badge">🎙️ خواطر فضيلة الشيخ الشعراوي (بالعامية):</span>' +
-                '<div>"' + shaarawyThought + '"</div>' +
-              '</div>' +
             '</div>';
           }
           contentEl.innerHTML = htmlTafsir;
-        } else {
-          contentEl.innerHTML = '<div class="reader-box"><p style="color:var(--text-muted);">تأكد من الاتصال بالإنترنت لتحميل التفسير والخواطر كاملة.</p></div>';
         }
       } else if (mode === 'english') {
         var arData = await fetchWithFallback('https://api.alquran.cloud/v1/surah/' + id + '/quran-uthmani');
         var enData = await fetchWithFallback('https://api.alquran.cloud/v1/surah/' + id + '/en.sahih');
+        var audData = await fetchWithFallback('https://api.alquran.cloud/v1/surah/' + id + '/ar.alafasy');
 
         if (arData && arData.data && enData && enData.data) {
+          var audioEn = document.getElementById('english-audio');
+          var ayahsEn = enData.data.ayahs;
+          var audioAyahs = audData ? audData.data.ayahs : [];
+          var curIndex = 0;
+
+          function playEnAyah(idx) {
+            if (idx >= ayahsEn.length) return;
+            curIndex = idx;
+            if (audioAyahs[idx]) {
+              audioEn.src = audioAyahs[idx].audio;
+              audioEn.play().catch(function(){});
+            }
+
+            var allBoxes = contentEl.querySelectorAll('.reader-box');
+            for (var b = 0; b < allBoxes.length; b++) {
+              allBoxes[b].style.borderColor = 'var(--border-color)';
+            }
+            var targetBox = document.getElementById('enbox-' + idx);
+            if (targetBox) {
+              targetBox.style.borderColor = 'var(--accent-gold)';
+              targetBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              setupWordHighlight(audioEn, targetBox);
+            }
+          }
+
+          audioEn.onended = function() {
+            if (curIndex + 1 < ayahsEn.length) {
+              playEnAyah(curIndex + 1);
+            }
+          };
+
           var htmlEn = '';
           for (var n = 0; n < arData.data.ayahs.length; n++) {
-            htmlEn += '<div class="reader-box"><div class="quran-text" style="direction:rtl;">' + arData.data.ayahs[n].text + ' ﴿' + arData.data.ayahs[n].numberInSurah + '﴾</div><div style="color:#cbd5e1; margin-top:8px;">' + enData.data.ayahs[n].text + '</div></div>';
+            var wordsEn = enData.data.ayahs[n].text.split(' ').map(function(w) {
+              return '<span class="word-span">' + w + '</span>';
+            }).join(' ');
+
+            htmlEn += '<div class="reader-box" id="enbox-' + n + '" onclick="window.playEnAyah(' + n + ')">' +
+              '<div class="quran-text" style="direction:rtl;">' + arData.data.ayahs[n].text + ' ﴿' + arData.data.ayahs[n].numberInSurah + '﴾</div>' +
+              '<div style="color:#cbd5e1; margin-top:8px; font-size:16px; line-height:1.7;">' + wordsEn + '</div>' +
+            '</div>';
           }
+
+          window.playEnAyah = playEnAyah;
           contentEl.innerHTML = htmlEn;
-        } else {
-          contentEl.innerHTML = '<div class="reader-box"><p style="color:var(--text-muted);">Please verify your internet connection to load English translation.</p></div>';
+          playEnAyah(0);
         }
       }
     }
 
     function closeReader(mode) {
-      if (mode === 'quran') {
-        document.getElementById('quran-audio').pause();
-        setReadingUnderline(false);
-      }
+      clearInterval(wordTimer);
+      if (mode === 'quran') document.getElementById('quran-audio').pause();
+      if (mode === 'english') document.getElementById('english-audio').pause();
+
       document.getElementById(mode + '-reader-view').style.display = 'none';
       document.getElementById(mode + '-list-view').style.display = 'block';
     }
@@ -513,54 +546,19 @@
         },
         {
           title: "2. أحكام النون الساكنة والتنوين (4 أحكام)",
-          text: "تخرج النون الساكنة أو التنوين عند التقائها بحروف الهجاء إلى 4 حالات:<br>" +
-          "1️⃣ <b>الإظهار الحلقي:</b> النطق بالنون واضحة بدون غنة عند حروف الحلق الستة: (ء ، هـ ، ع ، ح ، غ ، خ). <span class=\"tajweed-example\">مثال: مَنْ آمَنَ - مِنْ هَادٍ</span><br>" +
-          "2️⃣ <b>الإدغام:</b> دمج النون بالحرف التالي مع حروف كلمة (يَرْمَلُونَ)، وينقسم لقسمين:<br>" +
-             " - <b>بغنة:</b> عند حروف (يَنْمُو). <span class=\"tajweed-example\">مثال: مَنْ يَقُولُ</span><br>" +
-             " - <b>بغير غنة:</b> عند حرفي (ل ، ر). <span class=\"tajweed-example\">مثال: مِنْ لَدُنْهُ - مِنْ رَبِّهِمْ</span><br>" +
-          "3️⃣ <b>الإقلاب:</b> قلب النون أو التنوين ميماً مخفاة بغنة عند حرف الباء (ب). <span class=\"tajweed-example\">مثال: مِنْ بَعْدِ</span><br>" +
-          "4️⃣ <b>الإخفاء الحقيقي:</b> النطق بين الإظهار والإدغام بغنة عند باقي الحروف الـ 15. <span class=\"tajweed-example\">مثال: كُنْتُمْ - أَنْصَاراً</span>"
+          text: "1️⃣ <b>الإظهار الحلقي:</b> النطق بالنون جليّة عند حروف الحلق (ء ، هـ ، ع ، ح ، غ ، خ).<br>2️⃣ <b>الإدغام:</b> دمج النون بالحرف التالي مع حروف (يرملون) (بغنة: ينْمُو / بغير غنة: ل ، ر).<br>3️⃣ <b>الإقلاب:</b> قلب النون ميماً مخفاة بغنة عند الباء (ب).<br>4️⃣ <b>الإخفاء الحقيقي:</b> النطق بين الإظهار والإدغام عند باقي الحروف الـ 15."
         },
         {
           title: "3. أحكام الميم الساكنة (3 أحكام)",
-          text: "للميم الساكنة مع الحروف الهجائية 3 أحكام شفوية:<br>" +
-          "1️⃣ <b>الإخفاء الشفوي:</b> إذا جاء بعد الميم الساكنة حرف الباء (ب) مع الغنة. <span class=\"tajweed-example\">مثال: تَرْمِيهِمْ بِحِجَارَةٍ</span><br>" +
-          "2️⃣ <b>إدغام المثلين الصغير:</b> إذا جاء بعدها ميم متحركة (م) وتدغم فيها بغنة. <span class=\"tajweed-example\">مثال: لَكُمْ مَا كَسَبْتُمْ</span><br>" +
-          "3️⃣ <b>الإظهار الشفوي:</b> النطق بالميم جليّة عند باقي الحروف (وأشدها ظهوراً عند الواو والفاء). <span class=\"tajweed-example\">مثال: لَعَلَّكُمْ تَتَّقُونَ</span>"
+          text: "1️⃣ <b>الإخفاء الشفوي:</b> عند حرف الباء (ب).<br>2️⃣ <b>إدغام المثلين الصغير:</b> عند حرف الميم (م).<br>3️⃣ <b>الإظهار الشفوي:</b> عند باقي حروف الهجاء."
         },
         {
-          title: "4. النون والميم المشددتان",
-          text: "يجب إظهار الغنة بمقدار حركتين عند النطق بالنون أو الميم المشددتين (نّ / مّ).<br><span class=\"tajweed-example\">مثال: إِنَّ - ثُمَّ - النَّاسِ</span>"
+          title: "4. أحكام القلقلة (قطب جد)",
+          text: "القلقلة هي اضطراب الصوت عند النطق بحرف ساكن من حروف (قَطْبُ جَدٍّ). وتكون صغرى في وسط الكلمة وكبرى عند الوقف."
         },
         {
-          title: "5. أحكام القلقلة (قطب جد)",
-          text: "القلقلة هي اضطراب وتزلزل الصوت عند النطق بحرف ساكن من حروف (قَطْبُ جَدٍّ).<br>" +
-          "• <b>قلقلة صغرى:</b> إذا كان حرف القلقلة ساكناً في وسط الكلمة. <span class=\"tajweed-example\">مثال: يَقْطَعُونَ - إِبْرَاهِيمُ</span><br>" +
-          "• <b>قلقلة كبرى:</b> إذا كان الحرف في آخر الكلمة ووقفنا عليه. <span class=\"tajweed-example\">مثال: الْفَلَقِ - الْحَرِيقِ</span>"
-        },
-        {
-          title: "6. أحكام المدود الكاملة (أنواع المد)",
-          text: "المد هو إطالة الصوت بحرف من حروف المد الثلاثة (الألف، الواو، الياء):<br>" +
-          "1️⃣ <b>المد الطبيعي:</b> يمد حركتان. <span class=\"tajweed-example\">مثل: قَالَ - يَقُولُ</span><br>" +
-          "2️⃣ <b>مد البدل:</b> تقدم الهمز على المد (حركتان). <span class=\"tajweed-example\">مثل: آمَنُوا</span><br>" +
-          "3️⃣ <b>المد الواجب المتصل:</b> همز بعد حرف المد في كلمة واحدة (4 أو 5 حركات). <span class=\"tajweed-example\">مثل: جَاءَ</span><br>" +
-          "4️⃣ <b>المد الجائز المنفصل:</b> حرف المد في كلمة والهمز في الكلمة التالية (2 أو 4 أو 5 حركات). <span class=\"tajweed-example\">مثل: إِنَّا أَنْزَلْنَاهُ</span><br>" +
-          "5️⃣ <b>المد اللازم:</b> حرف مد بعده حرف ساكن سكوناً أصلياً (6 حركات لزوماً). <span class=\"tajweed-example\">مثل: الْحَاقَّةُ</span><br>" +
-          "6️⃣ <b>المد العارض للسكون:</b> عند الوقف على الكلمة (2 أو 4 أو 6 حركات). <span class=\"tajweed-example\">مثل: الْعَالَمِينَ</span>"
-        },
-        {
-          title: "7. التفخيم والترقيق (الراء واللام)",
-          text: "• <b>التفخيم:</b> تسمين الحرف ليملأ الصدى الفم (حروف خص ضغط قظ).<br>" +
-          "• <b>تفخيم وترقيق الراء:</b> تفخم الراء إذا كانت مفتوحة أو مضمومة (رَمَضَانَ)، وترقق إذا كانت مكسورة (رِزْقًا).<br>" +
-          "• <b>لام لفظ الجلالة (الله):</b> تفخم بعد الفتح والضم (عَبْدُ اللَّهِ)، وترقق بعد الكسر (بِسْمِ اللَّهِ)."
-        },
-        {
-          title: "8. مخارج الحروف الـ 17 الرئيسية",
-          text: "1️⃣ <b>الجوف:</b> المخرج لـ حروف المد.<br>" +
-          "2️⃣ <b>الحلق:</b> فيه 6 حروف (ء هـ ع ح غ خ).<br>" +
-          "3️⃣ <b>اللسان:</b> فيه 10 مخارج لـ 18 حرفاً.<br>" +
-          "4️⃣ <b>الشفتان:</b> فيهما مخرجان لـ (ف ، و ، ب ، م).<br>" +
-          "5️⃣ <b>الخيشوم:</b> مخرج صوت الغنة."
+          title: "5. أحكام المدود الكاملة",
+          text: "• المد الطبيعي (حركتان)<br>• مد البدل (حركتان)<br>• المد الواجب المتصل (4-5 حركات)<br>• المد الجائز المنفصل (2-4-5 حركات)<br>• المد اللازم (6 حركات لزوماً)"
         }
       ];
 
@@ -572,7 +570,6 @@
       document.getElementById('tajweed-content').innerHTML = html;
     }
 
-    // Initialize
     renderGrids();
     renderTajweed();
   </script>
