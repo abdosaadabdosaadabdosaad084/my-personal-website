@@ -50,6 +50,7 @@
     .reader-box { background: var(--card-bg); border: 1.5px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 10px; transition: all 0.2s ease; position: relative; }
     .reader-box.active-ayah-box { border-color: var(--accent-gold) !important; background: rgba(250, 204, 21, 0.08); box-shadow: 0 0 12px rgba(250, 204, 21, 0.2); }
     .quran-text { font-family: 'Amiri Quran', serif; font-size: var(--quran-font-size); color: var(--quran-font-color); line-height: 2.2; margin-bottom: 6px; }
+    .ayah-actions { display: flex; align-items: center; justify-content: flex-end; margin-top: 6px; border-top: 1px solid var(--border-color); padding-top: 6px; }
     .btn-download { background: var(--panel-bg); border: 1px solid var(--border-color); color: var(--accent-blue); padding: 5px 12px; border-radius: 6px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
     .btn-download:hover { background: var(--border-color); color: var(--accent-gold); }
     .btn-back { background: var(--accent-gold); color: #000; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 13px; cursor: pointer; margin-bottom: 10px; }
@@ -107,7 +108,7 @@
           <option value="Husary_128kbps">محمود خليل الحصري (مرتل)</option>
           <option value="Abdul_Basit_Murattal_192kbps">عبد الباسط عبد الصمد (مرتل)</option>
           <option value="Mohammad_al_Tablaway_128kbps">محمد محمود الطبلاوي (مرتل)</option>
-          <option value="Hatem_Farid_32kbps">حاتم فريد (سورة كاملة)</option>
+          <option value="Hatem_Farid_32kbps">حاتم فريد (مرتل)</option>
         </select>
         <div class="surah-grid" id="quran-grid"></div>
       </div>
@@ -165,6 +166,7 @@
       var mLink = document.getElementById('manifest-link');
       if (mLink) mLink.setAttribute('href', URL.createObjectURL(blob));
     })();
+
     var deferredPrompt;
     window.addEventListener('beforeinstallprompt', function(e) {
       e.preventDefault(); deferredPrompt = e;
@@ -183,13 +185,16 @@
         }
       });
     }
+
     var surahsList = [["الفاتحة",1],["البقرة",2],["آل عمران",3],["النساء",4],["المائدة",5],["الأنعام",6],["الأعراف",7],["الأنفال",8],["التوبة",9],["يونس",10],["هود",11],["يوسف",12],["الرعد",13],["إبراهيم",14],["الحجر",15],["النحل",16],["الإسراء",17],["الكهف",18],["مريم",19],["طه",20],["الأنبياء",21],["الحج",22],["المؤمنون",23],["النور",24],["الفرقان",25],["الشعراء",26],["النمل",27],["القصص",28],["العنكبوت",29],["الروم",30],["لقمان",31],["السجدة",32],["الأحزاب",33],["سبأ",34],["فاطر",35],["يس",36],["الصافات",37],["ص",38],["الزمر",39],["غافر",40],["فصلت",41],["الشورى",42],["الزخرف",43],["الدخان",44],["الجاثية",45],["الأحقاف",46],["محمد",47],["الفتح",48],["الحجرات",49],["ق",50],["الذاريات",51],["الطور",52],["النجم",53],["القمر",54],["الرحمن",55],["الواقعة",56],["الحديد",57],["المجادلة",58],["الحشر",59],["الممتحنة",60],["الصف",61],["الجمعة",62],["المنافقون",63],["التغابن",64],["الطلاق",65],["التحريم",66],["الملك",67],["القلم",68],["الحاقة",69],["المعارج",70],["نوح",71],["الجن",72],["المزمل",73],["المدثر",74],["القيامة",75],["الإنسان",76],["المرسلات",77],["النبأ",78],["النازعات",79],["عبس",80],["التكوير",81],["الانفطار",82],["المطففين",83],["الانشقاق",84],["البروج",85],["الطارق",86],["الأعلى",87],["الغاشية",88],["الفجر",89],["البلد",90],["الشمس",91],["الليل",92],["الضحى",93],["الشرح",94],["التين",95],["العلق",96],["القدر",97],["البينة",98],["الزلزلة",99],["العاديات",100],["القارعة",101],["التكاثر",102],["العصر",103],["الهمزة",104],["الفيل",105],["قريش",106],["الماعون",107],["الكوثر",108],["الكافرون",109],["النصر",110],["المسد",111],["الإخلاص",112],["الفلق",113],["الناس",114]];
     var currentQariPath = "Alafasy_128kbps", currentFontSize = 24, currentAyahsData = [], activeAyahIndex = 0, currentSurahId = 1;
+
     function getEveryAyahUrl(qariFolder, surahNum, ayahNum) {
       var sPadded = String(surahNum).padStart(3, '0');
-      if (qariFolder === "Hatem_Farid_32kbps") return "https://server11.mp3quran.net/hatem/" + sPadded + ".mp3";
-      return "https://www.everyayah.com/data/" + qariFolder + "/" + sPadded + String(ayahNum).padStart(3, '0') + ".mp3";
+      var aPadded = String(ayahNum).padStart(3, '0');
+      return "https://www.everyayah.com/data/" + qariFolder + "/" + sPadded + aPadded + ".mp3";
     }
+
     function showSection(secId) {
       var views = document.querySelectorAll('.section-view');
       for (var i = 0; i < views.length; i++) views[i].classList.remove('active-section');
@@ -197,6 +202,7 @@
       if (targetSec) targetSec.classList.add('active-section');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
     function renderGrids() {
       var qGrid = document.getElementById('quran-grid'), tGrid = document.getElementById('tafsir-grid'), eGrid = document.getElementById('english-grid');
       qGrid.innerHTML = ''; tGrid.innerHTML = ''; eGrid.innerHTML = '';
@@ -205,23 +211,33 @@
         var qCard = document.createElement('div'); qCard.className = 'surah-card';
         qCard.innerHTML = '<span style="font-size:11px; color:var(--text-muted);">' + id + '</span><span style="font-weight:bold; font-size:14px;">' + name + '</span>';
         qCard.onclick = function() { loadQuranSurah(id, name); }; qGrid.appendChild(qCard);
+        
         var tCard = document.createElement('div'); tCard.className = 'surah-card';
         tCard.innerHTML = '<span style="font-size:11px; color:var(--text-muted);">' + id + '</span><span style="font-weight:bold; font-size:14px;">' + name + '</span>';
         tCard.onclick = function() { loadTafsirSurah(id, name); }; tGrid.appendChild(tCard);
+
         var eCard = document.createElement('div'); eCard.className = 'surah-card';
         eCard.innerHTML = '<span style="font-size:11px; color:var(--text-muted);">' + id + '</span><span style="font-weight:bold; font-size:14px;">' + name + '</span>';
         eCard.onclick = function() { loadEnglishSurah(id, name); }; eGrid.appendChild(eCard);
       });
     }
+
     function loadQuranSurah(surahId, surahName) {
       currentSurahId = surahId;
       document.getElementById('quran-list-view').style.display = 'none';
       document.getElementById('quran-reader-view').style.display = 'block';
       document.getElementById('quran-surah-title').innerText = 'سورة ' + surahName;
       document.getElementById('bismillah-view').style.display = (surahId === 9 || surahId === 1) ? 'none' : 'block';
-      var audioEl = document.getElementById('quran-audio'), downloadBtn = document.getElementById('download-surah-btn');
+      
+      var downloadBtn = document.getElementById('download-surah-btn');
       var surahPadded = String(surahId).padStart(3, '0');
-      downloadBtn.href = "https://server11.mp3quran.net/hatem/" + surahPadded + ".mp3";
+      
+      if (currentQariPath === "Hatem_Farid_32kbps") {
+        downloadBtn.href = "https://server11.mp3quran.net/hatem/" + surahPadded + ".mp3";
+      } else {
+        downloadBtn.href = "https://server11.mp3quran.net/alafasy/" + surahPadded + ".mp3";
+      }
+
       fetch('https://api.alquran.cloud/v1/surah/' + surahId)
         .then(function(res) { return res.json(); })
         .then(function(data) {
@@ -229,15 +245,15 @@
           var container = document.getElementById('quran-content'); container.innerHTML = '';
           currentAyahsData.forEach(function(ayah, idx) {
             var box = document.createElement('div'); box.className = 'reader-box'; box.id = 'ayah-box-' + idx;
-            box.innerHTML = '<div class="quran-text">' + ayah.text + ' ﴿' + ayah.numberInSurah + '﴾</div>';
+            var ayahAudioUrl = getEveryAyahUrl(currentQariPath, surahId, ayah.numberInSurah);
+            box.innerHTML = '<div class="quran-text">' + ayah.text + ' ﴿' + ayah.numberInSurah + '﴾</div>' +
+                            '<div class="ayah-actions"><a class="btn-download" href="' + ayahAudioUrl + '" target="_blank" download>تحميل الآية ⬇️</a></div>';
             container.appendChild(box);
           });
-          if (currentQariPath === "Hatem_Farid_32kbps") {
-            audioEl.src = "https://server11.mp3quran.net/hatem/" + surahPadded + ".mp3";
-            audioEl.onended = null; audioEl.play();
-          } else { playAyahAudio(0); }
+          playAyahAudio(0);
         });
     }
+
     function playAyahAudio(index) {
       if (index >= currentAyahsData.length) return;
       activeAyahIndex = index;
@@ -249,9 +265,12 @@
       audioEl.src = getEveryAyahUrl(currentQariPath, currentSurahId, currentAyahsData[index].numberInSurah);
       audioEl.play();
       audioEl.onended = function() {
-        if (activeAyahIndex + 1 < currentAyahsData.length) playAyahAudio(activeAyahIndex + 1);
+        if (activeAyahIndex + 1 < currentAyahsData.length) {
+          playAyahAudio(activeAyahIndex + 1);
+        }
       };
     }
+
     function loadTafsirSurah(surahId, surahName) {
       document.getElementById('tafsir-list-view').style.display = 'none';
       document.getElementById('tafsir-reader-view').style.display = 'block';
@@ -267,6 +286,7 @@
           });
         });
     }
+
     function loadEnglishSurah(surahId, surahName) {
       document.getElementById('english-list-view').style.display = 'none';
       document.getElementById('english-reader-view').style.display = 'block';
@@ -282,22 +302,26 @@
           });
         });
     }
+
     function closeReader(mode) {
       var audioEl = document.getElementById(mode + '-audio');
       if (audioEl) { audioEl.pause(); audioEl.src = ''; }
       document.getElementById(mode + '-reader-view').style.display = 'none';
       document.getElementById(mode + '-list-view').style.display = 'block';
     }
+
     function changeFontSize(delta) {
       currentFontSize = Math.max(16, Math.min(40, currentFontSize + delta));
       document.documentElement.style.setProperty('--quran-font-size', currentFontSize + 'px');
       document.getElementById('font-size-val').innerText = currentFontSize;
     }
+
     function changeTextColor(color, el) {
       document.documentElement.style.setProperty('--quran-font-color', color);
       document.querySelectorAll('.color-dot').forEach(function(dot) { dot.classList.remove('active'); });
       if (el) el.classList.add('active');
     }
+
     window.onload = function() { renderGrids(); };
   </script>
 </body>
